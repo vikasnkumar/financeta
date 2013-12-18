@@ -1,7 +1,9 @@
 Build.PL
-lib/PDL/Finance/TA.pm
+lib/PDL/Finance/TA.pd
 LICENSE
 MANIFEST			This list of files
 META.json
 META.yml
 README.md
+t/00_use.t
+t/01_ma.t

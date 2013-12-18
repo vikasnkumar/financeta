@@ -75,7 +75,16 @@
 # Avoid the temporary directories created by Alien::Base
 \b_alien/
 \b_share/
+
+# Avoid tags and todos
 \btags$
 \bTAGS$
 \bTODO$
 \btodo$
+
+# Avoid PDLpp stuff
+TA.c$
+TA.xs$
+TA.pm$
+\.o$
+

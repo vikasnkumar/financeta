@@ -9,6 +9,7 @@ my $build = Module::Build::PDL->new(
     license => 'perl',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
     dist_abstract => 'PDL::Finance::TA is a wrapper for ta-lib from http://ta-lib.org using PDL',
+    dist_version_from => 'lib/PDL/Finance/TA.pd',
     create_readme => 0,
     create_license => 1,
     configure_requires => {
@@ -46,7 +47,7 @@ $build->dispatch('distmeta');
 $build->dispatch('manifest');
 
 __END__
-#### COPYRIGHT: Vikas N Kumar. All Rights Reserved
+#### COPYRIGHT: 2013. Vikas N Kumar. All Rights Reserved
 #### AUTHOR: Vikas N Kumar <vikas@cpan.org>
-#### DATE: 17th Dec 2013
+#### DATE: 18th Dec 2013
 #### LICENSE: Refer LICENSE file.
