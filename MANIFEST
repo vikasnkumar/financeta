@@ -1,0 +1,7 @@
+Build.PL
+lib/PDL/Finance/TA.pm
+LICENSE
+MANIFEST			This list of files
+META.json
+META.yml
+README.md
