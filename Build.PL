@@ -39,6 +39,10 @@ my $build = Module::Build::PDL->new(
             repository => "https://github.com/vikasnkumar/PDL-Finance-TA",
             bugtracker => "https://github.com/vikasnkumar/PDL-Finance-TA/issues",
         },
+        keywords => [qw/ finance technical-analysis technical analysis/],
+        no_index => {
+            directory => [qw/ t examples /],
+        },
     },
 );
 
