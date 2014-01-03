@@ -23,7 +23,7 @@ sub movavg($$) {
     my $b = conv1d $p, $kern;
     my $r1 = floor(($N - 1)/2);
     my $r2 = -1 - ceil(($N - 1)/2);
-    return ($b($r1:$r2), $N - 1);
+    return wantarray ? ($b($r1:$r2), $N - 1) : $b($r1:$r2);
 }
 
 1;

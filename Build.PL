@@ -52,6 +52,9 @@ my $build = $class->new(
         'lib::abs' => 0,
     },
     %talib,
+    share_dir => {
+        dist => [qw/examples/],
+    },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],
     meta_merge => {
