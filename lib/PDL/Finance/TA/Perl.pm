@@ -1,6 +1,6 @@
 package PDL::Finance::TA::Perl;
 use 5.10.0;
-use PDL::Lite;
+use PDL;
 use PDL::NiceSlice;
 
 BEGIN {
@@ -16,8 +16,12 @@ our @EXPORT = qw(
 
 sub movavg($$) {
     my ($p, $N) = @_;
-    my $b = pdl map { $p($_ - $N : $_ - 1)->avg } $N .. $p->nelem;
-    return wantarray ? ($b, $N - 1) : $b;
+    return null unless $N > 0;
+    my $kern = ones($N)/$N;
+    my $b = conv1d $p, $kern;
+    my $r1 = floor($N/2);
+    my $r2 = $p->nelem - $N + $r1;
+    return ($b($r1:$r2), $N - 1);
 }
 
 1;
