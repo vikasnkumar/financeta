@@ -1,10 +1,33 @@
 use strict;
 use warnings;
 use Module::Build::PDL;
-use Alien::TALib;
 
-my $alien = Alien::TALib->new;
-my $build = Module::Build::PDL->new(
+sub check_alien_talib {
+    return undef if $^O =~ /MSWin32|Cygwin/i;
+    eval 'require Alien::TALib' || return undef;
+    return Alien::TALib->new;
+}
+my $alien = check_alien_talib();
+my %talib = (
+    extra_compiler_flags => $alien->cflags(),
+    extra_linker_flags => $alien->libs(),
+    auto_features => {
+        talib_support => {
+            description => "Use TALib instead of pure perl interface where applicable",
+            configure_requires => {
+                'Alien::TALib' => 0,
+            },
+            requires => {
+                'Alien::TALib' => 0,
+            },
+        },
+    },
+) if $alien;
+
+my $class = 'Module::Build::PDL';
+$class = 'Module::Build' unless $alien;
+
+my $build = $class->new(
     module_name => 'PDL::Finance::TA',
     license => 'perl',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
@@ -12,13 +35,11 @@ my $build = Module::Build::PDL->new(
     create_readme => 0,
     create_license => 1,
     configure_requires => {
-        'Alien::TALib' => 0,
         'Module::Build' => 0,
         'Module::Build::PDL' => 0,
         'Software::License' => 0,
     },
     build_requires => {
-        'Alien::TALib' => 0,
         'Module::Build' => 0,
         'Module::Build::PDL' => 0,
         'Test::More' => 0,
@@ -30,9 +51,8 @@ my $build = Module::Build::PDL->new(
     recommends => {
         'lib::abs' => 0,
     },
+    %talib,
     dynamic_config => 1,
-    extra_compiler_flags => $alien->cflags(),
-    extra_linker_flags => $alien->libs(),
     add_to_cleanup => [ qw/*.bak _Inline/ ],
     meta_merge => {
         resources => {

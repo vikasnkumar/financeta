@@ -8,4 +8,4 @@ META.json
 META.yml
 README.md
 t/00_use.t
-t/01_ma.t
+t/01_movavg.t

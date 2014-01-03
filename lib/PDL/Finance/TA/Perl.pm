@@ -18,9 +18,11 @@ sub movavg($$) {
     my ($p, $N) = @_;
     return null unless $N > 0;
     my $kern = ones($N)/$N;
+    # conv1d using wrap-around method, hence we remove the N/2 number of
+    # elements from each side
     my $b = conv1d $p, $kern;
-    my $r1 = floor($N/2);
-    my $r2 = $p->nelem - $N + $r1;
+    my $r1 = floor(($N - 1)/2);
+    my $r2 = -1 - ceil(($N - 1)/2);
     return ($b($r1:$r2), $N - 1);
 }
 
