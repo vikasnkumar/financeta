@@ -1,4 +1,4 @@
-pp_bless('PDL::Finance::TA');
+pp_bless('PDL::Finance::TA::TALib');
 pp_addpm << 'EOPM';
 use 5.10.0;
 use feature ":5.10";
@@ -13,7 +13,7 @@ pp_addhdr << 'EOHDR';
 #include <ta_libc.h>
 EOHDR
 
-pp_def('MA',
+pp_def('movavg',
     Pars => q{
         double x(n);
         int t();

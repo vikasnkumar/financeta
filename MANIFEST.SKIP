@@ -83,8 +83,8 @@
 \btodo$
 
 # Avoid PDLpp stuff
-TA.c$
-TA.xs$
-TA.pm$
+TALib.c$
+TALib.xs$
+TALib.pm$
 \.o$
 \b_Inline

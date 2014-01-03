@@ -20,7 +20,7 @@ tags
 TAGS
 todo
 TODO
-TA.c
-TA.pm
+TALib.c
+TALib.pm
 *.o
 *.xs

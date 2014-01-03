@@ -1,5 +1,7 @@
 Build.PL
-lib/PDL/Finance/TA.pd
+lib/PDL/Finance/TA.pm
+lib/PDL/Finance/TA/Perl.pm
+lib/PDL/Finance/TA/TALib.pd
 LICENSE
 MANIFEST			This list of files
 META.json
