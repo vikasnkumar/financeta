@@ -12,9 +12,11 @@ my $x, $y1, $y2, $idx1, $idx2;
 my $M = 50;
 $x = 10 * random($M);
 $y1 = PDL::Finance::TA::movavg($x, 0);
+$y2 = PDL::Finance::TA::movavg($x, -5);
 isa_ok($y1, 'PDL');
-note $y1, "\n";
+isa_ok($y2, 'PDL');
 ok(PDL::isnull($y1), "PDL is null");
+ok(PDL::isnull($y2), "PDL is null");
 
 map {
 my $N = $_;
