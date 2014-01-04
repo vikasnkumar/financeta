@@ -1,16 +1,20 @@
 package PDL::Finance::TA;
 use 5.10.0;
+
 BEGIN {
     use Exporter();
+    our @ISA = qw/Exporter/;
     our $VERSION = '0.01';
     $VERSION = eval $VERSION;
+    our @EXPORT;
+    our @EXPORT_OK = qw(
+        movavg
+    );
+    our %EXPORT_TAGS = (
+        Func => [@EXPORT_OK],
+    );
 }
-
 use PDL::Finance::TA::Perl;
-
-our @EXPORT = qw(
-    movavg
-);
 
 1;
 __END__

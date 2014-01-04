@@ -31,6 +31,7 @@ pp_def('movavg',
 );
 
 pp_export_nothing();
+pp_add_exported(qw/movavg/);
 pp_done();
 
 __END__

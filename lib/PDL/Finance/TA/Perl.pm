@@ -4,15 +4,14 @@ use PDL;
 use PDL::NiceSlice;
 
 BEGIN {
-    use Exporter();
-    our @ISA = qw/Exporter/;
+    use PDL::Exporter;
+    our @ISA = qw/PDL::Exporter/;
     our $VERSION = '0.01';
     $VERSION = eval $VERSION;
+    our @EXPORT;
+    our @EXPORT_OK = qw/movavg/;
+    our %EXPORT_TAGS = (Func => [@EXPORT_OK]);
 }
-
-our @EXPORT = qw(
-    movavg
-);
 
 sub movavg($$) {
     my ($p, $N) = @_;

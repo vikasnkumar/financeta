@@ -1,4 +1,6 @@
 Build.PL
+examples/benchmark.pl
+examples/movavg.pl
 lib/PDL/Finance/TA.pm
 lib/PDL/Finance/TA/Perl.pm
 lib/PDL/Finance/TA/TALib.pd

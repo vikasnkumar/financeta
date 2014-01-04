@@ -1,8 +1,12 @@
 use Test::More;
-#use PDL;
-#use PDL::NiceSlice;
 
 BEGIN { use_ok('PDL::Finance::TA'); }
+
+SKIP: {
+    eval { require Alien::TALib };
+    skip 'Alien::TALib is not installed', 1 if $@;
+    use_ok('PDL::Finance::TA::TALib');
+}
 
 done_testing();
 
