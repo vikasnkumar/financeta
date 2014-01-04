@@ -48,9 +48,6 @@ my $build = $class->new(
         'perl' => '5.10.0',
         'PDL'  => '2.006',
     },
-    recommends => {
-        'lib::abs' => 0,
-    },
     %talib,
     share_dir => {
         dist => [qw/examples/],
