@@ -55,7 +55,7 @@ ways:
     my $ma_21 = movavg($p, 21); # the 21-day moving average
 
 For a nice example on how to use moving averages and plot them see
-L<examples/movavg.pl>.
+L<PDL::Finance::TA/examples/movavg.pl>.
 
 =begin HTML
 

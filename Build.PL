@@ -68,7 +68,7 @@ my $build = $class->new(
         },
         keywords => [qw/ finance technical-analysis technical analysis/],
         no_index => {
-            directory => [qw/ t examples /],
+            directory => [qw/ t /],
         },
     },
 );
