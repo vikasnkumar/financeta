@@ -1,2 +1,0 @@
-#`PDL::Finance::TA`
-
