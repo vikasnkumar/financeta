@@ -16,7 +16,8 @@ if ($ENV{DEBUG}) {
 }
 
 ## Now let's test this on real financial data
-eval 'require Finance::QuoteHist' || exit 0;
+eval 'require Finance::QuoteHist' || die "Please install the recommended ".
+    "packages in Build.PL before running this example";
 eval { require DateTime; require PDL::Graphics::PGPLOT::Window; };
 $PDL::doubleformat = "%.6lf";
 
