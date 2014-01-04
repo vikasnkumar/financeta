@@ -53,6 +53,7 @@ my $build = $class->new(
         'Finance::QuoteHist' => 0,
         'DateTime' => 0,
         'PDL::Graphics::PGPLOT' => 0,
+        'PGPLOT' => 0,
     },
     %talib,
     share_dir => {
