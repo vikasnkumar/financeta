@@ -57,6 +57,14 @@ ways:
 For a nice example on how to use moving averages and plot them see
 L<examples/movavg.pl>.
 
+=begin HTML
+
+<p><img
+src="http://vikasnkumar.github.io/PDL-Finance-TA/images/pgplot_movavg.png"
+alt="Moving Average plot of YAHOO stock for 2013" /></p>
+
+=end HTML
+
 =back
 
 =head1 COPYRIGHT
