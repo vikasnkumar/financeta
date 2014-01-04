@@ -50,7 +50,6 @@ my $build = $class->new(
         'PDL'  => '2.006',
     },
     recommends => {
-        'Finance::Quote' => 0,
         'Finance::QuoteHist' => 0,
         'DateTime' => 0,
         'PDL::Graphics::PGPLOT' => 0,
