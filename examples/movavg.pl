@@ -8,6 +8,6 @@ use PDL::NiceSlice;
 use PDL::Finance::TA ':Func';
 
 my $a = sequence 50;
-my $ma = movavg($a, 5);
+my $ma = $a->movavg(5);
 say $ma;
 say "Dims: ", $ma->dims, " NElem: ", $ma->nelem;

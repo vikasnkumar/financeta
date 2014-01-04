@@ -17,15 +17,15 @@ SKIP: {
 
 my $M = 50;
 my $x = 10 * random($M);
-my $y1 = PDL::Finance::TA::movavg($x, 0);
-my $y2 = PDL::Finance::TA::movavg($x, -5);
-isa_ok($y1, 'PDL');
-isa_ok($y2, 'PDL');
-ok(PDL::isnull($y1), "PDL is null");
-ok(PDL::isnull($y2), "PDL is null");
+my $y = $x->movavg(0);
+isa_ok($y, 'PDL');
+ok($y->isnull, "PDL is null");
+$y = $x->movavg(-5);
+isa_ok($y, 'PDL');
+ok($y->isnull, "PDL is null");
 
 foreach $N (1 .. 10) {
-    my ($y1, $idx1) = PDL::Finance::TA::movavg($x, $N);
+    my ($y1, $idx1) = $x->movavg($N);
     isa_ok($y1, 'PDL');
     is($y1->nelem, $M - $N + 1, "no. of elements is " . ($M - $N + 1));
     is($idx1, $N - 1, "beginning index from movavg is $idx1");

@@ -13,7 +13,9 @@ BEGIN {
     our %EXPORT_TAGS = (Func => [@EXPORT_OK], Internal => []);
 }
 
-sub movavg($$) {
+*movavg = \&PDL::movavg;
+
+sub PDL::movavg($$) {
     my ($p, $N) = @_;
     return null unless $N > 0;
     my $kern = ones($N)/$N;
