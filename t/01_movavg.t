@@ -25,18 +25,15 @@ isa_ok($y, 'PDL');
 ok($y->isnull, "PDL is null");
 
 foreach $N (1 .. 10) {
-    my ($y1, $idx1) = $x->movavg($N);
+    my $y1 = $x->movavg($N);
     isa_ok($y1, 'PDL');
     is($y1->nelem, $M - $N + 1, "no. of elements is " . ($M - $N + 1));
-    is($idx1, $N - 1, "beginning index from movavg is $idx1");
     note $y1, "\n";
     SKIP: {
         skip 'PDL::Finance::TA::TALib will not be tested', 4 unless $have_talib;
-        my $idx2;
-        ($y2, $idx2) = PDL::Finance::TA::TALib::movavg($x, $N);
+        my ($y2) = PDL::Finance::TA::TALib::movavg($x, $N);
         isa_ok($y2, 'PDL');
         is($y2->nelem, $M, "no. of elements is $M");
-        is($idx2, $N - 1, "begIdx from TA_MA in ta-lib is $idx2");
         is(all(abs($y1 - $y2) < 1e-12), 1, "Both PDLs are the same");
         note $y2, "\n";
     }
