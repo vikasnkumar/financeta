@@ -10,7 +10,7 @@ BEGIN {
     $VERSION = eval $VERSION;
     our @EXPORT;
     our @EXPORT_OK = qw/movavg/;
-    our %EXPORT_TAGS = (Func => [@EXPORT_OK]);
+    our %EXPORT_TAGS = (Func => [@EXPORT_OK], Internal => []);
 }
 
 sub movavg($$) {

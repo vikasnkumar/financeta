@@ -12,9 +12,12 @@ BEGIN {
     );
     our %EXPORT_TAGS = (
         Func => [@EXPORT_OK],
+        Internal => [],
     );
 }
 use PDL::Finance::TA::Perl;
+
+*movavg = \&PDL::Finance::TA::Perl::movavg;
 
 1;
 __END__
