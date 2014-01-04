@@ -48,6 +48,12 @@ my $build = $class->new(
         'perl' => '5.10.0',
         'PDL'  => '2.006',
     },
+    recommends => {
+        'Finance::Quote' => 0,
+        'Finance::QuoteHist' => 0,
+        'DateTime' => 0,
+        'PDL::Graphics::PGPLOT' => 0,
+    },
     %talib,
     share_dir => {
         dist => [qw/examples/],
