@@ -43,6 +43,7 @@ my $build = $class->new(
         'Module::Build' => 0,
         'Module::Build::PDL' => 0,
         'Test::More' => 0,
+        'File::Spec' => 0,
     },
     requires => {
         'perl' => '5.10.0',

@@ -9,10 +9,11 @@ use PDL::NiceSlice;
 use PDL::Finance::TA ':Func';
 
 ## Let's test if the moving average function works first
-my $a = sequence 50;
-my $ma = $a->movavg(5);
-say $ma;
-say "Dims: ", $ma->dims, " NElem: ", $ma->nelem;
+if ($ENV{DEBUG}) {
+    my $a = sequence 50;
+    my $ma = $a->movavg(5);
+    say $ma, "\tDims: ", $ma->dims, " NElem: ", $ma->nelem;
+}
 
 ## Now let's test this on real financial data
 eval 'require Finance::QuoteHist' || exit 0;
@@ -44,17 +45,38 @@ unless (-e $path) {
     }
     $fq->clear_cache;
     close $fh;
+    say "$path has some data for analysis";
 }
 
-## now read this back into a PDL using rcols
+## now read this back into a PDL using rcol
 my $data = rcols $path, [], { COLSEP => ',', DEFTYPE => PDL::double };
-say $data(0:10);
-
-my $N = 13;
+my ($start) = $data(0, (0))->list;
+my $start_day = DateTime->from_epoch(epoch => $start)->ymd;
+$data(0:-1,(0)) -= $start;
+if ($ENV{DEBUG}) {
+    say $data(0:50,(0));
+    say $data(0:50,(1));
+    say $data(0:50,(1))->movavg(13);
+}
 my $win = PDL::Graphics::PGPLOT::Window->new(Device => '/xs');
-$win->line($data(,(0)), $data(,(4)));
+# plot the close price
+$win->line($data(0:-1,(0)), $data(0:-1,(4)),
+    { COLOR => 'CYAN', AXIS => [ 'BCNSTZ', 'BCNST']});
 $win->hold;
-$win->line($data($N - 1:-1,(0)), $data(,(4))->movavg($N));
+# plot the 5-day moving average of the close price
+$win->line($data(0 + 5 - 1 :-1,(0)), $data(0:-1,(4))->movavg(5),
+            { COLOR => 'MAGENTA'});
+# plot the 13-day moving average of the close price
+$win->line($data(0 + 13 - 1:-1,(0)), $data(0:-1,(4))->movavg(13),
+            { COLOR => 'RED'});
+# plot the 21-day moving average of the close price
+$win->line($data(0 + 21 - 1:-1,(0)), $data(0:-1,(4))->movavg(21),
+            { COLOR => 'YELLOW'});
+$win->label_axes("Days since $start_day", 'Close Price', 'Moving Average of Close Prices');
+$win->legend(['YHOO', '5-day Mov. Avg.', '13-day Mov. Avg.', '21-day Mov. Avg.'],
+    40, 40, { Colour => ['CYAN', 'MAGENTA', 'RED', 'YELLOW'], XPos => 5, YPos =>
+    5, Width => 'Automatic'});
+$win->release;
 $win->close;
 
 
