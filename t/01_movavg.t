@@ -31,7 +31,7 @@ foreach $N (1 .. 10) {
     is($idx1, $N - 1, "beginning index from movavg is $idx1");
     note $y1, "\n";
     SKIP: {
-        skip 'PDL::Finance::TA::TALib will not be tested' unless $have_talib;
+        skip 'PDL::Finance::TA::TALib will not be tested', 4 unless $have_talib;
         my $idx2;
         ($y2, $idx2) = PDL::Finance::TA::TALib::movavg($x, $N);
         isa_ok($y2, 'PDL');
