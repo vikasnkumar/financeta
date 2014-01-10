@@ -17,8 +17,8 @@ SKIP: {
 
 my $M = 50;
 my $x = 10 * random($M);
-my $y = $x->movavg(0);
 ok($M >= $N, "size of pdl($M) > N($N)");
+my $y = $x->movavg(0);
 isa_ok($y, 'PDL');
 ok($y->isnull, "PDL is null");
 $y = $x->movavg(-5);

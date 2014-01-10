@@ -22,9 +22,10 @@ BEGIN {
 
 sub PDL::movavg($$) {
     my ($p, $N) = @_;
-    barf "argument N has to be defined and positive" unless defined $N;
-    carp "argument N has to be positive" if $N <= 0;
-    return null unless $N > 0;
+    unless (defined $N and $N > 0) {
+        carp "argument N has to be defined and positive";
+        return null;
+    }
     my $kern = ones($N)/$N;
     # conv1d using wrap-around method, hence we remove the N/2 number of
     # elements from each side
@@ -38,7 +39,7 @@ sub PDL::expmovavg {
     my ($p, $N, $alpha) = @_;
     # if N is undefined use the maximum
     $N = $p->nelem unless defined $N;
-    # if N < 0 then barf
+    # if N < 0 then return null
     carp "argument N cannot be negative. It can be > 0 or undef" if $N < 0;
     return null if $N < 0;
     $N = $p->nelem if $N > $p->nelem;
