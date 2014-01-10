@@ -9,6 +9,7 @@ BEGIN {
     our @EXPORT;
     our @EXPORT_OK = qw(
         movavg
+        expmovavg
     );
     our %EXPORT_TAGS = (
         Func => [@EXPORT_OK],
@@ -18,6 +19,7 @@ BEGIN {
 use PDL::Finance::TA::Perl;
 
 *movavg = \&PDL::Finance::TA::Perl::movavg;
+*expmovavg = \&PDL::Finance::TA::Perl::expmovavg;
 
 1;
 __END__
@@ -46,7 +48,7 @@ analysis on financial data stored as PDLs.
 =item B<movavg $p, $N>
 
 The C<movavg()> function takes two arguments, a pdl object and the number of
-elements over which to calculate the moving average. It can be invoked in two
+elements over which to calculate the simple moving average. It can be invoked in two
 ways:
 
     use PDL;
