@@ -3,7 +3,7 @@ use warnings;
 use Module::Build::PDL;
 
 sub check_alien_talib {
-    return undef if $^O =~ /MSWin32|Cygwin/i;
+    return undef if $^O =~ /MSWin32/i;
     eval 'require Alien::TALib' || return undef;
     return Alien::TALib->new;
 }
@@ -54,6 +54,7 @@ my $build = $class->new(
         'DateTime' => 0,
         'PDL::Graphics::PGPLOT' => 0,
         'PGPLOT' => 0,
+        'Alien::TALib' => 0,
     },
     %talib,
     share_dir => {
