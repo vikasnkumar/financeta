@@ -11,3 +11,4 @@ META.yml
 README.md
 t/00_use.t
 t/01_movavg.t
+t/02_expmovavg.t

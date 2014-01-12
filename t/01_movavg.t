@@ -17,7 +17,6 @@ SKIP: {
 
 my $M = 50;
 my $x = 10 * random($M);
-ok($M >= $N, "size of pdl($M) > N($N)");
 my $y = $x->movavg(0);
 isa_ok($y, 'PDL');
 ok($y->isnull, "PDL is null");
@@ -25,7 +24,8 @@ $y = $x->movavg(-5);
 isa_ok($y, 'PDL');
 ok($y->isnull, "PDL is null");
 
-foreach $N (1 .. 10) {
+foreach my $N (1 .. 10) {
+    ok($M >= $N, "size of pdl($M) > N($N)");
     my $y1 = $x->movavg($N);
     isa_ok($y1, 'PDL');
     ok(!$y1->isnull, "PDL isn't null");

@@ -17,21 +17,20 @@ SKIP: {
 
 my $M = 50;
 my $x = 10 * random($M);
-ok($M >= $N, "size of pdl($M) > N($N)");
 my $y = $x->expmovavg(0);
 isa_ok($y, 'PDL');
 ok(!$y->isnull, "PDL is not null");
-$y = $x->movavg(-5);
+$y = $x->expmovavg(-5);
 isa_ok($y, 'PDL');
 ok($y->isnull, "PDL is null");
 
-foreach $N (0 .. 0) {
+foreach $N (0 .. $M) {
     my $y1 = $x->expmovavg($N);
     isa_ok($y1, 'PDL');
     ok(!$y1->isnull, "PDL isn't null");
     note "pdl generated: $y1\n";
-    my $NN = $N;
-    $NN = $M unless $N;
+    my $NN = $N || $M;
+    note "N is $NN\n";
     is($y1->nelem, $M - $NN + 1, "no. of elements is " . ($M - $NN + 1));
     my @xarr = $x->list;
     my @yarr = ();
@@ -41,7 +40,7 @@ foreach $N (0 .. 0) {
     my @powarr = map { $alpha * ((1 - $alpha) ** $_) } 0 .. ($NN - 1);
     for my $i ($NN .. scalar(@xarr)) {
         my $s = 0;
-        map { $s += $powarr[$_ - ($i - $NN)] * $xarr[$_] } ($i - $NN .. $i - 1);
+        map { $s += $powarr[$_] * $xarr[$_ + $i - $NN] } 0 .. ($NN - 1);
         push @yarr, $s;
     }
     is(scalar @yarr, $M - $NN + 1, "no. of elements is " . ($M - $NN + 1));
