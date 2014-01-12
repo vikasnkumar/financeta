@@ -25,3 +25,4 @@ TALib.pm
 *.o
 *.xs
 PDL-Finance-TA-*tar.gz
+.*.swp
