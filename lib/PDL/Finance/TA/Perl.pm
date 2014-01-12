@@ -48,7 +48,7 @@ sub PDL::expmovavg {
     my $a = ones($N) * (1 - $alpha);
     ## all elements are now (1 - K)^i for i in [0, N - 1]
     ## multiply everything by K
-    my $kern = $a->power(sequence($N), 0)->(-1:0) * $alpha;
+    my $kern = $a->power(sequence($N), 0) * $alpha;
     my $out = conv1d $p, $kern, { Boundary => 'reflect' };
     my $r1 = floor(($N - 1)/2);
     my $r2 = -1 - ceil(($N - 1)/2);

@@ -38,9 +38,10 @@ foreach $N (0 .. $M) {
 
     my $alpha = 2 / ($NN + 1);
     my @powarr = map { $alpha * ((1 - $alpha) ** $_) } 0 .. ($NN - 1);
+#    note join(' ', @powarr), "\n";
     for my $i ($NN .. scalar(@xarr)) {
         my $s = 0;
-        map { $s += $powarr[$_] * $xarr[$_ + $i - $NN] } 0 .. ($NN - 1);
+        map { $s += $powarr[$NN - $_ - 1] * $xarr[$_ + $i - $NN] } 0 .. ($NN - 1);
         push @yarr, $s;
     }
     is(scalar @yarr, $M - $NN + 1, "no. of elements is " . ($M - $NN + 1));
