@@ -57,13 +57,32 @@ ways:
     my $ma_21 = movavg($p, 21); # the 21-day moving average
 
 For a nice example on how to use moving averages and plot them see
-L<PDL::Finance::TA/examples/movavg.pl>.
+I<examples/movavg.pl>.
 
 =begin HTML
 
 <p><img
 src="http://vikasnkumar.github.io/PDL-Finance-TA/images/pgplot_movavg.png"
-alt="Moving Average plot of YAHOO stock for 2013" /></p>
+alt="Simple Moving Average plot of YAHOO stock for 2013" /></p>
+
+=end HTML
+
+=item B<expmovavg $p, $N, $alpha>
+
+The C<expmovavg()> function takes three arguments, a pdl object, the number of
+elements over which to calculate the exponential moving avergage and the
+exponent to use to calculate the moving average. If the number of elements is 0
+or C<undef> then all the elements are used to calculate the value. If the
+exponent argument is C<undef>, the value of (2 / (N + 1)) is assumed.
+
+For a nice example on how to use and compare exponential moving average to the
+simple moving average look at I<examples/expmovavg.pl>.
+
+=begin HTML
+
+<p><img
+src="http://vikasnkumar.github.io/PDL-Finance-TA/images/pgplot_expmovavg.png"
+alt="Exponential Moving Average plot of YAHOO stock for 2013" /></p>
 
 =end HTML
 

@@ -85,7 +85,8 @@ $win->line($data(0 + $N - 1:-1,(0)), $data(0:-1,(4))->expmovavg($N, $alpha),
 # plot the 34-day simple moving average of the close price
 $win->line($data(0 + $N - 1:-1,(0)), $data(0:-1,(4))->movavg($N),
             { COLOR => 'MAGENTA'});
-$win->label_axes("Days since $start_day", 'Close Price', 'Exponential Moving Average of Close Prices');
+$win->label_axes("Days since $start_day", 'Close Price',
+    "Exponential Moving Average of Close Prices - $symbol");
 $win->legend([$symbol, '21-day EMA', '21-day SMA', '34-day EMA', '34-day SMA'],
     40, 40, { Colour => [qw/CYAN RED YELLOW GREEN MAGENTA/], XPos => 5, YPos =>
     5, Width => 'Automatic'});
