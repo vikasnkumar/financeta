@@ -71,23 +71,23 @@ my $win = PDL::Graphics::PGPLOT::Window->new(Device => '/xs');
 $win->line($data(0:-1,(0)), $data(0:-1,(4)),
     { COLOR => 'CYAN', AXIS => [ 'BCNSTZ', 'BCNST']});
 $win->hold;
-# plot the 5-day simple moving average of the close price
-$win->line($data(0 + 5 - 1:-1,(0)), $data(0:-1,(4))->movavg(5),
+# plot the 21-day simple moving average of the close price
+my ($N, $alpha) = (21, 0.9);
+$win->line($data(0 + $N - 1:-1,(0)), $data(0:-1,(4))->movavg($N),
             { COLOR => 'YELLOW'});
-# plot the 5-day exponential moving average of the close price
-$win->line($data(0 + 5 - 1:-1,(0)), $data(0:-1,(4))->expmovavg(5, 0.9),
+# plot the 21-day exponential moving average of the close price
+$win->line($data(0 + $N - 1:-1,(0)), $data(0:-1,(4))->expmovavg($N, $alpha),
             { COLOR => 'RED'});
-# plot the 13-day exponential moving average of the close price
-$win->line($data(0 + 13 - 1:-1,(0)), $data(0:-1,(4))->expmovavg(13, 0.9),
+$N = 34;
+# plot the 34-day exponential moving average of the close price
+$win->line($data(0 + $N - 1:-1,(0)), $data(0:-1,(4))->expmovavg($N, $alpha),
             { COLOR => 'GREEN'});
-# plot the 13-day simple moving average of the close price
-$win->line($data(0 + 13 - 1:-1,(0)), $data(0:-1,(4))->movavg(13),
+# plot the 34-day simple moving average of the close price
+$win->line($data(0 + $N - 1:-1,(0)), $data(0:-1,(4))->movavg($N),
             { COLOR => 'MAGENTA'});
 $win->label_axes("Days since $start_day", 'Close Price', 'Exponential Moving Average of Close Prices');
-$win->legend([$symbol, '5-day EMA', '5-day SMA', '13-day EMA', '13-day SMA'],
+$win->legend([$symbol, '21-day EMA', '21-day SMA', '34-day EMA', '34-day SMA'],
     40, 40, { Colour => [qw/CYAN RED YELLOW GREEN MAGENTA/], XPos => 5, YPos =>
     5, Width => 'Automatic'});
 $win->release;
 $win->close;
-
-
