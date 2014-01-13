@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use blib;
+eval { require blib; };
 use 5.10.0;
 use feature 'say';
 use Benchmark 'timethese';

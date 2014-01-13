@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use blib;
 use feature 'say';
+eval { require blib; };
 use File::Spec;
 use PDL;
 use PDL::NiceSlice;

@@ -35,6 +35,7 @@ my $build = $class->new(
     license => 'perl',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
     dist_abstract => 'PDL::Finance::TA provides technical analysis functions for PDL',
+    dist_version_from => 'lib/TA.pm',
     create_readme => 0,
     create_license => (-e 'LICENSE' ? 0 : 1),
     configure_requires => {
@@ -75,6 +76,11 @@ my $build = $class->new(
             directory => [qw/ t /],
         },
     },
+    pm_files => {
+        'lib/TA.pm' => 'lib/PDL/Finance/TA.pm',
+        'lib/TA/Perl.pm' => 'lib/PDL/Finance/TA/Perl.pm',
+        'lib/TA/TALib.pm' => 'lib/PDL/Finance/TA/TALib.pm',
+    }
 );
 
 $build->create_build_script;
