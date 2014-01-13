@@ -8,7 +8,10 @@ sub check_alien_talib {
     return Alien::TALib->new;
 }
 my $alien = check_alien_talib();
+my %compiler = ();
+$compiler{config} = { cc => 'gcc', ld => 'gcc' } if $^O =~ /darwin/i;
 my %talib = (
+    %compiler,
     extra_compiler_flags => $alien->cflags(),
     extra_linker_flags => $alien->libs(),
     auto_features => {
