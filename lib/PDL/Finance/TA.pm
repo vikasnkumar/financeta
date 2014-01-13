@@ -94,5 +94,8 @@ alt="Exponential Moving Average plot of YAHOO stock for 2013" /></p>
 
 Copyright (C) 2013-2014. Vikas N Kumar <vikas@cpan.org>. All Rights Reserved.
 
-This is free software; You can redistribute it or modify it under the terms of
-Perl itself.
+=head1 LICENSE
+
+This is free software. You can redistribute it or modify it under the terms of
+Perl itself. Refer LICENSE file in the top level source directory for more
+information.

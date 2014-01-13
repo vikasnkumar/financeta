@@ -1,0 +1,37 @@
+c1204d184cf56462d86d00c29260d1cdcd59cbce Adding strictness to the package.
+731a4627d34f8a145a7182b005f90414cf5a315e Removing vim swap files from git status checks
+2513e919f145efb6336154ff9e0b1fa2e6c74ed4 Adding documentation for exponential moving average
+e6a2a4d68de2f7d7443f254f4617fbcde43701be minor edits to the example to show the visibility of the exp-mov-avg
+b7a72908b91ce99db84830f96a0792c8ad41ed95 Adding an example for exp-mov-avg and fixing the unit test to be correct.
+74aee742013f58a78eaa678dd184edb9d09e649b Updating movavg.pl to really use PDLs to create the data instead of just rcols.
+321ec31b1b080c13632034133c8b435a3a5f6e5b Fixing the exp-movavg code and test.
+4c8e4c5faa0f72a2cc3965e17136d69ec6674e2a Adding a unit test for expmovavg. works partially
+a187654c254401f4f5ef08c19278267ca3a2d1a3 - Removing barf from the movavg function. We don't barf and instead return null. as the calling program can call barf or croak or whatever
+cabf910ef5e229cc32e88251569041a267bdce23 - Completing the exponential mov avg function - updating movavg to barf on undefined N - updating unit test to use perl code to test the PDL/TALib function for   verification on systems that do not have or do not want to use TALib
+743019070ce94f09c0798cd9d7a84a1141b819d5 Alien::TALib compiles under Cygwin but not Strawberry Perl
+cbb5413a8718d0f7e385765196e118bd01f6b535 Adding better link to examples
+7b91cd0244b39101fb088372ebeaf67fb75a5deb Adding an image to the CPAN documentation
+3316c59ddce3e11af74be3f39d0e19fbf287efe0 Update the exit to a die with a message for the user
+9472bdf16f414d4ad2383b2909517a85db4e6884 Adding PGPLOT to the recommended list
+e4507da34b12e0d45c4a4bc6261bf43505148fbf We dont need Finance::Quote
+897e7a9d231b4bd7cb7d670a611ea50d2416f0c0 Adding some basic documentation.
+6317fb22abd263f08bd0a82c1c6fc8fda4263593 Finishing the moving average example to perform moving average plots
+506502778d92b13f596605885b45f3c6cef784a5 Fixing the argument list for the movavg() function
+756732406d4fc599e10d163eb6c22aa69bc2a380 Sample app for plotting moving averages
+3dab0f63f97d7704892260c084e7ab6c541d2428 Updating the module to handle both PDL::Finance::TA::$FUNC and pdl->$FUNC() methods.
+7e76c5bce40b6228f075fbda2cc96621b4a8d2e0 minor bugs so that the Windows build works.
+5a9bb955ecb41d734b19ad60ef8cafa8557d2017 Removing the lib::abs
+559bf25936d84baf0c906a93138cb718a0302362 Fixing minor test bug shown on Linux
+2c75a803159e484795338a0dd5ae1a694e5498b0 minor edits to PDL export
+cf5d78a89e9f2bf71fcf916df70ab0364e898e58 Making the TALib test optional only if Alien::TALib is installed.
+2dc904d703b6d6b125d2e2b67bde6f75d723633d Updating to add a simple moving average example and also fixing the return value correctly
+32281d8ae7d1240b9ec1378e8d19d4aa6fc7c013 Handle the negative N case as well
+22d95d5d9b981e62275e9fa353fbbc7a45f0f55a Handle the null case as well
+1b3a0f402c79a24c3092fe29ee9274795093ff26 Fixing the moving average function to handle both odd and even Ns
+2dccef0e0374276587121ef0819471cdee277932 Updating the moving average function to use conv1d instead of map thus providing a huge speedup
+0b13002308396d6ba4c94a40e2e4449065ea841a Adding a moving average function that directly works in PDL without using TALib. also renaming the TALib function
+e69b4c8a73dda1617baf78e7c0d4b5a7d9c9c20a Updating license for 2014
+3ba37df909e1d861640c67ff12946b9a3bfc0c54 Update the README, add some more CPAN::Meta information, ignore _Inline directory generated from Inline:pdlpp
+7439244573b111299819b75f816010c0e1d97b41 Updating the code to perform the Moving Average function on a PDL object. Copied from old code written in another project.
+0ec6b659c472d313776c224ad736e7b62eec7569 Adding a dummy build setup
+0a1de48dab6e20aaa06824f3e693746044094ec6 Initial commit
