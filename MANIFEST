@@ -1,5 +1,7 @@
 Build.PL
+Changes
 examples/benchmark.pl
+examples/expmovavg.pl
 examples/movavg.pl
 lib/PDL/Finance/TA.pm
 lib/PDL/Finance/TA/Perl.pm
