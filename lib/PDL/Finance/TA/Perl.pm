@@ -1,4 +1,6 @@
 package PDL::Finance::TA::Perl;
+use strict;
+use warnings;
 use 5.10.0;
 use Carp;
 use PDL;

@@ -1,5 +1,7 @@
 pp_bless('PDL::Finance::TA::TALib');
 pp_addpm << 'EOPM';
+use strict;
+use warnings;
 use 5.10.0;
 use feature ":5.10";
 use Alien::TALib;
