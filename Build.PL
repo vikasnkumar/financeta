@@ -86,6 +86,7 @@ my $build = $class->new(
 $build->create_build_script;
 $build->dispatch('distmeta');
 $build->dispatch('manifest');
+$build->dispatch('forcepdlpp');
 
 __END__
 #### COPYRIGHT: 2013. Vikas N Kumar. All Rights Reserved
