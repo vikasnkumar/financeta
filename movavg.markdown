@@ -1,3 +1,6 @@
+<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 ---
 title: Technical Analysis using PDL::Finance::TA - An Introduction
 ---
