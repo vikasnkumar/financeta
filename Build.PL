@@ -16,6 +16,7 @@ my $build = Module::Build->new(
     configure_requires => {
         'Module::Build' => 0,
         'Software::License' => 0,
+        'Pod::Readme' => 0,
     },
     build_requires => {
         'Module::Build' => 0,
@@ -27,18 +28,18 @@ my $build = Module::Build->new(
         'Carp' => 0,
         'File::Spec' => 0,
         'PDL'  => '2.007',
-        'PDL::Graphics::PGPLOT' => 0,
-        'PGPLOT' => 0,
         'DateTime' => 0,
         'Finance::QuoteHist' => 1.20,
         'PDL::Finance::Talib' => '0.006',
         'Prima' => 1.39,
         'DateTime::Format::Strptime' => 0,
         'POE::Loop::Prima' => 0,
+        'PDL::Graphics::PGPLOT' => 0,
+        'PGPLOT' => 0,
+        'PDL::Graphics::PLplot' => 0.67,
     },
     recommends => {
         'Graphics::PLplot' => 0,
-        'PDL::Graphics::PLplot' => 0,
     },
     share_dir => {
         dist => [qw/examples/],

@@ -2,6 +2,7 @@ package PDL::Finance::TA;
 use strict;
 use warnings;
 use 5.10.0;
+use feature 'say';
 
 our $VERSION = '0.02';
 $VERSION = eval $VERSION;
@@ -9,9 +10,18 @@ $VERSION = eval $VERSION;
 use PDL::Finance::TA::Mo;
 use Carp;
 use File::Spec;
+use DateTime;
 use POE 'Loop::Prima';
-use Prima qw/Application Buttons MsgBox/;
+use Prima qw/Application Buttons MsgBox Calendar ComboBox/;
 use Prima::Utils ();
+use Data::Dumper;
+use Finance::QuoteHist;
+use PDL::Lite;
+use PDL::IO::Misc;
+use PDL::NiceSlice;
+use PDL::Graphics::PGPLOT::Window;
+use PDL::Graphics::PLplot;
+$PDL::doubleformat = "%0.6lf";
 
 has brand => (default => sub { __PACKAGE__ });
 has main => (builder => '_build_main');
@@ -40,12 +50,13 @@ sub _build_main {
         # force border styles for consistency
         borderIcons => bi::All,
         borderStyle => bs::Sizeable,
-        windowState => ws::Maximized,
+        windowState => ws::Normal,
         icon => $self->icon,
         # origin
         left => 10,
         top => 0,
     );
+    $mw->maximize;
     return $mw;
 }
 
@@ -55,10 +66,17 @@ sub _menu_items {
         [
             '~Security' => [
                 [
-                    'security_new',
+                    'security_wizard',
                     '~New', 'Ctrl+N', '^N',
                     sub {
-
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        if ($gui->security_wizard($win)) {
+                            # download security data
+                            my $data = $gui->download_data();
+                            $gui->display_data($win, $data);
+                            $gui->plot_data($win, $data);
+                        }
                     },
                     $self,
                 ],
@@ -84,6 +102,10 @@ sub _menu_items {
 
 sub close_all {
     my ($self, $win) = @_;
+    my $pwin = $win->{plot};
+    if ($pwin and $pwin->isa('PDL::Graphics::PGPLOT')) {
+        $pwin->close;
+    }
     $win->close if $win;
     $::application->close;
 }
@@ -92,6 +114,254 @@ sub run {
     my $self = shift;
     $self->main->show;
     run Prima;
+}
+
+has current => {};
+
+sub security_wizard {
+    my ($self, $win) = @_;
+    my $w = Prima::Dialog->new(
+        name => 'sec_wizard',
+        centered => 1,
+        origin => [200, 200],
+        size => [640, 480],
+        text => 'Security Wizard',
+        icon => $self->icon,
+        visible => 1,
+        taskListed => 0,
+        onExecute => sub {
+            my $dlg = shift;
+            my $sec = $self->current->{symbol} || '';
+            $dlg->input_symbol->text($sec);
+            $dlg->btn_ok->enabled(0);
+            $dlg->btn_cancel->enabled(1);
+            if ($self->current->{start_date}) {
+                my $dt = $self->current->{start_date};
+                $dlg->cal_start->date($dt->day, $dt->month - 1, $dt->year - 1900);
+            } else {
+                $dlg->cal_start->date_from_time(gmtime);
+                # reduce 1 year
+                my $yr = $dlg->cal_start->year;
+                $dlg->cal_start->year($yr - 1);
+            }
+            if ($self->current->{end_date}) {
+                my $dt = $self->current->{end_date};
+                $dlg->cal_end->date($dt->day, $dt->month - 1, $dt->year - 1900);
+            } else {
+                $dlg->cal_end->date_from_time(gmtime);
+            }
+        },
+    );
+    $w->owner($win) if defined $win;
+    $w->insert(
+        Label => text => 'Enter Security Symbol',
+        name => 'label_symbol',
+        alignment => ta::Left,
+        autoHeight => 1,
+        origin => [ 20, 440],
+        autoWidth => 1,
+        font => { height => 14, style => fs::Bold },
+    );
+    $w->insert(
+        InputLine => name => 'input_symbol',
+        alignment => ta::Left,
+        autoHeight => 1,
+        width => 60,
+        autoTab => 1,
+        maxLen => 10,
+        origin => [ 180, 440],
+        font => { height => 16 },
+        onChange => sub {
+            my $inp = shift;
+            my $owner = $inp->owner;
+            unless (length $inp->text) {
+                $owner->btn_ok->enabled(0);
+            } else {
+                $owner->btn_ok->enabled(1);
+            }
+        },
+    );
+    $w->insert(
+        Label => text => 'Select Start Date',
+        name => 'label_enddate',
+        alignment => ta::Center,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 20, 410 ],
+        font => { height => 14, style => fs::Bold },
+    );
+    $w->insert(
+        Calendar => name => 'cal_start',
+        useLocale => 1,
+        size => [ 220, 200 ],
+        origin => [ 20, 200 ],
+        font => { height => 16 },
+        onChange => sub {
+            my $cal = shift;
+            $self->current->{start_date} = new DateTime(
+                year => 1900 + $cal->year(),
+                month => 1 + $cal->month(),
+                day => $cal->day(),
+                time_zone => 'America/New_York',
+            );
+        },
+    );
+    $w->insert(
+        Label => text => 'Select End Date',
+        name => 'label_enddate',
+        alignment => ta::Center,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 260, 410 ],
+        font => { height => 14, style => fs::Bold },
+    );
+    $w->insert(
+        Calendar => name => 'cal_end',
+        useLocale => 1,
+        size => [ 220, 200 ],
+        origin => [ 260, 200 ],
+        font => { height => 16 },
+        onChange => sub {
+            my $cal = shift;
+            $self->current->{end_date} = new DateTime(
+                year => 1900 + $cal->year(),
+                month => 1 + $cal->month(),
+                day => $cal->day(),
+                time_zone => 'America/New_York',
+            );
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_cancel',
+        text => 'Cancel',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 20, 40 ],
+        modalResult => mb::Cancel,
+        default => 1,
+        enabled => 1,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            delete $self->current->{symbol};
+            delete $self->current->{start_date};
+            delete $self->current->{end_date};
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_ok',
+        text => 'OK',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 150, 40 ],
+        modalResult => mb::Ok,
+        default => 0,
+        enabled => 0,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            my $btn = shift;
+            my $owner = $btn->owner;
+            $self->current->{symbol} = $owner->input_symbol->text;
+            unless (defined $self->current->{start_date}) {
+                my $cal = $owner->cal_start;
+                $self->current->{start_date} = new DateTime(
+                    year => 1900 + $cal->year(),
+                    month => 1 + $cal->month(),
+                    day => $cal->day(),
+                    time_zone => 'America/New_York',
+                );
+            }
+            unless (defined $self->current->{end_date}) {
+                my $cal = $owner->cal_end;
+                $self->current->{end_date} = new DateTime(
+                    year => 1900 + $cal->year(),
+                    month => 1 + $cal->month(),
+                    day => $cal->day(),
+                    time_zone => 'America/New_York',
+                );
+            }
+        },
+    );
+    my $res = $w->execute();
+    $w->end_modal;
+    return $res == mb::Ok;
+}
+
+has tmpdir => ( default => sub {
+    return $ENV{TMPDIR} || '/tmp';
+});
+
+sub download_data {
+    my ($self) = @_;
+#    say Dumper($self->current);
+    my $start = $self->current->{start_date};
+    my $end = $self->current->{end_date};
+    my $symbol = $self->current->{symbol};
+    #TODO: check symbol validity
+    my $csv = sprintf "%s_%d_%d.csv", $symbol, $start->ymd(''), $end->ymd('');
+    $csv = File::Spec->catfile($self->tmpdir, $csv);
+    my $data;
+    unless (-e $csv) {
+        my $fq = new Finance::QuoteHist(
+            symbols => [ $symbol ],
+            start_date => '1 year ago',
+            end_date => 'today',
+            auto_proxy => 1,
+        );
+        open my $fh, '>', $csv or die "$!";
+        my @quotes = ();
+        foreach my $row ($fq->quotes) {
+            my ($sym, $date, $o, $h, $l, $c, $vol) = @$row;
+            my ($yy, $mm, $dd) = split /\//, $date;
+            my $epoch = DateTime->new(
+                year => $yy,
+                month => $mm,
+                day => $dd,
+                hour => 16, minute => 0, second => 0,
+                time_zone => 'America/New_York',
+            )->epoch;
+            say $fh "$epoch,$o,$h,$l,$c";
+            push @quotes, pdl($epoch, $o, $h, $l, $c);
+        }
+        $fq->clear_cache;
+        close $fh;
+        say "$csv has downloaded data for analysis";
+        $data = pdl(@quotes)->transpose;
+    } else {
+        ## now read this back into a PDL using rcol
+        say "$csv already present. loading it...";
+        $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
+    }
+    return $data;
+}
+
+sub display_data {
+    my ($self, $win, $data) = @_;
+    return unless defined $win and defined $data;
+}
+
+sub plot_data {
+    return plot_data_pgplot(@_);
+}
+
+sub plot_data_pgplot {
+    my ($self, $win, $data) = @_;
+    my $pwin = PDL::Graphics::PGPLOT::Window->new(
+            Device => '/xw',
+        );
+    $win->{plot} = $pwin;
+    $pwin->line($data(0:-1,(0)), $data(0:-1,(4)),
+        { COLOR => 'CYAN', AXIS => [ 'BCNSTZ', 'BCNST' ]});
+    $pwin->release;
+    $pwin->focus;
+}
+
+sub plot_data_plplot {
+    my ($self, $win, $data) = @_;
+    my $pwin = PDL::Graphics::PLplot->new(DEV => 'xwin');
+    $pwin->xyplot($data(0:-1,(0)), $data(0:-1,(4)),
+        COLOR => 'RED',
+        PLOTTYPE => 'LINE',
+    );
 }
 
 1;
