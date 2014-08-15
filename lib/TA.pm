@@ -21,7 +21,8 @@ use PDL::IO::Misc;
 use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 $PDL::doubleformat = "%0.6lf";
-
+$| = 1;
+has debug => 0;
 has timezone => 'America/New_York';
 has brand => (default => sub { __PACKAGE__ });
 has main => (builder => '_build_main');
@@ -36,6 +37,7 @@ sub _build_icon {
     $pkgpath =~ s|\.pm$||g;
     my $icon_path = File::Spec->catfile($pkgpath, 'images', 'icon.gif');
     my $icon = Prima::Icon->create;
+    say "Icon path: $icon_path" if $self->debug;
     $icon->load($icon_path) or carp "Unable to load $icon_path";
     return $icon;
 }
@@ -105,6 +107,7 @@ sub close_all {
     my ($self, $win) = @_;
     my $pwin = $win->{plot};
     $pwin->close if $pwin;
+    say "Closing all open windows" if $self->debug;
     $win->close if $win;
     $::application->close;
 }
@@ -286,6 +289,7 @@ sub security_wizard {
 }
 
 has tmpdir => ( default => sub {
+    return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
     return $ENV{TMPDIR} || '/tmp';
 });
 
@@ -341,10 +345,12 @@ sub display_data {
 sub plot_data {
     my $self = shift;
     if ($self->use_pgplot) {
+        say "Using PGPLOT to do plotting" if $self->debug;
         eval 'require PDL::Graphics::PGPLOT::Window' or
             croak 'You asked for PGPLOT but PDL::Graphics::PGPLOT is not installed';
         return $self->plot_data_pgplot(@_);
     } else {
+        say "Using Gnuplot to do plotting" if $self->debug;
         return $self->plot_data_gnuplot(@_);
     }
 }

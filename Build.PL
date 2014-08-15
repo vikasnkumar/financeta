@@ -2,9 +2,6 @@ use strict;
 use warnings;
 use Module::Build;
 
-# temporary
-die 'No support for OS' unless $^O =~ /linux/i;
-
 my $build = Module::Build->new(
     module_name => 'PDL::Finance::TA',
     license => 'perl',
