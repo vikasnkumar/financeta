@@ -1,12 +1,7 @@
 use Test::More;
 
-BEGIN { use_ok('PDL::Finance::TA'); }
-
-SKIP: {
-    eval { require Alien::TALib };
-    skip 'Alien::TALib is not installed', 1 if $@;
-    use_ok('PDL::Finance::TA::TALib');
-}
+use_ok('PDL::Finance::TA::Mo');
+use_ok('PDL::Finance::TA');
 
 done_testing();
 

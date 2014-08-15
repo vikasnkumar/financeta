@@ -3,25 +3,11 @@ use strict;
 use warnings;
 use 5.10.0;
 
-BEGIN {
-    use Exporter();
-    our @ISA = qw/Exporter/;
-    our $VERSION = '0.01';
-    $VERSION = eval $VERSION;
-    our @EXPORT;
-    our @EXPORT_OK = qw(
-        movavg
-        expmovavg
-    );
-    our %EXPORT_TAGS = (
-        Func => [@EXPORT_OK],
-        Internal => [],
-    );
-}
-use PDL::Finance::TA::Perl;
+our $VERSION = '0.02';
+$VERSION = eval $VERSION;
 
-*movavg = \&PDL::Finance::TA::Perl::movavg;
-*expmovavg = \&PDL::Finance::TA::Perl::expmovavg;
+use PDL::Finance::TA::Mo;
+use Carp;
 
 1;
 __END__

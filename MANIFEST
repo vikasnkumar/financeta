@@ -4,13 +4,11 @@ examples/benchmark.pl
 examples/expmovavg.pl
 examples/movavg.pl
 lib/TA.pm
-lib/TA/Perl.pm
-lib/TA/TALib.pd
+lib/TA/Mo.pm
 LICENSE
 MANIFEST			This list of files
 META.json
 META.yml
+README
 README.md
 t/00_use.t
-t/01_movavg.t
-t/02_expmovavg.t
