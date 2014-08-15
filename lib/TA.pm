@@ -23,6 +23,7 @@ use PDL::Graphics::PGPLOT::Window;
 use PDL::Graphics::PLplot;
 $PDL::doubleformat = "%0.6lf";
 
+has timezone => 'America/New_York';
 has brand => (default => sub { __PACKAGE__ });
 has main => (builder => '_build_main');
 has icon => (builder => '_build_icon');
@@ -202,7 +203,7 @@ sub security_wizard {
                 year => 1900 + $cal->year(),
                 month => 1 + $cal->month(),
                 day => $cal->day(),
-                time_zone => 'America/New_York',
+                time_zone => $self->timezone,
             );
         },
     );
@@ -227,7 +228,7 @@ sub security_wizard {
                 year => 1900 + $cal->year(),
                 month => 1 + $cal->month(),
                 day => $cal->day(),
-                time_zone => 'America/New_York',
+                time_zone => $self->timezone,
             );
         },
     );
@@ -267,7 +268,7 @@ sub security_wizard {
                     year => 1900 + $cal->year(),
                     month => 1 + $cal->month(),
                     day => $cal->day(),
-                    time_zone => 'America/New_York',
+                    time_zone => $self->timezone,
                 );
             }
             unless (defined $self->current->{end_date}) {
@@ -276,7 +277,7 @@ sub security_wizard {
                     year => 1900 + $cal->year(),
                     month => 1 + $cal->month(),
                     day => $cal->day(),
-                    time_zone => 'America/New_York',
+                    time_zone => $self->timezone,
                 );
             }
         },
@@ -317,7 +318,7 @@ sub download_data {
                 month => $mm,
                 day => $dd,
                 hour => 16, minute => 0, second => 0,
-                time_zone => 'America/New_York',
+                time_zone => $self->timezone,
             )->epoch;
             say $fh "$epoch,$o,$h,$l,$c";
             push @quotes, pdl($epoch, $o, $h, $l, $c);
