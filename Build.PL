@@ -37,9 +37,6 @@ my $build = Module::Build->new(
         'PDL::Graphics::PGPLOT' => 0,
         'PGPLOT' => 0,
     },
-    share_dir => {
-        dist => [qw/examples/],
-    },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],
     meta_merge => {

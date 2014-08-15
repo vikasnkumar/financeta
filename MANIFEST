@@ -1,8 +1,6 @@
 bin/financeta
 Build.PL
 Changes
-examples/benchmark.pl
-examples/expmovavg.pl
 examples/movavg.pl
 images/icon.gif
 images/sm_perl_id_bk_wt.gif
