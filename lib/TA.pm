@@ -12,7 +12,10 @@ use Carp;
 use File::Spec;
 use DateTime;
 use POE 'Loop::Prima';
-use Prima qw/Application Buttons MsgBox Calendar ComboBox/;
+use Prima qw(
+    Application Buttons MsgBox Calendar ComboBox Notebooks
+    ScrollWidget DetailedList
+);
 use Prima::Utils ();
 use Data::Dumper;
 use Finance::QuoteHist;
@@ -152,6 +155,8 @@ sub security_wizard {
             } else {
                 $dlg->cal_end->date_from_time(gmtime);
             }
+            $dlg->chk_force_download->checked(0);
+            $self->current->{force_download} = 0;
         },
     );
     $w->owner($win) if defined $win;
@@ -234,6 +239,21 @@ sub security_wizard {
         },
     );
     $w->insert(
+        CheckBox => name => 'chk_force_download',
+        text => 'Force Download',
+        origin => [ 20, 170 ],
+        font => { height => 14, style => fs::Bold },
+        onCheck => sub {
+            my $chk = shift;
+            my $owner = $chk->owner;
+            if ($chk->checked) {
+                $self->current->{force_download} = 1;
+            } else {
+                $self->current->{force_download} = 0;
+            }
+        },
+    );
+    $w->insert(
         Button => name => 'btn_cancel',
         text => 'Cancel',
         autoHeight => 1,
@@ -247,6 +267,7 @@ sub security_wizard {
             delete $self->current->{symbol};
             delete $self->current->{start_date};
             delete $self->current->{end_date};
+            delete $self->current->{force_download};
         },
     );
     $w->insert(
@@ -303,11 +324,12 @@ sub download_data {
     my $csv = sprintf "%s_%d_%d.csv", $symbol, $start->ymd(''), $end->ymd('');
     $csv = File::Spec->catfile($self->tmpdir, $csv);
     my $data;
+    unlink $csv if $self->current->{force_download};
     unless (-e $csv) {
         my $fq = new Finance::QuoteHist(
             symbols => [ $symbol ],
-            start_date => '1 year ago',
-            end_date => 'today',
+            start_date => $start->mdy('/'),
+            end_date => $end->mdy('/'),
             auto_proxy => 1,
         );
         open my $fh, '>', $csv or die "$!";
@@ -322,8 +344,8 @@ sub download_data {
                 hour => 16, minute => 0, second => 0,
                 time_zone => $self->timezone,
             )->epoch;
-            say $fh "$epoch,$o,$h,$l,$c";
-            push @quotes, pdl($epoch, $o, $h, $l, $c);
+            say $fh "$epoch,$o,$h,$l,$c,$vol";
+            push @quotes, pdl($epoch, $o, $h, $l, $c, $vol);
         }
         $fq->clear_cache;
         close $fh;
@@ -340,6 +362,60 @@ sub download_data {
 sub display_data {
     my ($self, $win, $data) = @_;
     return unless defined $win and defined $data;
+    my @tabsize = $win->size();
+    my $symbol = $self->current->{symbol};
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    say "Tabs: @tabs" if $self->debug;
+    unless (@tabs) {
+        $win->insert('Prima::TabbedNotebook',
+            name => 'data_tabs',
+            size => \@tabsize,
+            origin => [ 0, 0 ],
+            style => tns::Simple,
+            growMode => gm::Client
+        );
+    }
+    my $nt = $win->data_tabs;
+    my $nt_tabs = $nt->tabs;
+    $nt->tabs([@$nt_tabs, $symbol]);
+    $tabsize[0] *= 0.98;
+    $tabsize[1] *= 0.96;
+    my $pc = $nt->pageCount;
+    say "TabCount: $pc" if $self->debug;
+    my $items = $data->transpose->unpdl;
+    my $tz = $self->timezone;
+    # reformat
+    foreach my $arr (@$items) {
+        my $dt = DateTime->from_epoch(epoch => $arr->[0], time_zone => $tz)->ymd('-');
+        $arr->[0] = $dt;
+    }
+    $nt->insert_to_page($pc, 'DetailedList',
+        pack => { expand => 1, fill => 'both' },
+        items => $items,
+        origin => [ 10, 10 ],
+        headers => ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'],
+        columns => 6,
+        onSort => sub {
+            my ($p, $col, $dir) = @_;
+            return if $col != 1;
+            if ($dir) {
+                $p->{items} = [
+                    sort {$$a[$col] <=> $$b[$col]}
+                    @{$self->{items}}
+                ];
+            } else {
+                $p->{items} = [
+                    sort {$$b[$col] <=> $$a[$col]}
+                    @{$self->{items}}
+                ];
+            }
+            $p->clear_event;
+        },
+        title => $symbol,
+        titleSpace => 30,
+        size => \@tabsize,
+    );
+    $nt->pageIndex($pc);
 }
 
 sub plot_data {

@@ -10,7 +10,7 @@ use PDL::Finance::TA;
 
 #TODO: parse arguments and set up options
 sub run {
-    my $gui = PDL::Finance::TA->new;
+    my $gui = PDL::Finance::TA->new(debug => 1);
     $gui->run;
 }
 
