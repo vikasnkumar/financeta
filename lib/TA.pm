@@ -19,14 +19,14 @@ use Finance::QuoteHist;
 use PDL::Lite;
 use PDL::IO::Misc;
 use PDL::NiceSlice;
-use PDL::Graphics::PGPLOT::Window;
-use PDL::Graphics::PLplot;
+use PDL::Graphics::Gnuplot;
 $PDL::doubleformat = "%0.6lf";
 
 has timezone => 'America/New_York';
 has brand => (default => sub { __PACKAGE__ });
 has main => (builder => '_build_main');
 has icon => (builder => '_build_icon');
+has use_pgplot => 0;
 
 sub _build_icon {
     my $self = shift;
@@ -104,9 +104,7 @@ sub _menu_items {
 sub close_all {
     my ($self, $win) = @_;
     my $pwin = $win->{plot};
-    if ($pwin and $pwin->isa('PDL::Graphics::PGPLOT')) {
-        $pwin->close;
-    }
+    $pwin->close if $pwin;
     $win->close if $win;
     $::application->close;
 }
@@ -134,7 +132,7 @@ sub security_wizard {
             my $dlg = shift;
             my $sec = $self->current->{symbol} || '';
             $dlg->input_symbol->text($sec);
-            $dlg->btn_ok->enabled(0);
+            $dlg->btn_ok->enabled(length($sec) ? 1 : 0);
             $dlg->btn_cancel->enabled(1);
             if ($self->current->{start_date}) {
                 my $dt = $self->current->{start_date};
@@ -341,7 +339,14 @@ sub display_data {
 }
 
 sub plot_data {
-    return plot_data_pgplot(@_);
+    my $self = shift;
+    if ($self->use_pgplot) {
+        eval 'require PDL::Graphics::PGPLOT::Window' or
+            croak 'You asked for PGPLOT but PDL::Graphics::PGPLOT is not installed';
+        return $self->plot_data_pgplot(@_);
+    } else {
+        return $self->plot_data_gnuplot(@_);
+    }
 }
 
 sub plot_data_pgplot {
@@ -356,13 +361,11 @@ sub plot_data_pgplot {
     $pwin->focus;
 }
 
-sub plot_data_plplot {
+sub plot_data_gnuplot {
     my ($self, $win, $data) = @_;
-    my $pwin = PDL::Graphics::PLplot->new(DEV => 'xwin');
-    $pwin->xyplot($data(0:-1,(0)), $data(0:-1,(4)),
-        COLOR => 'RED',
-        PLOTTYPE => 'LINE',
-    );
+    my $pwin = gpwin('x11');
+    $win->{plot} = $pwin;
+    $pwin->plot({ with => 'lines' }, $data(0:-1,(0)), $data(0:-1,(4)));
 }
 
 1;

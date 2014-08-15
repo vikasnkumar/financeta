@@ -34,12 +34,11 @@ my $build = Module::Build->new(
         'Prima' => 1.39,
         'DateTime::Format::Strptime' => 0,
         'POE::Loop::Prima' => 0,
-        'PDL::Graphics::PGPLOT' => 0,
-        'PGPLOT' => 0,
-        'PDL::Graphics::PLplot' => 0.67,
+        'PDL::Graphics::Gnuplot' => 0,
     },
     recommends => {
-        'Graphics::PLplot' => 0,
+        'PDL::Graphics::PGPLOT' => 0,
+        'PGPLOT' => 0,
     },
     share_dir => {
         dist => [qw/examples/],
