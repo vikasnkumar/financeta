@@ -8,6 +8,91 @@ $VERSION = eval $VERSION;
 
 use PDL::Finance::TA::Mo;
 use Carp;
+use File::Spec;
+use POE 'Loop::Prima';
+use Prima qw/Application Buttons MsgBox/;
+use Prima::Utils ();
+
+has brand => (default => sub { __PACKAGE__ });
+has main => (builder => '_build_main');
+has icon => (builder => '_build_icon');
+
+sub _build_icon {
+    my $self = shift;
+    my $pkg = __PACKAGE__ . '.pm';
+    $pkg =~ s|::|/|g;
+    my $pkgpath = File::Spec->canonpath(File::Spec->rel2abs($INC{$pkg}));
+    $pkgpath =~ s|\.pm$||g;
+    my $icon_path = File::Spec->catfile($pkgpath, 'images', 'icon.gif');
+    my $icon = Prima::Icon->create;
+    $icon->load($icon_path) or carp "Unable to load $icon_path";
+    return $icon;
+}
+
+sub _build_main {
+    my $self = shift;
+    my $mw = new Prima::MainWindow(
+        name => 'main',
+        text => $self->brand,
+        size => [800, 600],
+        centered => 1,
+        menuItems => $self->_menu_items,
+        # force border styles for consistency
+        borderIcons => bi::All,
+        borderStyle => bs::Sizeable,
+        windowState => ws::Maximized,
+        icon => $self->icon,
+        # origin
+        left => 10,
+        top => 0,
+    );
+    return $mw;
+}
+
+sub _menu_items {
+    my $self = shift;
+    return [
+        [
+            '~Security' => [
+                [
+                    'security_new',
+                    '~New', 'Ctrl+N', '^N',
+                    sub {
+
+                    },
+                    $self,
+                ],
+                [
+                    'app_exit',
+                    'E~xit', 'Alt+X', '@X',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        $gui->close_all($win);
+                    },
+                    $self,
+                ],
+            ],
+        ],
+        [
+            '~Help' => [
+                ['About Logo', '', kb::NoKey, sub { message('http://www.perl.com'); }, ]
+            ],
+        ],
+    ];
+}
+
+sub close_all {
+    my ($self, $win) = @_;
+    $win->close if $win;
+    $::application->close;
+}
+
+sub run {
+    my $self = shift;
+    $self->main->show;
+    run Prima;
+}
 
 1;
 __END__
@@ -27,7 +112,7 @@ analysis on financial data stored as PDLs.
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 METHODS
 

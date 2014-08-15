@@ -6,7 +6,7 @@ SYNOPSIS
     analysis on financial data stored as PDLs.
 
 VERSION
-    0.01
+    0.02
 
 METHODS
     movavg $p, $N

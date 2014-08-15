@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use App::financeta;
+
+App::financeta->run;
+
+__END__
+#### COPYRIGHT: 2014. Vikas N Kumar. All Rights Reserved
+#### AUTHOR: Vikas N Kumar <vikas@cpan.org>
+#### DATE: 15th Aug 2014

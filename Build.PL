@@ -24,6 +24,8 @@ my $build = Module::Build->new(
     },
     requires => {
         'perl' => '5.10.0',
+        'Carp' => 0,
+        'File::Spec' => 0,
         'PDL'  => '2.007',
         'PDL::Graphics::PGPLOT' => 0,
         'PGPLOT' => 0,
@@ -56,9 +58,14 @@ my $build = Module::Build->new(
     pm_files => {
         'lib/TA.pm' => 'lib/PDL/Finance/TA.pm',
         'lib/TA/Mo.pm' => 'lib/PDL/Finance/TA/Mo.pm',
+        'lib/App.pm' => 'lib/App/financeta.pm',
+    },
+    image_files => {
+        'images/icon.gif' => 'lib/PDL/Finance/TA/images/icon.gif',
     }
 );
 
+$build->add_build_element('image');
 $build->create_build_script;
 $build->dispatch('distmeta');
 $build->dispatch('manifest');

@@ -2,6 +2,7 @@ use Test::More;
 
 use_ok('PDL::Finance::TA::Mo');
 use_ok('PDL::Finance::TA');
+use_ok('App::financeta');
 
 done_testing();
 
