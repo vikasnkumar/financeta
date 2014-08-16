@@ -3,7 +3,8 @@ use strict;
 use warnings;
 use App::financeta;
 
-App::financeta->run;
+App::financeta->print_warning;
+App::financeta->run(@ARGV);
 
 __END__
 #### COPYRIGHT: 2014. Vikas N Kumar. All Rights Reserved

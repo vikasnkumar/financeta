@@ -4,7 +4,7 @@ use Module::Build;
 
 my $build = Module::Build->new(
     module_name => 'PDL::Finance::TA',
-    license => 'perl',
+    license => 'gpl3',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
     dist_abstract => 'PDL::Finance::TA is a Technical Analysis GUI',
     dist_version_from => 'lib/TA.pm',

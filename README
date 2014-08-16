@@ -3,36 +3,48 @@ NAME
 
 SYNOPSIS
     PDL::Finance::TA is a perl module allowing the user to perform technical
-    analysis on financial data stored as PDLs.
+    analysis on financial data stored as PDLs. It is the basis of the
+    graphics application App::financeta which can be used by users to do
+    financial stocks research with Technical Analysis.
 
 VERSION
     0.02
 
 METHODS
-    movavg $p, $N
-        The `movavg()' function takes two arguments, a pdl object and the
-        number of elements over which to calculate the simple moving
-        average. It can be invoked in two ways:
+    new Creates a new instance of "PDL::Finance::TA". Takes in various
+        properties that the user might want to override. Check the
+        PROPERTIES section to view the different properties.
 
-            use PDL;
-            use PDL::Finance::TA 'movavg';
-            my $ma_13 = $p->movavg(13); # the 13-day moving average
-            my $ma_21 = movavg($p, 21); # the 21-day moving average
+    run This function starts the graphical user interface (GUI) and uses
+        POE::Loop::Prima and Prima to do all its work. This is our current
+        choice of the GUI framework but it need not be in the future.
 
-        For a nice example on how to use moving averages and plot them see
-        *examples/movavg.pl*.
+PROPERTIES
+    debug
+        Turn on debug printing of comments on the terminal. Set it to 1 to
+        enable and 0 or undef to disable.
 
-    expmovavg $p, $N, $alpha
-        The `expmovavg()' function takes three arguments, a pdl object, the
-        number of elements over which to calculate the exponential moving
-        avergage and the exponent to use to calculate the moving average. If
-        the number of elements is 0 or `undef' then all the elements are
-        used to calculate the value. If the exponent argument is `undef',
-        the value of (2 / (N + 1)) is assumed.
+    timezone
+        Default is set to *America/New_York*.
 
-        For a nice example on how to use and compare exponential moving
-        average to the simple moving average look at
-        *examples/expmovavg.pl*.
+    brand
+        Default is set to PDL::Finance::TA. Changing this will change the
+        application name. Useful if the user wants to embed
+        "PDL::Finance::TA" in another application.
+
+    icon
+        Picks up the file in "PDL/Finance/TA/images/icon.gif" as the
+        application icon but can be given as a "Prima::Icon" object as well.
+
+    use_pgplot
+        The default plotting apparatus today is Gnuplot but the user can use
+        PGPLOT as well. This is turned off by default since Gnuplot has more
+        features.
+
+    tmpdir
+        The default on Windows is $ENV{TMP} or $ENV{TEMP} and on Unix based
+        systems is $ENV{TMPDIR} if it is set or "/tmp" if none are set. The
+        CSV files that are downloaded and temporary data is stored here.
 
 COPYRIGHT
     Copyright (C) 2013-2014. Vikas N Kumar <vikas@cpan.org>. All Rights
@@ -40,6 +52,6 @@ COPYRIGHT
 
 LICENSE
     This is free software. You can redistribute it or modify it under the
-    terms of Perl itself. Refer LICENSE file in the top level source
-    directory for more information.
+    terms of GNU General Public License version 3. Refer LICENSE file in the
+    top level source directory for more information.
 

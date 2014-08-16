@@ -123,6 +123,28 @@ sub _menu_items {
                     },
                     $self,
                 ],
+                [
+                    'plot_close',
+                    'Close Price', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($data, $symbol) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CLOSE');
+                    },
+                    $self,
+                ],
+                [
+                    'plot_closev',
+                    'Close Price Volume', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($data, $symbol) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CLOSEV');
+                    },
+                    $self,
+                ],
             ],
         ],
         [
@@ -379,11 +401,11 @@ sub download_data {
         }
         $fq->clear_cache;
         close $fh;
-        say "$csv has downloaded data for analysis";
+        say "$csv has downloaded data for analysis" if $self->debug;
         $data = pdl(@quotes)->transpose;
     } else {
         ## now read this back into a PDL using rcol
-        say "$csv already present. loading it...";
+        say "$csv already present. loading it..." if $self->debug;
         $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
     }
     return ($data, $symbol);
@@ -406,7 +428,7 @@ sub display_data {
             onChange => sub {
                 my ($w, $oldidx, $newidx) = @_;
                 my $owner = $w->owner;
-                say "Tab changed from $oldidx to $newidx";
+                say "Tab changed from $oldidx to $newidx" if $self->debug;
                 return if $oldidx == $newidx;
                 # ok find the detailed-list object and use it
                 my ($data, $symbol) = $self->_get_tab_data($w, $newidx);
@@ -516,18 +538,121 @@ sub plot_data_gnuplot {
         $term = 'wxt' if grep {/wxt/} @terms;
     };
     say "Using term $term" if $self->debug;
-    my $pwin = $win->{plot} || gpwin($term, size => [1280, 960, 'px']);
+    my $pwin = $win->{plot} || gpwin($term, size => [1024, 768, 'px']);
     $win->{plot} = $pwin;
-    $pwin->plot({
-            title => $symbol,
-            xlabel => 'Date',
-            ylabel => 'Price',
-            xdata => 'time',
-            xtics => {format => '%Y-%m-%d', rotate => -90, },
-        },
-        with => 'financebars', $data(,(0)), $data(,(1)), $data(,(2)),
-        $data(,(3)), $data(,(4))
-    );
+    $symbol = $self->current->{symbol} unless defined $symbol;
+    $type = $self->current->{plot_type} unless defined $type;
+    given ($type) {
+        when ('OHLC') {
+            $pwin->reset();
+            $pwin->plot({
+                    title => "$symbol Open-High-Low-Close",
+                    xlabel => 'Date',
+                    ylabel => 'Price',
+                    xdata => 'time',
+                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                },
+                {
+                    with => 'financebars',
+                    linecolor => 'red',
+                    legend => 'Price',
+                },
+                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+            );
+        }
+        when ('OHLCV') {
+            # use multiplot
+            $pwin->reset();
+            $pwin->multiplot(title => "$symbol Price & Volume");
+            $pwin->plot({
+                    xlabel => '',
+                    ylabel => 'Price',
+                    xdata => 'time',
+                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    bmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.7"], #bug in P:G:G
+                    origin => [0, 0.3],
+                },
+                {
+                    with => 'financebars',
+                    linecolor => 'red',
+                    legend => 'Price',
+                },
+                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+            );
+            $pwin->plot({
+                    ylabel => 'Volume (in 1M)',
+                    xlabel => 'Date',
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.3"], #bug in P:G:G
+                    origin => [0, 0],
+                },
+                {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
+                $data(,(0)), $data(,(5)) / 1e6,
+            );
+            $pwin->end_multi;
+        }
+        when ('CLOSEV') {
+            # use multiplot
+            $pwin->reset();
+            $pwin->multiplot(title => "$symbol Close Price & Volume");
+            $pwin->plot({
+                    xlabel => '',
+                    ylabel => 'Close Price',
+                    xdata => 'time',
+                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    bmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.7"], #bug in P:G:G
+                    origin => [0, 0.3],
+                },
+                {
+                    with => 'lines',
+                    linecolor => 'blue',
+                    legend => 'Close Price',
+                },
+                $data(,(0)), $data(,(4)),
+            );
+            $pwin->plot({
+                    ylabel => 'Volume (in 1M)',
+                    xlabel => 'Date',
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.3"], #bug in P:G:G
+                    origin => [0, 0],
+                },
+                {with => 'impulses', legend => 'Volume', linecolor => 'green'},
+                $data(,(0)), $data(,(5)) / 1e6,
+            );
+            $pwin->end_multi;
+        }
+        default {
+            $type = 'CLOSE';
+            $pwin->reset();
+            $pwin->plot({
+                    title => "$symbol Close Price",
+                    xlabel => 'Date',
+                    ylabel => 'Close Price',
+                    xdata => 'time',
+                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                },
+                {
+                    with => 'lines',
+                    linecolor => 'blue',
+                    legend => 'Close Price',
+                },
+                $data(,(0)), $data(,(4))
+            );
+        }
+    }
+    # make the current plot type the type
+    $self->current->{plot_type} = $type if defined $type;
 }
 
 1;
@@ -544,7 +669,9 @@ PDL::Finance::TA
 =head1 SYNOPSIS
 
 PDL::Finance::TA is a perl module allowing the user to perform technical
-analysis on financial data stored as PDLs.
+analysis on financial data stored as PDLs. It is the basis of the graphics
+application L<App::financeta> which can be used by users to do financial stocks
+research with Technical Analysis.
 
 =head1 VERSION
 
@@ -554,46 +681,54 @@ analysis on financial data stored as PDLs.
 
 =over
 
-=item B<movavg $p, $N>
+=item B<new>
 
-The C<movavg()> function takes two arguments, a pdl object and the number of
-elements over which to calculate the simple moving average. It can be invoked in two
-ways:
+Creates a new instance of C<PDL::Finance::TA>. Takes in various properties that
+the user might want to override. Check the B<PROPERTIES> section to view the
+different properties.
 
-    use PDL;
-    use PDL::Finance::TA 'movavg';
-    my $ma_13 = $p->movavg(13); # the 13-day moving average
-    my $ma_21 = movavg($p, 21); # the 21-day moving average
+=item B<run>
 
-For a nice example on how to use moving averages and plot them see
-I<examples/movavg.pl>.
+This function starts the graphical user interface (GUI) and uses
+L<POE::Loop::Prima> and L<Prima> to do all its work. This is our current choice
+of the GUI framework but it need not be in the future.
 
-=begin HTML
+=back
 
-<p><img
-src="http://vikasnkumar.github.io/PDL-Finance-TA/images/pgplot_movavg.png"
-alt="Simple Moving Average plot of YAHOO stock for 2013" /></p>
+=head1 PROPERTIES
 
-=end HTML
+=over
 
-=item B<expmovavg $p, $N, $alpha>
+=item B<debug>
 
-The C<expmovavg()> function takes three arguments, a pdl object, the number of
-elements over which to calculate the exponential moving avergage and the
-exponent to use to calculate the moving average. If the number of elements is 0
-or C<undef> then all the elements are used to calculate the value. If the
-exponent argument is C<undef>, the value of (2 / (N + 1)) is assumed.
+Turn on debug printing of comments on the terminal. Set it to 1 to enable and 0
+or undef to disable.
 
-For a nice example on how to use and compare exponential moving average to the
-simple moving average look at I<examples/expmovavg.pl>.
+=item B<timezone>
 
-=begin HTML
+Default is set to I<America/New_York>.
 
-<p><img
-src="http://vikasnkumar.github.io/PDL-Finance-TA/images/pgplot_expmovavg.png"
-alt="Exponential Moving Average plot of YAHOO stock for 2013" /></p>
+=item B<brand>
 
-=end HTML
+Default is set to L<PDL::Finance::TA>. Changing this will change the application
+name. Useful if the user wants to embed C<PDL::Finance::TA> in another
+application.
+
+=item B<icon>
+
+Picks up the file in C<PDL/Finance/TA/images/icon.gif> as the application icon
+but can be given as a C<Prima::Icon> object as well.
+
+=item B<use_pgplot>
+
+The default plotting apparatus today is Gnuplot but the user can use PGPLOT as
+well. This is turned off by default since Gnuplot has more features.
+
+=item B<tmpdir>
+
+The default on Windows is C<$ENV{TMP}> or C<$ENV{TEMP}> and on Unix based
+systems is C<$ENV{TMPDIR}> if it is set or C</tmp> if none are set.
+The CSV files that are downloaded and temporary data is stored here.
 
 =back
 
@@ -604,5 +739,5 @@ Copyright (C) 2013-2014. Vikas N Kumar <vikas@cpan.org>. All Rights Reserved.
 =head1 LICENSE
 
 This is free software. You can redistribute it or modify it under the terms of
-Perl itself. Refer LICENSE file in the top level source directory for more
+GNU General Public License version 3. Refer LICENSE file in the top level source directory for more
 information.
