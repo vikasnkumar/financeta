@@ -59,7 +59,7 @@ my $build = Module::Build->new(
     image_files => {
         'images/icon.gif' => 'lib/PDL/Finance/TA/images/icon.gif',
     },
-    installdirs => 'core',
+    installdirs => ($^O =~ /Darwin/i) ? 'core' : 'site',
 );
 
 $build->add_build_element('image');
