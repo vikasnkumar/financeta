@@ -81,7 +81,6 @@ sub _menu_items {
                             # download security data
                             my $data = $gui->download_data();
                             $gui->display_data($win, $data);
-                            $gui->plot_data($win, $data);
                         }
                     },
                     $self,
@@ -93,6 +92,21 @@ sub _menu_items {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         $gui->close_all($win);
+                    },
+                    $self,
+                ],
+            ],
+        ],
+        [
+            '~Analysis' => [
+                [
+                    'ohlc_plot',
+                    '~OHLC Plot', 'Ctrl+O', '^P',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my $data = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data);
                     },
                     $self,
                 ],
@@ -389,7 +403,8 @@ sub display_data {
         my $dt = DateTime->from_epoch(epoch => $arr->[0], time_zone => $tz)->ymd('-');
         $arr->[0] = $dt;
     }
-    $nt->insert_to_page($pc, 'DetailedList',
+    my $dl = $nt->insert_to_page($pc, 'DetailedList',
+        name => "list_$symbol",
         pack => { expand => 1, fill => 'both' },
         items => $items,
         origin => [ 10, 10 ],
@@ -416,6 +431,19 @@ sub display_data {
         size => \@tabsize,
     );
     $nt->pageIndex($pc);
+    $dl->{-pdl} = $data;
+}
+
+sub get_tab_data {
+    my ($self, $win) = @_;
+    return unless $win;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $idx = $win->data_tabs->pageIndex;
+    my @nt = $win->data_tabs->widgets_from_page($idx);
+    my ($dl) = grep { $_->name =~ /^list_/i } @nt;
+    say "Found ", $dl->name if $self->debug;
+    return $dl->{-pdl};
 }
 
 sub plot_data {
@@ -433,6 +461,7 @@ sub plot_data {
 
 sub plot_data_pgplot {
     my ($self, $win, $data) = @_;
+    return unless defined $data;
     my $pwin = PDL::Graphics::PGPLOT::Window->new(
             Device => '/xw',
         );
@@ -445,6 +474,7 @@ sub plot_data_pgplot {
 
 sub plot_data_gnuplot {
     my ($self, $win, $data) = @_;
+    return unless defined $data;
     my $pwin = gpwin('x11');
     $win->{plot} = $pwin;
     $pwin->plot({ with => 'lines' }, $data(0:-1,(0)), $data(0:-1,(4)));
