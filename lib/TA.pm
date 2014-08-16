@@ -493,7 +493,15 @@ sub plot_data_pgplot {
 sub plot_data_gnuplot {
     my ($self, $win, $data, $symbol) = @_;
     return unless defined $data;
-    my $pwin = $win->{plot} || gpwin('x11', size => [1280, 960, 'px']);
+    my @terms = PDL::Graphics::Gnuplot::terminfo;
+    # use the x11 term by default first
+    my $term = 'x11';
+    # if the aqua term is there use that
+    $term = 'aqua' if grep(/aqua/, @terms);
+    # if the wxt term is there use that instead since it is just better
+    $term = 'wxt' if grep(/wxt/, @terms);
+    say "Using term $term" if $self->debug;
+    my $pwin = $win->{plot} || gpwin($term, size => [1280, 960, 'px']);
     $win->{plot} = $pwin;
     $pwin->plot({
             title => $symbol,
