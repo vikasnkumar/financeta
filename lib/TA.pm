@@ -18,6 +18,7 @@ use Prima qw(
 );
 use Prima::Utils ();
 use Data::Dumper;
+use Capture::Tiny ();
 use Finance::QuoteHist;
 use PDL::Lite;
 use PDL::IO::Misc;
@@ -79,9 +80,9 @@ sub _menu_items {
                         my $gui = $win->menu->data($item);
                         if ($gui->security_wizard($win)) {
                             # download security data
-                            my $data = $gui->download_data();
+                            my ($data, $symbol) = $gui->download_data();
                             $gui->display_data($win, $data);
-                            $gui->plot_data($win, $data);
+                            $gui->plot_data($win, $data, $symbol, 'OHLC');
                         }
                     },
                     $self,
@@ -99,15 +100,26 @@ sub _menu_items {
             ],
         ],
         [
-            '~Analysis' => [
+            '~Plot' => [
                 [
-                    'ohlc_plot',
-                    '~OHLC Plot', 'Ctrl+O', '^P',
+                    'plot_ohlc',
+                    '~OHLC', 'Ctrl+O', '^P',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my $data = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data);
+                        my ($data, $symbol) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'OHLC');
+                    },
+                    $self,
+                ],
+                [
+                    'plot_ohlcv',
+                    'OHLC Volume', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($data, $symbol) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'OHLCV');
                     },
                     $self,
                 ],
@@ -374,7 +386,7 @@ sub download_data {
         say "$csv already present. loading it...";
         $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
     }
-    return $data;
+    return ($data, $symbol);
 }
 
 sub display_data {
@@ -397,8 +409,8 @@ sub display_data {
                 say "Tab changed from $oldidx to $newidx";
                 return if $oldidx == $newidx;
                 # ok find the detailed-list object and use it
-                my $data = $self->_get_tab_data($w, $newidx);
-                $self->plot_data($owner, $data);
+                my ($data, $symbol) = $self->_get_tab_data($w, $newidx);
+                $self->plot_data($owner, $data, $symbol, 'OHLC');
             },
         );
     }
@@ -445,6 +457,7 @@ sub display_data {
     );
     $nt->pageIndex($pc);
     $dl->{-pdl} = $data;
+    $dl->{-symbol} = $symbol;
 }
 
 sub _get_tab_data {
@@ -452,7 +465,7 @@ sub _get_tab_data {
     my @nt = $nb->widgets_from_page($idx);
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     say "Found ", $dl->name if $self->debug;
-    return $dl->{-pdl};
+    return ($dl->{-pdl}, $dl->{-symbol});
 }
 
 sub get_tab_data {
@@ -478,7 +491,7 @@ sub plot_data {
 }
 
 sub plot_data_pgplot {
-    my ($self, $win, $data) = @_;
+    my ($self, $win, $data, $sym, $type) = @_;
     return unless defined $data;
     my $pwin = PDL::Graphics::PGPLOT::Window->new(
             Device => '/xw',
@@ -491,15 +504,17 @@ sub plot_data_pgplot {
 }
 
 sub plot_data_gnuplot {
-    my ($self, $win, $data, $symbol) = @_;
+    my ($self, $win, $data, $symbol, $type) = @_;
     return unless defined $data;
-    my @terms = PDL::Graphics::Gnuplot::terminfo;
     # use the x11 term by default first
     my $term = 'x11';
-    # if the aqua term is there use that
-    $term = 'aqua' if grep(/aqua/, @terms);
     # if the wxt term is there use that instead since it is just better
-    $term = 'wxt' if grep(/wxt/, @terms);
+    # if the aqua term is there use that if wxt isn't there
+    Capture::Tiny::capture {
+        my @terms = PDL::Graphics::Gnuplot::terminfo();
+        $term = 'aqua' if grep {/aqua/} @terms;
+        $term = 'wxt' if grep {/wxt/} @terms;
+    };
     say "Using term $term" if $self->debug;
     my $pwin = $win->{plot} || gpwin($term, size => [1280, 960, 'px']);
     $win->{plot} = $pwin;

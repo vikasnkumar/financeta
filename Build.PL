@@ -23,6 +23,7 @@ my $build = Module::Build->new(
     requires => {
         'perl' => '5.10.0',
         'Carp' => 0,
+        'Data::Dumper' => 0,
         'File::Spec' => 0,
         'PDL'  => '2.007',
         'DateTime' => 0,
@@ -32,6 +33,7 @@ my $build = Module::Build->new(
         'DateTime::Format::Strptime' => 0,
         'POE::Loop::Prima' => 0,
         'PDL::Graphics::Gnuplot' => 0,
+        'Capture::Tiny' => 0,
     },
     recommends => {
         'PDL::Graphics::PGPLOT' => 0,
