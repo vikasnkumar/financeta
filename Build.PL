@@ -58,7 +58,8 @@ my $build = Module::Build->new(
     },
     image_files => {
         'images/icon.gif' => 'lib/PDL/Finance/TA/images/icon.gif',
-    }
+    },
+    installdirs => 'core',
 );
 
 $build->add_build_element('image');
