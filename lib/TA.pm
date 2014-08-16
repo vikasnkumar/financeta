@@ -81,6 +81,7 @@ sub _menu_items {
                             # download security data
                             my $data = $gui->download_data();
                             $gui->display_data($win, $data);
+                            $gui->plot_data($win, $data);
                         }
                     },
                     $self,
@@ -386,7 +387,16 @@ sub display_data {
             size => \@tabsize,
             origin => [ 0, 0 ],
             style => tns::Simple,
-            growMode => gm::Client
+            growMode => gm::Client,
+            onChange => sub {
+                my ($w, $oldidx, $newidx) = @_;
+                my $owner = $w->owner;
+                say "Tab changed from $oldidx to $newidx";
+                return if $oldidx == $newidx;
+                # ok find the detailed-list object and use it
+                my $data = $self->_get_tab_data($w, $newidx);
+                $self->plot_data($owner, $data);
+            },
         );
     }
     my $nt = $win->data_tabs;
@@ -404,7 +414,7 @@ sub display_data {
         $arr->[0] = $dt;
     }
     my $dl = $nt->insert_to_page($pc, 'DetailedList',
-        name => "list_$symbol",
+        name => "tab_$symbol",
         pack => { expand => 1, fill => 'both' },
         items => $items,
         origin => [ 10, 10 ],
@@ -434,16 +444,21 @@ sub display_data {
     $dl->{-pdl} = $data;
 }
 
+sub _get_tab_data {
+    my ($self, $nb, $idx) = @_;
+    my @nt = $nb->widgets_from_page($idx);
+    my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+    say "Found ", $dl->name if $self->debug;
+    return $dl->{-pdl};
+}
+
 sub get_tab_data {
     my ($self, $win) = @_;
     return unless $win;
     my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
     return unless @tabs;
     my $idx = $win->data_tabs->pageIndex;
-    my @nt = $win->data_tabs->widgets_from_page($idx);
-    my ($dl) = grep { $_->name =~ /^list_/i } @nt;
-    say "Found ", $dl->name if $self->debug;
-    return $dl->{-pdl};
+    $self->_get_tab_data($win->data_tabs, $idx);
 }
 
 sub plot_data {
@@ -475,7 +490,7 @@ sub plot_data_pgplot {
 sub plot_data_gnuplot {
     my ($self, $win, $data) = @_;
     return unless defined $data;
-    my $pwin = gpwin('x11');
+    my $pwin = $win->{plot} || gpwin('x11');
     $win->{plot} = $pwin;
     $pwin->plot({ with => 'lines' }, $data(0:-1,(0)), $data(0:-1,(4)));
 }
