@@ -115,7 +115,10 @@ sub _menu_items {
         ],
         [
             '~Help' => [
-                ['About Logo', '', kb::NoKey, sub { message('http://www.perl.com'); }, ]
+                ['About Logo', '', kb::NoKey, sub {
+                    message_box('About Logo', 'http://www.perl.com',
+                                mb::Ok | mb::Information);
+                }, ]
             ],
         ],
     ];
@@ -488,11 +491,20 @@ sub plot_data_pgplot {
 }
 
 sub plot_data_gnuplot {
-    my ($self, $win, $data) = @_;
+    my ($self, $win, $data, $symbol) = @_;
     return unless defined $data;
-    my $pwin = $win->{plot} || gpwin('x11');
+    my $pwin = $win->{plot} || gpwin('x11', size => [1280, 960, 'px']);
     $win->{plot} = $pwin;
-    $pwin->plot({ with => 'lines' }, $data(0:-1,(0)), $data(0:-1,(4)));
+    $pwin->plot({
+            title => $symbol,
+            xlabel => 'Date',
+            ylabel => 'Price',
+            xdata => 'time',
+            xtics => {format => '%Y-%m-%d', rotate => -90, },
+        },
+        with => 'financebars', $data(,(0)), $data(,(1)), $data(,(2)),
+        $data(,(3)), $data(,(4))
+    );
 }
 
 1;
