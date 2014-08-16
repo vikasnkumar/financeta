@@ -46,6 +46,16 @@ PROPERTIES
         systems is $ENV{TMPDIR} if it is set or "/tmp" if none are set. The
         CSV files that are downloaded and temporary data is stored here.
 
+SEE ALSO
+    PDL::Finance::Talib
+        This module will be used to add technical analysis to the charts.
+
+    App::financeta
+        This module just runs the application that calls "PDL::Finance::TA".
+
+    financeta
+        The commandline script that calls "App::financeta".
+
 COPYRIGHT
     Copyright (C) 2013-2014. Vikas N Kumar <vikas@cpan.org>. All Rights
     Reserved.

@@ -732,6 +732,25 @@ The CSV files that are downloaded and temporary data is stored here.
 
 =back
 
+=head1 SEE ALSO
+
+=over
+
+=item L<PDL::Finance::Talib>
+
+This module will be used to add technical analysis to the charts.
+
+=item L<App::financeta>
+
+This module just runs the application that calls C<PDL::Finance::TA>.
+
+=item L<financeta>
+
+The commandline script that calls C<App::financeta>.
+
+
+=back
+
 =head1 COPYRIGHT
 
 Copyright (C) 2013-2014. Vikas N Kumar <vikas@cpan.org>. All Rights Reserved.
