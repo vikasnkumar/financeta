@@ -8,7 +8,7 @@ SYNOPSIS
     financial stocks research with Technical Analysis.
 
 VERSION
-    0.02
+    0.03
 
 METHODS
     new Creates a new instance of "PDL::Finance::TA". Takes in various

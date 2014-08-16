@@ -4,7 +4,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 $VERSION = eval $VERSION;
 
 use PDL::Finance::TA::Mo;
@@ -675,7 +675,7 @@ research with Technical Analysis.
 
 =head1 VERSION
 
-0.02
+0.03
 
 =head1 METHODS
 
