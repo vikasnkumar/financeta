@@ -14,7 +14,7 @@ use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
     Application Buttons MsgBox Calendar ComboBox Notebooks
-    ScrollWidget DetailedList
+    ScrollWidget DetailedList HelpViewer
 );
 use Prima::Utils ();
 use Data::Dumper;
@@ -154,10 +154,24 @@ sub _menu_items {
         ],
         [
             '~Help' => [
-                ['About Logo', '', kb::NoKey, sub {
-                    message_box('About Logo', 'http://www.perl.com',
+                [
+                    'help_viewer',
+                    'Help Viewer', '', kb::NoKey,
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        $::application->open_help(__PACKAGE__);
+                    },
+                    $self,
+                ],
+                [
+                    'about_logo',
+                    'About Logo', '', kb::NoKey,
+                    sub {
+                        message_box('About Logo', 'http://www.perl.com',
                                 mb::Ok | mb::Information);
-                }, ]
+                    }, $self,
+                ]
             ],
         ],
     ];
