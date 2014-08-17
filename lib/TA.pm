@@ -153,6 +153,22 @@ sub _menu_items {
             ],
         ],
         [
+            '~Analysis' => [
+                [
+                    'add_indicator',
+                    'Add Indicator', 'Ctrl+I', '^I',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($data, $symbol) = $gui->get_tab_data($win);
+                        # ok add an indicator which also plots it
+                        $gui->add_indicator($win, $data, $symbol);
+                    },
+                    $self,
+                ],
+            ],
+        ],
+        [
             '~Help' => [
                 [
                     'help_viewer',
@@ -171,7 +187,7 @@ sub _menu_items {
                         message_box('About Logo', 'http://www.perl.com',
                                 mb::Ok | mb::Information);
                     }, $self,
-                ]
+                ],
             ],
         ],
     ];
@@ -429,6 +445,17 @@ sub security_wizard {
     my $res = $w->execute();
     $w->end_modal;
     return $res == mb::Ok;
+}
+
+sub add_indicator {
+    my ($self, $win, $data, $symbol) = @_;
+    if ($self->indicator_wizard($win)) {
+    }
+}
+
+sub indicator_wizard {
+    my ($self, $win) = @_;
+    #TODO:
 }
 
 has tmpdir => ( default => sub {
