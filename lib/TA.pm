@@ -81,8 +81,10 @@ sub _menu_items {
                         if ($gui->security_wizard($win)) {
                             # download security data
                             my ($data, $symbol) = $gui->download_data();
-                            $gui->display_data($win, $data);
-                            $gui->plot_data($win, $data, $symbol, 'OHLC');
+                            if (defined $data) {
+                                $gui->display_data($win, $data);
+                                $gui->plot_data($win, $data, $symbol, 'OHLC');
+                            }
                         }
                     },
                     $self,
@@ -402,6 +404,10 @@ sub download_data {
         $fq->clear_cache;
         close $fh;
         say "$csv has downloaded data for analysis" if $self->debug;
+        unless (scalar @quotes) {
+            Prima::message("Failed to download $symbol data", mb::Ok);
+            return;
+        }
         $data = pdl(@quotes)->transpose;
     } else {
         ## now read this back into a PDL using rcol
@@ -432,7 +438,7 @@ sub display_data {
                 return if $oldidx == $newidx;
                 # ok find the detailed-list object and use it
                 my ($data, $symbol) = $self->_get_tab_data($w, $newidx);
-                $self->plot_data($owner, $data, $symbol, 'OHLC');
+                $self->plot_data($owner, $data, $symbol);
             },
         );
     }
