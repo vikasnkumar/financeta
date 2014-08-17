@@ -79,12 +79,15 @@ sub _menu_items {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         if ($gui->security_wizard($win)) {
+                            my $bar = $gui->progress_bar_create($win,
+                                'Downloading...');
                             # download security data
-                            my ($data, $symbol) = $gui->download_data();
+                            my ($data, $symbol) = $gui->download_data($bar);
                             if (defined $data) {
                                 $gui->display_data($win, $data);
                                 $gui->plot_data($win, $data, $symbol, 'OHLC');
                             }
+                            $gui->progress_bar_close($bar);
                         }
                     },
                     $self,
@@ -176,6 +179,57 @@ sub run {
 }
 
 has current => {};
+
+sub progress_bar_create {
+    my ($self, $win, $text) = @_;
+    $text = 'Loading...' unless length $text;
+    my $bar = Prima::Window->create(
+        name => 'progress_bar',
+        text => $text,
+        size => [160, 100],
+        origin => [0, 0],
+        widgetClass => wc::Dialog,
+        borderStyle => bs::Dialog,
+        borderIcons => 0,
+        centered => 1,
+        owner => $win,
+        visible => 1,
+        pointerType => cr::Wait,
+        onPaint => sub {
+            my ($w, $canvas) = @_;
+            $canvas->color(cl::Blue);
+            $canvas->bar(0, 0, $w->{-progress}, $w->height);
+            $canvas->color(cl::Back);
+            $canvas->bar($w->{-progress}, 0, $w->size);
+            $canvas->color(cl::Yellow);
+            $canvas->font(size => 16, style => fs::Bold);
+            $canvas->text_out($w->text, 0, 10);
+        },
+        syncPaint => 1,
+        onTop => 1,
+    );
+    $bar->{-progress} = 0;
+    $bar->repaint;
+    $win->pointerType(cr::Wait);
+    $win->repaint;
+    return $bar;
+}
+
+sub progress_bar_update {
+    my ($self, $bar) = @_;
+    if ($bar and defined $bar->{-progress}) {
+        $bar->{-progress} += 5;
+        $bar->repaint;
+    }
+}
+
+sub progress_bar_close {
+    my ($self, $bar) = @_;
+    if ($bar) {
+        $bar->owner->pointerType(cr::Default);
+        $bar->close;
+    }
+}
 
 sub security_wizard {
     my ($self, $win) = @_;
@@ -369,14 +423,16 @@ has tmpdir => ( default => sub {
 });
 
 sub download_data {
-    my ($self) = @_;
+    my ($self, $pbar) = @_;
 #    say Dumper($self->current);
+    $self->progress_bar_update($pbar) if $pbar;
     my $start = $self->current->{start_date};
     my $end = $self->current->{end_date};
     my $symbol = $self->current->{symbol};
     #TODO: check symbol validity
     my $csv = sprintf "%s_%d_%d.csv", $symbol, $start->ymd(''), $end->ymd('');
     $csv = File::Spec->catfile($self->tmpdir, $csv);
+    $self->progress_bar_update($pbar) if $pbar;
     my $data;
     unlink $csv if $self->current->{force_download};
     unless (-e $csv) {
@@ -386,6 +442,7 @@ sub download_data {
             end_date => $end->mdy('/'),
             auto_proxy => 1,
         );
+        $self->progress_bar_update($pbar) if $pbar;
         open my $fh, '>', $csv or die "$!";
         my @quotes = ();
         foreach my $row ($fq->quotes) {
@@ -401,18 +458,24 @@ sub download_data {
             say $fh "$epoch,$o,$h,$l,$c,$vol";
             push @quotes, pdl($epoch, $o, $h, $l, $c, $vol);
         }
+        $self->progress_bar_update($pbar) if $pbar;
         $fq->clear_cache;
         close $fh;
         say "$csv has downloaded data for analysis" if $self->debug;
         unless (scalar @quotes) {
-            Prima::message("Failed to download $symbol data", mb::Ok);
+            message("Failed to download $symbol data", mb::Ok);
+            unlink $csv;
             return;
         }
+        $self->progress_bar_update($pbar) if $pbar;
         $data = pdl(@quotes)->transpose;
+        $self->progress_bar_update($pbar) if $pbar;
     } else {
         ## now read this back into a PDL using rcol
+        $self->progress_bar_update($pbar) if $pbar;
         say "$csv already present. loading it..." if $self->debug;
         $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
+        $self->progress_bar_update($pbar) if $pbar;
     }
     return ($data, $symbol);
 }
