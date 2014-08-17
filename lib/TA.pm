@@ -453,9 +453,29 @@ sub add_indicator {
     }
 }
 
+has indicator => (default => sub { PDL::Finance::TA::Indicators->new });
+
 sub indicator_wizard {
     my ($self, $win) = @_;
+    my $w = Prima::Dialog->new(
+        name => 'ind_wizard',
+        centered => 1,
+        origin => [200, 200],
+        size => [640, 480],
+        text => 'Technical Analysis Indicator Wizard',
+        icon => $self->icon,
+        visible => 1,
+        taskListed => 0,
+        onExecute => sub {
+            my $dlg = shift;
+        },
+    );
+    $w->owner($win) if defined $win;
+    my $indicators = $self->indicator->types;
     #TODO:
+    my $res = $w->execute();
+    $w->end_modal;
+    return $res == mb::Ok;
 }
 
 has tmpdir => ( default => sub {
