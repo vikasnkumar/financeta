@@ -6,6 +6,7 @@ images/icon.gif
 images/sm_perl_id_bk_wt.gif
 lib/App.pm
 lib/TA.pm
+lib/TA.pod
 lib/TA/Mo.pm
 LICENSE
 MANIFEST			This list of files

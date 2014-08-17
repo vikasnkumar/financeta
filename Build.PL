@@ -56,6 +56,9 @@ my $build = Module::Build->new(
         'lib/TA/Mo.pm' => 'lib/PDL/Finance/TA/Mo.pm',
         'lib/App.pm' => 'lib/App/financeta.pm',
     },
+    pod_files => {
+        'lib/TA.pod' => 'lib/PDL/Finance/TA.pod',
+    },
     image_files => {
         'images/icon.gif' => 'lib/PDL/Finance/TA/images/icon.gif',
     },
