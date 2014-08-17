@@ -9,7 +9,7 @@ $VERSION = eval $VERSION;
 use PDL::Finance::TA::Mo;
 use PDL::Finance::Talib;
 
-has overlaps => {
+has overlays => {
     bbands => {
         name => 'Bollinger Bands',
         func => 'ta_bbands',
@@ -27,10 +27,38 @@ has overlaps => {
     },
 };
 
+sub get_groups {
+    my $self = shift;
+    my @groups = qw/
+        overlays
+    /;
+    @groups = map { ucfirst $_ } @groups;
+    return wantarray ? @groups : \@groups;
+}
+
+sub get_funcs {
+    my ($self, $grp) = @_;
+    $grp = lc $grp if defined $grp;
+    if (defined $grp and $self->has($grp)) {
+        my $r = $self->$grp;
+        my @funcs = ();
+        foreach my $k (keys $r) {
+            push @funcs, $r->{$k}->{name};
+        }
+        return wantarray ? @funcs : \@funcs;
+    }
+}
+
+sub get_params {
+    my ($self, $fn_name) = @_;
+    return unless defined $fn_name;
+
+}
+
 sub types {
     my $self = shift;
     return {
-        overlaps => $self->overlaps,
+        overlays => $self->overlays,
     };
 }
 

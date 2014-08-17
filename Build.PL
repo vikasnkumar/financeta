@@ -54,6 +54,7 @@ my $build = Module::Build->new(
     pm_files => {
         'lib/TA.pm' => 'lib/PDL/Finance/TA.pm',
         'lib/TA/Mo.pm' => 'lib/PDL/Finance/TA/Mo.pm',
+        'lib/TA/Indicators.pm' => 'lib/PDL/Finance/TA/Indicators.pm',
         'lib/App.pm' => 'lib/App/financeta.pm',
     },
     pod_files => {

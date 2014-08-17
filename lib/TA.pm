@@ -24,6 +24,8 @@ use PDL::Lite;
 use PDL::IO::Misc;
 use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
+use PDL::Finance::TA::Indicators;
+
 $PDL::doubleformat = "%0.6lf";
 $| = 1;
 has debug => 0;
@@ -87,6 +89,11 @@ sub _menu_items {
                                 $gui->display_data($win, $data);
                                 $gui->plot_data($win, $data, $symbol, 'OHLC');
                             }
+                            $win->menu->plot_ohlc->enabled(1);
+                            $win->menu->plot_ohlcv->enabled(1);
+                            $win->menu->plot_close->enabled(1);
+                            $win->menu->plot_closev->enabled(1);
+                            $win->menu->add_indicator->enabled(1);
                             $gui->progress_bar_close($bar);
                         }
                     },
@@ -205,6 +212,12 @@ sub close_all {
 sub run {
     my $self = shift;
     $self->main->show;
+    # disable the appropriate menu options
+    $self->main->menu->plot_ohlc->enabled(0);
+    $self->main->menu->plot_ohlcv->enabled(0);
+    $self->main->menu->plot_close->enabled(0);
+    $self->main->menu->plot_closev->enabled(0);
+    $self->main->menu->add_indicator->enabled(0);
     run Prima;
 }
 
@@ -468,10 +481,112 @@ sub indicator_wizard {
         taskListed => 0,
         onExecute => sub {
             my $dlg = shift;
+            $dlg->cbox_groups->List->focusedItem(-1);
+            $dlg->cbox_funcs->List->focusedItem(-1);
+            $dlg->btn_cancel->enabled(1);
+            $dlg->btn_ok->enabled(0);
         },
     );
     $w->owner($win) if defined $win;
-    my $indicators = $self->indicator->types;
+    my @groups = $self->indicator->get_groups;
+    $w->insert(Label => name => 'label_groups',
+        text => 'Select Group',
+        font => { style => fs::Bold, height => 16 },
+        alignment => ta::Left,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [20, 440],
+    );
+    $w->insert(ComboBox =>
+        name => 'cbox_groups',
+        style => cs::DropDownList,
+        height => 30,
+        width => 180,
+        hScroll => 0,
+        multiSelect => 0,
+        multiColumn => 0,
+        dragable => 0,
+        focusedItem => -1,
+        font => { height => 16 },
+        items => ['', @groups],
+        origin => [180, 440],
+        onChange => sub {
+            my $cbox = shift;
+            my $owner = $cbox->owner;
+            my $lbox = $cbox->List;
+            my $index = $lbox->focusedItem;
+            my $txt = $lbox->get_item_text($index);
+            if (defined $txt and length $txt) {
+                my @funcs = $self->indicator->get_funcs($txt);
+                if (scalar @funcs) {
+                    $owner->cbox_funcs->items(\@funcs);
+                }
+                $owner->btn_ok->enabled(1);
+            } else {
+                $owner->btn_ok->enabled(0);
+            }
+        },
+    );
+    $w->insert(Label => name => 'label_funcs',
+        text => 'Select Function',
+        font => { style => fs::Bold, height => 16 },
+        alignment => ta::Left,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [20, 400],
+    );
+    $w->insert(ComboBox =>
+        name => 'cbox_funcs',
+        style => cs::DropDownList,
+        height => 30,
+        width => 180,
+        hScroll => 0,
+        font => { height => 16 },
+        multiSelect => 0,
+        multiColumn => 0,
+        dragable => 0,
+        focusedItem => -1,
+        items => [],
+        origin => [180, 400],
+        onChange => sub {
+            my $cbox = shift;
+            my $owner = $cbox->owner;
+            my $lbox = $cbox->List;
+            my $index = $lbox->focusedItem;
+            my $txt = $lbox->get_item_text($index);
+            my @params = $self->indicator->get_params($txt);
+            $owner->btn_ok->enabled(1);
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_cancel',
+        text => 'Cancel',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 20, 40 ],
+        modalResult => mb::Cancel,
+        default => 1,
+        enabled => 1,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_ok',
+        text => 'OK',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 150, 40 ],
+        modalResult => mb::Ok,
+        default => 0,
+        enabled => 0,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            my $btn = shift;
+            my $owner = $btn->owner;
+        },
+    );
+
     #TODO:
     my $res = $w->execute();
     $w->end_modal;
