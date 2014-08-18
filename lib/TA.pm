@@ -25,6 +25,7 @@ use PDL::IO::Misc;
 use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use PDL::Finance::TA::Indicators;
+use Scalar::Util qw(blessed);
 
 $PDL::doubleformat = "%0.6lf";
 $| = 1;
@@ -462,6 +463,8 @@ sub security_wizard {
 sub add_indicator {
     my ($self, $win, $data, $symbol) = @_;
     if ($self->indicator_wizard($win)) {
+        my $iref = $self->current->{indicator};
+        say Dumper($iref) if $self->debug;
     }
 }
 
@@ -476,6 +479,127 @@ sub indicator_parameter_wizard {
         my @origin = $gbox->origin;
         my @size = $gbox->size;
         say "Gbox: Origin: @origin  Size: @size" if $self->debug;
+        my $num = scalar @$params;
+        my $sz_x = $size[0] / 2; # label and value
+        my $sz_y = $size[1] / ($num + 1);
+        my $count = 0;
+        $self->current->{indicator}->{params} = {};
+        foreach my $p (reverse @$params) {
+            next unless ref $p eq 'ARRAY';
+            my $hkey = $p->[0];
+            my $label = $p->[1];
+            my $type = $p->[2];
+            my $typeclass = blessed($type) if $type;
+            my $value = $p->[3];
+            if (defined $type and $type eq 'ARRAY' and ref $value eq 'ARRAY') {
+                # use ComboBox
+                $self->current->{indicator}->{params}->{$hkey} = $value->[0];
+                $self->current->{indicator}->{params}->{$hkey . '_index'} = 0;
+                $gbox->insert(Label => text => $label,
+                    name => "label_$grp\_$count",
+                    alignment => ta::Left,
+                    autoHeight => 1,
+                    autoWidth => 1,
+                    origin => [$origin[0] + 10,
+                                $origin[1] + $count * $sz_y - 40],
+                    font => {height => 13},
+                );
+                $gbox->insert(ComboBox => style => cs::DropDownList,
+                    name => "cbox_$grp\_$count",
+                    height => 30,
+                    width => $sz_x - 50,
+                    autoHeight => 1,
+                    font => { height => 16 },
+                    hScroll => 0,
+                    multiSelect => 0,
+                    multiColumn => 0,
+                    dragable => 0,
+                    focusedItem => -1,
+                    items => $value,
+                    autoTab => 1,
+                    origin => [$origin[0] + 10 + $sz_x,
+                                $origin[1] + $count * $sz_y - 40],
+                    onChange => sub {
+                        my $cbox = shift;
+                        my $lbox = $cbox->List;
+                        my $index = $lbox->focusedItem;
+                        $self->current->{indicator}->{params}->{$hkey} = $lbox->get_item_text($index);
+                        $self->current->{indicator}->{params}->{$hkey . '_index'} = $index;
+                    },
+                );
+            } elsif (defined $typeclass and $typeclass eq 'PDL::Type') {
+                # use InputLine for all numbers
+                $self->current->{indicator}->{params}->{$hkey} = $value;
+                $gbox->insert(Label => text => $label,
+                    name => "label_$grp\_$count",
+                    alignment => ta::Left,
+                    autoHeight => 1,
+                    autoWidth => 1,
+                    origin => [$origin[0] + 10,
+                                $origin[1] + $count * $sz_y - 40],
+                    font => {height => 13},
+                );
+                $gbox->insert(InputLine => name => "input_$grp\_$count",
+                    alignment => ta::Left,
+                    autoHeight => 1,
+                    width => $sz_x - 50,
+                    autoTab => 1,
+                    maxLen => 20,
+                    origin => [$origin[0] + 10 + $sz_x,
+                                $origin[1] + $count * $sz_y - 40],
+                    text => $value,
+                    font => {height => 16},
+                    onChange => sub {
+                        my $il = shift;
+                        my $val = undef;
+                        my $txt = $il->text;
+                        return unless length $txt;
+                        if ($type->symbol eq 'PDL_B') {
+                            # byte buffer
+                            $val = $txt;
+                        } elsif ($type->symbol eq 'PDL_F' or $type->symbol eq 'PDL_D') {
+                            # is a real number
+                            if ($txt =~ /^(\d+\.?\d*)|(\.\d+)$/) {
+                                $val = sprintf "%0.04f", $txt;
+                            } else {
+                                message_box('Parameter Error',
+                                    "$label has to be a real number",
+                                    mb::Ok | mb::Error);
+                                return;
+                            }
+                        } else {
+                            # is an integer form
+                            if ($txt =~ /^([+-]?\d+)$/) {
+                                $val = sprintf "%d", $txt;
+                            } else {
+                                message_box('Parameter Error',
+                                    "$label has to be an integer",
+                                    mb::Ok | mb::Error);
+                                return;
+                            }
+                        }
+                        $self->current->{indicator}->{params}->{$hkey} = $val;
+                    },
+                );
+            } else {
+                # use checkbox
+                $self->current->{indicator}->{params}->{$hkey} = ($value) ? 1 : 0;
+                $gbox->insert(CheckBox => name => "chk_$grp\_$count",
+                    alignment => ta::Left,
+                    autoTab => 1,
+                    origin => [$origin[0] + 10,
+                                $origin[1] + $count * $sz_y - 40],
+                    text => $label,
+                    font => {height => 13},
+                    onCheck => sub {
+                        my $chk = shift;
+                        $self->current->{indicator}->{params}->{$hkey} =
+                                $chk->checked ? 1 : 0;
+                    },
+                );
+            }
+            $count++;
+        }
     } else {
         # if none are defined remove the parameter screen
         my @widgets = $gbox->get_widgets;
@@ -483,6 +607,7 @@ sub indicator_parameter_wizard {
             map { $_->close() } @widgets;
         }
         $gbox->text("Indicator Parameters");
+        delete $self->current->{indicator}->{params};
     }
 }
 
@@ -506,6 +631,7 @@ sub indicator_wizard {
         },
     );
     $w->owner($win) if defined $win;
+    $self->current->{indicator} = {}; # reset
     my @groups = $self->indicator->get_groups;
     $w->insert(Label => name => 'label_groups',
         text => 'Select Group',
@@ -540,8 +666,6 @@ sub indicator_wizard {
                     $owner->cbox_funcs->items(\@funcs);
                 }
                 $owner->btn_ok->enabled(1);
-                $self->current->{indicator} = {} unless defined
-                                $self->current->{indicator};
                 $self->current->{indicator}->{overlay} = $txt;
             } else {
                 $owner->cbox_funcs->items([]);
@@ -583,12 +707,16 @@ sub indicator_wizard {
             if (defined $grp) {
                 # $params is an array-ref
                 my $params = $self->indicator->get_params($txt, $grp);
+                $self->current->{indicator}->{func} = $txt;
                 say Dumper($params) if $self->debug;
                 $owner->btn_ok->enabled(1);
                 $self->indicator_parameter_wizard($owner->gbox_params,
                         $txt, $grp, $params);
             } else {
                 $owner->btn_ok->enabled(0);
+                $cbox->items([]);
+                $cbox->focusedItem(-1);
+                delete $self->current->{indicator}->{func};
                 $self->indicator_parameter_wizard($owner->gbox_params);
             }
         },
@@ -604,6 +732,7 @@ sub indicator_wizard {
         enabled => 1,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
+            delete $self->current->{indicator};
         },
     );
     $w->insert(
@@ -617,8 +746,7 @@ sub indicator_wizard {
         enabled => 0,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
-            my $btn = shift;
-            my $owner = $btn->owner;
+            say Dumper($self->current->{indicator}) if $self->debug;
         },
     );
     $w->insert(GroupBox => name => 'gbox_params',

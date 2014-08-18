@@ -33,6 +33,8 @@ my $build = Module::Build->new(
         'POE::Loop::Prima' => 0,
         'PDL::Graphics::Gnuplot' => 0,
         'Capture::Tiny' => 0,
+        'Scalar::Util' => 0,
+        'Getopt::Long' => 0,
     },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],

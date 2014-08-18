@@ -2,11 +2,13 @@ package App::financeta;
 use strict;
 use warnings;
 use 5.10.0;
+use feature 'say';
 
 our $VERSION = '0.03';
 $VERSION = eval $VERSION;
 
 use PDL::Finance::TA;
+use Carp;
 
 sub print_warning {
     my $license = <<'LICENSE';
@@ -20,10 +22,20 @@ sub print_warning {
 LICENSE
     print STDERR "$license\n";
 }
-#TODO: parse arguments and set up options
+
 sub run {
     my @args = @_;
-    my $gui = PDL::Finance::TA->new(debug => 1);
+    shift @args if (@args and $args[0] eq __PACKAGE__);
+    my %opts = @args;
+    if ($opts{version}) {
+        print "Version $VERSION\n";
+        return;
+    }
+    if ($opts{help}) {
+        print "Help: Coming soon\n";
+        return;
+    }
+    my $gui = PDL::Finance::TA->new(debug => $opts{debug});
     $gui->run;
 }
 

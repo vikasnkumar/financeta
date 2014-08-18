@@ -14,11 +14,11 @@ has overlays => {
         name => 'Bollinger Bands',
         func => 'ta_bbands',
         params => [
-            ['Period', PDL::long, 5],
-            ['Upper Deviation multiplier', PDL::float, 2.0],
-            ['Lower Deviation multiplier', PDL::float, 2.0],
+            [ 'InTimePeriod', 'Period Window', PDL::long, 5],
+            [ 'InNbDevUp', 'Upper Deviation multiplier', PDL::float, 2.0],
+            [ 'InNbDevDn', 'Lower Deviation multiplier', PDL::float, 2.0],
             # this will show up in a combo list
-            ['Moving Average Type', 'ARRAY',
+            [ 'InMAType', 'Moving Average Type', 'ARRAY',
                 [
                 qw/SMA EMA WMA DEMA TEMA TRIMA KAMA MAMA T3/
                 ]
