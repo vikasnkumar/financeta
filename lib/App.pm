@@ -11,8 +11,9 @@ use PDL::Finance::TA;
 use Carp;
 
 sub print_warning {
-    my $license = <<'LICENSE';
-    App::financeta  Copyright (C) 2014  Vikas N Kumar <vikas@cpan.org>
+    my $pkg = shift || __PACKAGE__;
+    my $license = <<"LICENSE";
+    $pkg  Copyright (C) 2014  Vikas N Kumar <vikas\@cpan.org>
     This program comes with ABSOLUTELY NO WARRANTY; for details read the LICENSE
     file in the distribution.
     This is free software, and you are welcome to redistribute it
@@ -28,7 +29,7 @@ sub run {
     shift @args if (@args and $args[0] eq __PACKAGE__);
     my %opts = @args;
     if ($opts{version}) {
-        print "Version $VERSION\n";
+        print __PACKAGE__ . " Version $VERSION\n";
         return;
     }
     if ($opts{help}) {
