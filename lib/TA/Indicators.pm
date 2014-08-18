@@ -20,7 +20,6 @@ has plot_engine => 'gnuplot';
 has overlays => {
     bbands => {
         name => 'Bollinger Bands',
-#        func => 'ta_bbands',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window', PDL::long, 5],

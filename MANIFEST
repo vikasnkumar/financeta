@@ -1,7 +1,6 @@
 bin/financeta
 Build.PL
 Changes
-examples/movavg.pl
 images/icon.gif
 images/sm_perl_id_bk_wt.gif
 lib/App.pm
