@@ -15,6 +15,7 @@ use Data::Dumper;
 
 $PDL::doubleformat = "%0.6lf";
 has debug => 0;
+has plot_engine => 'gnuplot';
 
 has overlays => {
     bbands => {
@@ -42,6 +43,22 @@ has overlays => {
                 ['Lower Band', $lower],
             ];
         },
+        # use Gnuplot related stuff
+        gnuplot => sub {
+            my ($obj, $xdata, $output) = @_;
+            # output is the same as the return value of the code-ref above
+            my @plotinfo = ();
+            my @colors = qw(dark-blue brown dark-green);
+            foreach (@$output) {
+                my $p = $_->[1];
+                push @plotinfo, {
+                    with => 'lines',
+                    legend => $_->[0],
+                    linecolor => shift @colors,
+                }, $xdata, $p;
+            }
+            return @plotinfo;
+        }
     },
 };
 
@@ -85,9 +102,8 @@ sub get_params($$) {
     }
 }
 
-sub execute_ohlc($$) {
-    my ($self, $data, $iref) = @_;
-    return unless ref $data eq 'PDL';
+sub _find_func_key($$) {
+    my ($self, $iref) = @_;
     return unless ref $iref eq 'HASH';
     my $params = $iref->{params};
     my $grp = $iref->{group};
@@ -103,7 +119,17 @@ sub execute_ohlc($$) {
     }
     return unless defined $fn_key;
     say "Found $fn_key" if $self->debug;
+    return $fn_key;
+}
+
+sub execute_ohlc($$) {
+    my ($self, $data, $iref) = @_;
+    return unless ref $data eq 'PDL';
+    my $fn_key = $self->_find_func_key($iref);
+    return unless defined $fn_key;
     # ok now we found the function so let's invoke it
+    my $grp = lc $iref->{group};
+    my $params = $iref->{params};
     my $func = $self->$grp->{$fn_key}->{func};
     my $coderef = $self->$grp->{$fn_key}->{code};
     my $paramarray = $self->$grp->{$fn_key}->{params};
@@ -119,7 +145,16 @@ sub execute_ohlc($$) {
         }
     }
     # only send the close price in
-    return &$coderef($self, $data(,(4)), @args);
+    return &$coderef($self, $data(,(4)), @args) if ref $coderef eq 'CODE';
+}
+
+sub plot_ohlc($$$) {
+    my ($self, $data, $output, $iref) = @_;
+    my $fn_key = $self->_find_func_key($iref);
+    return unless defined $fn_key;
+    my $grp = lc $iref->{group};
+    my $plotref = $self->$grp->{$fn_key}->{$self->plot_engine};
+    return &$plotref($self, $data(,(0)), $output) if ref $plotref eq 'CODE';
 }
 
 1;

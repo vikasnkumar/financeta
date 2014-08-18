@@ -482,7 +482,9 @@ sub add_indicator($$$) {
             return;
         }
         $self->display_data($win, $data, $symbol, $output);
-#        $self->plot_data($win, $data, $symbol, 'OHLC');
+        my $type = $self->current->{plot_type} || 'CLOSE';
+        my @indicator = $self->indicator->plot_ohlc($data, $output, $iref);
+        $self->plot_data($win, $data, $symbol, $type, @indicator);
     }
 }
 
@@ -946,7 +948,7 @@ sub plot_data {
 }
 
 sub plot_data_gnuplot {
-    my ($self, $win, $data, $symbol, $type) = @_;
+    my ($self, $win, $data, $symbol, $type, @indicator) = @_;
     return unless defined $data;
     # use the x11 term by default first
     my $term = 'x11';
@@ -980,6 +982,7 @@ sub plot_data_gnuplot {
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+                @indicator,
             );
         }
         when ('OHLCV') {
@@ -1003,6 +1006,7 @@ sub plot_data_gnuplot {
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+                @indicator,
             );
             $pwin->plot({
                     ylabel => 'Volume (in 1M)',
@@ -1015,6 +1019,7 @@ sub plot_data_gnuplot {
                 },
                 {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
                 $data(,(0)), $data(,(5)) / 1e6,
+                @indicator,
             );
             $pwin->end_multi;
         }
@@ -1035,10 +1040,11 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'lines',
-                    linecolor => 'blue',
+                    linecolor => 'black',
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),
+                @indicator,
             );
             $pwin->plot({
                     ylabel => 'Volume (in 1M)',
@@ -1049,8 +1055,9 @@ sub plot_data_gnuplot {
                     size => ["1,0.3"], #bug in P:G:G
                     origin => [0, 0],
                 },
-                {with => 'impulses', legend => 'Volume', linecolor => 'green'},
+                {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
                 $data(,(0)), $data(,(5)) / 1e6,
+                @indicator,
             );
             $pwin->end_multi;
         }
@@ -1066,10 +1073,11 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'lines',
-                    linecolor => 'blue',
+                    linecolor => 'black',
                     legend => 'Close Price',
                 },
-                $data(,(0)), $data(,(4))
+                $data(,(0)), $data(,(4)),
+                @indicator,
             );
         }
     }
