@@ -23,11 +23,12 @@ LICENSE
 #TODO: parse arguments and set up options
 sub run {
     my @args = @_;
-    my $gui = PDL::Finance::TA->new(debug => 0);
+    my $gui = PDL::Finance::TA->new(debug => 1);
     $gui->run;
 }
 
 1;
+__END__
 ### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 15th Aug 2014

@@ -36,30 +36,37 @@ sub get_groups {
     return wantarray ? @groups : \@groups;
 }
 
-sub get_funcs {
+sub get_funcs($) {
     my ($self, $grp) = @_;
     $grp = lc $grp if defined $grp;
     if (defined $grp and $self->has($grp)) {
         my $r = $self->$grp;
         my @funcs = ();
-        foreach my $k (keys $r) {
+        foreach my $k (sort(keys %$r)) {
             push @funcs, $r->{$k}->{name};
         }
         return wantarray ? @funcs : \@funcs;
     }
 }
 
-sub get_params {
-    my ($self, $fn_name) = @_;
-    return unless defined $fn_name;
-
-}
-
-sub types {
-    my $self = shift;
-    return {
-        overlays => $self->overlays,
-    };
+sub get_params($$) {
+    my ($self, $fn_name, $grp) = @_;
+    $grp = lc $grp if defined $grp;
+    my $fn;
+    # find the function parameters
+    if (defined $grp and $self->has($grp)) {
+        my $r = $self->$grp;
+        foreach my $k (sort (keys %$r)) {
+            $fn = $k if $r->{$k}->{name} eq $fn_name;
+            last if defined $fn;
+        }
+        return $r->{$fn}->{params} if defined $fn;
+    }
 }
 
 1;
+__END__
+### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
+### AUTHOR: Vikas N Kumar <vikas@cpan.org>
+### DATE: 17th Aug 2014
+### LICENSE: Refer LICENSE file

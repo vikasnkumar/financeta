@@ -55,11 +55,6 @@ application.
 Picks up the file in C<PDL/Finance/TA/images/icon.gif> as the application icon
 but can be given as a C<Prima::Icon> object as well.
 
-=item B<use_pgplot>
-
-The default plotting apparatus today is Gnuplot but the user can use PGPLOT as
-well. This is turned off by default since Gnuplot has more features.
-
 =item B<tmpdir>
 
 The default on Windows is C<$ENV{TMP}> or C<$ENV{TEMP}> and on Unix based

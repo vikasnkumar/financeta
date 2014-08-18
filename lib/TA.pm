@@ -33,7 +33,6 @@ has timezone => 'America/New_York';
 has brand => (default => sub { __PACKAGE__ });
 has main => (builder => '_build_main');
 has icon => (builder => '_build_icon');
-has use_pgplot => 0;
 
 sub _build_icon {
     my $self = shift;
@@ -468,6 +467,25 @@ sub add_indicator {
 
 has indicator => (default => sub { PDL::Finance::TA::Indicators->new });
 
+sub indicator_parameter_wizard {
+    my ($self, $gbox, $fn_name, $grp, $params) = @_;
+    return unless defined $gbox;
+    # if all are defined create the parameter screen
+    if (defined $fn_name and defined $grp and defined $params) {
+        $gbox->text("$fn_name Parameters");
+        my @origin = $gbox->origin;
+        my @size = $gbox->size;
+        say "Gbox: Origin: @origin  Size: @size" if $self->debug;
+    } else {
+        # if none are defined remove the parameter screen
+        my @widgets = $gbox->get_widgets;
+        if (@widgets) {
+            map { $_->close() } @widgets;
+        }
+        $gbox->text("Indicator Parameters");
+    }
+}
+
 sub indicator_wizard {
     my ($self, $win) = @_;
     my $w = Prima::Dialog->new(
@@ -522,8 +540,15 @@ sub indicator_wizard {
                     $owner->cbox_funcs->items(\@funcs);
                 }
                 $owner->btn_ok->enabled(1);
+                $self->current->{indicator} = {} unless defined
+                                $self->current->{indicator};
+                $self->current->{indicator}->{overlay} = $txt;
             } else {
+                $owner->cbox_funcs->items([]);
+                $owner->cbox_funcs->focusedItem(-1);
+                $self->indicator_parameter_wizard($owner->gbox_params);
                 $owner->btn_ok->enabled(0);
+                delete $self->current->{indicator}->{overlay};
             }
         },
     );
@@ -554,8 +579,18 @@ sub indicator_wizard {
             my $lbox = $cbox->List;
             my $index = $lbox->focusedItem;
             my $txt = $lbox->get_item_text($index);
-            my @params = $self->indicator->get_params($txt);
-            $owner->btn_ok->enabled(1);
+            my $grp = $self->current->{indicator}->{overlay};
+            if (defined $grp) {
+                # $params is an array-ref
+                my $params = $self->indicator->get_params($txt, $grp);
+                say Dumper($params) if $self->debug;
+                $owner->btn_ok->enabled(1);
+                $self->indicator_parameter_wizard($owner->gbox_params,
+                        $txt, $grp, $params);
+            } else {
+                $owner->btn_ok->enabled(0);
+                $self->indicator_parameter_wizard($owner->gbox_params);
+            }
         },
     );
     $w->insert(
@@ -563,7 +598,7 @@ sub indicator_wizard {
         text => 'Cancel',
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 20, 40 ],
+        origin => [ 20, 20 ],
         modalResult => mb::Cancel,
         default => 1,
         enabled => 1,
@@ -576,7 +611,7 @@ sub indicator_wizard {
         text => 'OK',
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 150, 40 ],
+        origin => [ 150, 20 ],
         modalResult => mb::Ok,
         default => 0,
         enabled => 0,
@@ -585,6 +620,12 @@ sub indicator_wizard {
             my $btn = shift;
             my $owner = $btn->owner;
         },
+    );
+    $w->insert(GroupBox => name => 'gbox_params',
+        text => 'Indicator Parameters',
+        size => [600, 300],
+        origin => [20, 60],
+        font => { height => 16, style => fs::Bold },
     );
 
     #TODO:
@@ -639,7 +680,9 @@ sub download_data {
         close $fh;
         say "$csv has downloaded data for analysis" if $self->debug;
         unless (scalar @quotes) {
-            message("Failed to download $symbol data", mb::Ok);
+            message_box('Error',
+                "Failed to download $symbol data. Check if '$symbol' is correct",
+                mb::Ok | mb::Error);
             unlink $csv;
             return;
         }
@@ -746,28 +789,8 @@ sub get_tab_data {
 
 sub plot_data {
     my $self = shift;
-    if ($self->use_pgplot) {
-        say "Using PGPLOT to do plotting" if $self->debug;
-        eval 'require PDL::Graphics::PGPLOT::Window' or
-            croak 'You asked for PGPLOT but PDL::Graphics::PGPLOT is not installed';
-        return $self->plot_data_pgplot(@_);
-    } else {
-        say "Using Gnuplot to do plotting" if $self->debug;
-        return $self->plot_data_gnuplot(@_);
-    }
-}
-
-sub plot_data_pgplot {
-    my ($self, $win, $data, $sym, $type) = @_;
-    return unless defined $data;
-    my $pwin = PDL::Graphics::PGPLOT::Window->new(
-            Device => '/xw',
-        );
-    $win->{plot} = $pwin;
-    $pwin->line($data(0:-1,(0)), $data(0:-1,(4)),
-        { COLOR => 'CYAN', AXIS => [ 'BCNSTZ', 'BCNST' ]});
-    $pwin->release;
-    $pwin->focus;
+    say "Using Gnuplot to do plotting" if $self->debug;
+    return $self->plot_data_gnuplot(@_);
 }
 
 sub plot_data_gnuplot {
@@ -777,11 +800,13 @@ sub plot_data_gnuplot {
     my $term = 'x11';
     # if the wxt term is there use that instead since it is just better
     # if the aqua term is there use that if wxt isn't there
-    Capture::Tiny::capture {
-        my @terms = PDL::Graphics::Gnuplot::terminfo();
-        $term = 'aqua' if grep {/aqua/} @terms;
-        $term = 'wxt' if grep {/wxt/} @terms;
-    };
+    if ($^O =~ /Darwin/i) {
+        Capture::Tiny::capture {
+            my @terms = PDL::Graphics::Gnuplot::terminfo();
+            $term = 'aqua' if grep {/aqua/} @terms;
+            $term = 'wxt' if grep {/wxt/} @terms;
+        };
+    }
     say "Using term $term" if $self->debug;
     my $pwin = $win->{plot} || gpwin($term, size => [1024, 768, 'px']);
     $win->{plot} = $pwin;
