@@ -4,12 +4,11 @@ use Module::Build;
 
 my $build = Module::Build->new(
     module_name => 'PDL::Finance::TA',
-    license => 'gpl3',
+    license => 'gpl',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
     dist_abstract => 'PDL::Finance::TA is a Technical Analysis GUI',
     dist_version_from => 'lib/TA.pm',
     create_readme => 0,
-    create_license => (-e 'LICENSE' ? 0 : 1),
     configure_requires => {
         'Module::Build' => 0,
         'Software::License' => 0,
