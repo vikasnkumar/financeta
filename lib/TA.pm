@@ -34,6 +34,17 @@ has timezone => 'America/New_York';
 has brand => (default => sub { __PACKAGE__ });
 has main => (builder => '_build_main');
 has icon => (builder => '_build_icon');
+has tmpdir => ( default => sub {
+    return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
+    return $ENV{TMPDIR} || '/tmp';
+});
+has current => {};
+has indicator => (builder => '_build_indicator');
+
+sub _build_indicator {
+    my $self = shift;
+    return PDL::Finance::TA::Indicators->new(debug => $self->debug);
+}
 
 sub _build_icon {
     my $self = shift;
@@ -220,8 +231,6 @@ sub run {
     $self->main->menu->add_indicator->enabled(0);
     run Prima;
 }
-
-has current => {};
 
 sub progress_bar_create {
     my ($self, $win, $text) = @_;
@@ -460,15 +469,22 @@ sub security_wizard {
     return $res == mb::Ok;
 }
 
-sub add_indicator {
+sub add_indicator($$$) {
     my ($self, $win, $data, $symbol) = @_;
     if ($self->indicator_wizard($win)) {
         my $iref = $self->current->{indicator};
         say Dumper($iref) if $self->debug;
+        my $output = $self->indicator->execute_ohlc($data, $iref);
+        unless (defined $output) {
+            message_box('Indicator Error',
+                "Unable to run the indicator on data.",
+                mb::Ok | mb::Error);
+            return;
+        }
+        $self->display_data($win, $data, $symbol, $output);
+#        $self->plot_data($win, $data, $symbol, 'OHLC');
     }
 }
-
-has indicator => (default => sub { PDL::Finance::TA::Indicators->new });
 
 sub indicator_parameter_wizard {
     my ($self, $gbox, $fn_name, $grp, $params) = @_;
@@ -666,13 +682,13 @@ sub indicator_wizard {
                     $owner->cbox_funcs->items(\@funcs);
                 }
                 $owner->btn_ok->enabled(1);
-                $self->current->{indicator}->{overlay} = $txt;
+                $self->current->{indicator}->{group} = $txt;
             } else {
                 $owner->cbox_funcs->items([]);
                 $owner->cbox_funcs->focusedItem(-1);
                 $self->indicator_parameter_wizard($owner->gbox_params);
                 $owner->btn_ok->enabled(0);
-                delete $self->current->{indicator}->{overlay};
+                delete $self->current->{indicator}->{group};
             }
         },
     );
@@ -703,7 +719,7 @@ sub indicator_wizard {
             my $lbox = $cbox->List;
             my $index = $lbox->focusedItem;
             my $txt = $lbox->get_item_text($index);
-            my $grp = $self->current->{indicator}->{overlay};
+            my $grp = $self->current->{indicator}->{group};
             if (defined $grp) {
                 # $params is an array-ref
                 my $params = $self->indicator->get_params($txt, $grp);
@@ -761,11 +777,6 @@ sub indicator_wizard {
     $w->end_modal;
     return $res == mb::Ok;
 }
-
-has tmpdir => ( default => sub {
-    return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
-    return $ENV{TMPDIR} || '/tmp';
-});
 
 sub download_data {
     my ($self, $pbar) = @_;
@@ -828,10 +839,10 @@ sub download_data {
 }
 
 sub display_data {
-    my ($self, $win, $data) = @_;
+    my ($self, $win, $data, $symbol, $output) = @_;
     return unless defined $win and defined $data;
     my @tabsize = $win->size();
-    my $symbol = $self->current->{symbol};
+    $symbol = $self->current->{symbol} unless defined $symbol;
     my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
     say "Tabs: @tabs" if $self->debug;
     unless (@tabs) {
@@ -859,20 +870,32 @@ sub display_data {
     $tabsize[1] *= 0.96;
     my $pc = $nt->pageCount;
     say "TabCount: $pc" if $self->debug;
+    # take existing items
+    my $headers = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'];
+    if ($output and scalar @$output) {
+        foreach my $a (@$output) {
+            push @$headers, $a->[0];
+            # splice the indicator PDL into $data
+            $data = $data->glue(1, $a->[1]) if ref $a->[1] eq 'PDL';
+        }
+    }
     my $items = $data->transpose->unpdl;
     my $tz = $self->timezone;
     # reformat
     foreach my $arr (@$items) {
         my $dt = DateTime->from_epoch(epoch => $arr->[0], time_zone => $tz)->ymd('-');
         $arr->[0] = $dt;
+        for (my $i = 1; $i < scalar @$arr; ++$i) {
+            $arr->[$i] = '' if $arr->[$i] =~ /BAD/i;
+        }
     }
     my $dl = $nt->insert_to_page($pc, 'DetailedList',
         name => "tab_$symbol",
         pack => { expand => 1, fill => 'both' },
         items => $items,
         origin => [ 10, 10 ],
-        headers => ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'],
-        columns => 6,
+        headers => $headers,
+        columns => scalar @$headers,
         onSort => sub {
             my ($p, $col, $dir) = @_;
             return if $col != 1;
@@ -896,6 +919,7 @@ sub display_data {
     $nt->pageIndex($pc);
     $dl->{-pdl} = $data;
     $dl->{-symbol} = $symbol;
+    1;
 }
 
 sub _get_tab_data {
