@@ -148,13 +148,13 @@ sub execute_ohlc($$) {
     return &$coderef($self, $data(,(4)), @args) if ref $coderef eq 'CODE';
 }
 
-sub plot_ohlc($$$) {
-    my ($self, $data, $output, $iref) = @_;
+sub get_plot_args($$$) {
+    my ($self, $xdata, $output, $iref) = @_;
     my $fn_key = $self->_find_func_key($iref);
     return unless defined $fn_key;
     my $grp = lc $iref->{group};
-    my $plotref = $self->$grp->{$fn_key}->{$self->plot_engine};
-    return &$plotref($self, $data(,(0)), $output) if ref $plotref eq 'CODE';
+    my $plotref = $self->$grp->{$fn_key}->{lc($self->plot_engine)};
+    return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
 }
 
 1;

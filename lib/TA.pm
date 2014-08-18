@@ -38,12 +38,14 @@ has tmpdir => ( default => sub {
     return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
     return $ENV{TMPDIR} || '/tmp';
 });
+has plot_engine => 'gnuplot';
 has current => {};
 has indicator => (builder => '_build_indicator');
 
 sub _build_indicator {
     my $self = shift;
-    return PDL::Finance::TA::Indicators->new(debug => $self->debug);
+    return PDL::Finance::TA::Indicators->new(debug => $self->debug,
+                                            plot_engine => $self->plot_engine);
 }
 
 sub _build_icon {
@@ -130,8 +132,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'OHLC');
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'OHLC', $indicators);
                     },
                     $self,
                 ],
@@ -141,8 +143,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'OHLCV');
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'OHLCV', $indicators);
                     },
                     $self,
                 ],
@@ -152,8 +154,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'CLOSE');
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CLOSE', $indicators);
                     },
                     $self,
                 ],
@@ -163,8 +165,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'CLOSEV');
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CLOSEV', $indicators);
                     },
                     $self,
                 ],
@@ -178,7 +180,7 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol) = $gui->get_tab_data($win);
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                         # ok add an indicator which also plots it
                         $gui->add_indicator($win, $data, $symbol);
                     },
@@ -481,10 +483,10 @@ sub add_indicator($$$) {
                 mb::Ok | mb::Error);
             return;
         }
-        $self->display_data($win, $data, $symbol, $output);
+        $self->display_data($win, $data, $symbol, $iref, $output);
+        my ($ndata, $nsymbol, $indicators) = $self->get_tab_data($win);
         my $type = $self->current->{plot_type} || 'CLOSE';
-        my @indicator = $self->indicator->plot_ohlc($data, $output, $iref);
-        $self->plot_data($win, $data, $symbol, $type, @indicator);
+        $self->plot_data($win, $ndata, $nsymbol, $type, $indicators);
     }
 }
 
@@ -841,7 +843,7 @@ sub download_data {
 }
 
 sub display_data {
-    my ($self, $win, $data, $symbol, $output) = @_;
+    my ($self, $win, $data, $symbol, $iref, $output) = @_;
     return unless defined $win and defined $data;
     my @tabsize = $win->size();
     $symbol = $self->current->{symbol} unless defined $symbol;
@@ -860,18 +862,23 @@ sub display_data {
                 say "Tab changed from $oldidx to $newidx" if $self->debug;
                 return if $oldidx == $newidx;
                 # ok find the detailed-list object and use it
-                my ($data, $symbol) = $self->_get_tab_data($w, $newidx);
-                $self->plot_data($owner, $data, $symbol);
+                my ($data, $symbol, $indicators) = $self->_get_tab_data($w, $newidx);
+                my $type = $self->current->{plot_type} || 'CLOSE';
+                $self->plot_data($owner, $data, $symbol, $type, $indicators);
             },
         );
     }
     my $nt = $win->data_tabs;
     my $nt_tabs = $nt->tabs;
-    $nt->tabs([@$nt_tabs, $symbol]);
+    # create unique tab-names
+    if (scalar @$nt_tabs) {
+        my %tabnames = map { $_ => 1 } @$nt_tabs;
+        $nt->tabs([@$nt_tabs, $symbol]) unless exists $tabnames{$symbol};
+    } else {
+        $nt->tabs([$symbol]);
+    }
     $tabsize[0] *= 0.98;
     $tabsize[1] *= 0.96;
-    my $pc = $nt->pageCount;
-    say "TabCount: $pc" if $self->debug;
     # take existing items
     my $headers = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'];
     if ($output and scalar @$output) {
@@ -891,7 +898,25 @@ sub display_data {
             $arr->[$i] = '' if $arr->[$i] =~ /BAD/i;
         }
     }
-    my $dl = $nt->insert_to_page($pc, 'DetailedList',
+    my $pc = $nt->pageCount;
+    say "TabCount: $pc" if $self->debug;
+    my $pageno = $pc;
+    # find the existing tab with the same symbol info and remove the widget
+    # there and get that page number
+    for my $idx (0 .. $pc) {
+        my @wids = $nt->widgets_from_page($idx);
+        next unless @wids;
+        my @dls = grep { $_->name eq "tab_$symbol" } @wids;
+        if (@dls) {
+            foreach (@dls) {
+                say "Found existing ", $_->name, " at $idx" if $self->debug;
+                $nt->delete_widget($_);
+            }
+            $pageno = $idx;
+            last;
+        }
+    }
+    my $dl = $nt->insert_to_page($pageno, 'DetailedList',
         name => "tab_$symbol",
         pack => { expand => 1, fill => 'both' },
         items => $items,
@@ -918,18 +943,28 @@ sub display_data {
         titleSpace => 30,
         size => \@tabsize,
     );
-    $nt->pageIndex($pc);
+    $nt->pageIndex($pageno);
     $dl->{-pdl} = $data;
     $dl->{-symbol} = $symbol;
+    if ($output and $iref) {
+        $dl->{-indicators} = [] unless defined $dl->{-indicators};
+        push @{$dl->{-indicators}}, {
+            indicator => $iref,
+            data => $output,
+        };
+    }
     1;
 }
 
 sub _get_tab_data {
     my ($self, $nb, $idx) = @_;
     my @nt = $nb->widgets_from_page($idx);
+    return unless @nt;
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
-    say "Found ", $dl->name if $self->debug;
-    return ($dl->{-pdl}, $dl->{-symbol});
+    if ($dl) {
+        say "Found ", $dl->name if $self->debug;
+        return ($dl->{-pdl}, $dl->{-symbol}, $dl->{-indicators});
+    }
 }
 
 sub get_tab_data {
@@ -938,17 +973,20 @@ sub get_tab_data {
     my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
     return unless @tabs;
     my $idx = $win->data_tabs->pageIndex;
-    $self->_get_tab_data($win->data_tabs, $idx);
+    return $self->_get_tab_data($win->data_tabs, $idx);
 }
 
 sub plot_data {
     my $self = shift;
-    say "Using Gnuplot to do plotting" if $self->debug;
-    return $self->plot_data_gnuplot(@_);
+    if (lc($self->plot_engine) eq 'gnuplot') {
+        say "Using Gnuplot to do plotting" if $self->debug;
+        return $self->plot_data_gnuplot(@_);
+    }
+    carp $self->plot_engine . " is not supported yet.";
 }
 
 sub plot_data_gnuplot {
-    my ($self, $win, $data, $symbol, $type, @indicator) = @_;
+    my ($self, $win, $data, $symbol, $type, $indicators) = @_;
     return unless defined $data;
     # use the x11 term by default first
     my $term = 'x11';
@@ -966,6 +1004,16 @@ sub plot_data_gnuplot {
     $win->{plot} = $pwin;
     $symbol = $self->current->{symbol} unless defined $symbol;
     $type = $self->current->{plot_type} unless defined $type;
+    my @indicator = ();
+    if (defined $indicators and scalar @$indicators) {
+        # ok now create a list of indicators to plot
+        foreach (@$indicators) {
+            my $iref = $_->{indicator};
+            my $idata = $_->{data};
+            my @iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
+            push @indicator, @iplot if scalar @iplot;
+        }
+    }
     given ($type) {
         when ('OHLC') {
             $pwin->reset();
@@ -1019,7 +1067,6 @@ sub plot_data_gnuplot {
                 },
                 {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
                 $data(,(0)), $data(,(5)) / 1e6,
-                @indicator,
             );
             $pwin->end_multi;
         }
@@ -1057,7 +1104,6 @@ sub plot_data_gnuplot {
                 },
                 {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
                 $data(,(0)), $data(,(5)) / 1e6,
-                @indicator,
             );
             $pwin->end_multi;
         }
