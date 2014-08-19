@@ -417,6 +417,58 @@ has overlaps => {
 };
 
 has 'volatility' => {
+    atr => {
+        name => 'Average True Range',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_atr with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_atr($high, $low, $close, @args);
+            return [
+                ["ATR($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    natr => {
+        name => 'Normalized Average True Range',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_natr with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_natr($high, $low, $close, @args);
+            return [
+                ["NATR($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    trange => {
+        name => 'True Range',
+        params => [
+            # no params
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close) = @_;
+            say "Executing ta_trange" if $obj->debug;
+            my $outpdl = PDL::ta_trange($high, $low, $close);
+            return [
+                ["True Range", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
 };
 
 has 'momentum' => {
