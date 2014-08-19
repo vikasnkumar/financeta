@@ -28,7 +28,15 @@ has overlays => {
             # this will show up in a combo list
             [ 'InMAType', 'Moving Average Type', 'ARRAY',
                 [
-                qw/SMA EMA WMA DEMA TEMA TRIMA KAMA MAMA T3/
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
                 ],
             ],
         ],
