@@ -17,12 +17,41 @@ $PDL::doubleformat = "%0.6lf";
 has debug => 0;
 has plot_engine => 'gnuplot';
 
+sub _plot_gnuplot_general {
+    my ($self, $xdata, $output) = @_;
+    # output is the same as the return value of the code-ref above
+    my @plotinfo = ();
+    my @colors = qw(dark-blue brown dark-green dark-red magenta dark-magenta);
+    foreach (@$output) {
+        my $p = $_->[1];
+        push @plotinfo, {
+            with => 'lines',
+            legend => $_->[0],
+            linecolor => shift @colors,
+        }, $xdata, $p;
+    }
+    return @plotinfo;
+}
+
+has ma_names => {
+    0 => 'SMA',
+    1 => 'EMA',
+    2 => 'WMA',
+    3 => 'DEMA',
+    4 => 'TEMA',
+    5 => 'TRIMA',
+    6 => 'KAMA',
+    7 => 'MAMA',
+    8 => 'T3',
+};
+
+#TODO: verify parameters that are entered by the user
 has overlays => {
     bbands => {
         name => 'Bollinger Bands',
         params => [
             # key, pretty name, type, default value
-            [ 'InTimePeriod', 'Period Window', PDL::long, 5],
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 5],
             [ 'InNbDevUp', 'Upper Deviation multiplier', PDL::float, 2.0],
             [ 'InNbDevDn', 'Lower Deviation multiplier', PDL::float, 2.0],
             # this will show up in a combo list
@@ -43,29 +72,327 @@ has overlays => {
         code => sub {
             my ($obj, $inpdl, @args) = @_;
             say "Executing ta_bbands with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
             my ($upper, $middle, $lower) = PDL::ta_bbands($inpdl, @args);
             return [
-                ['Upper Band', $upper],
-                ['Middle Band', $middle],
-                ['Lower Band', $lower],
+                ["Upper Band($period)", $upper],
+                ["Middle Band($period)", $middle],
+                ["Lower Band($period)", $lower],
             ];
         },
         # use Gnuplot related stuff
-        gnuplot => sub {
-            my ($obj, $xdata, $output) = @_;
-            # output is the same as the return value of the code-ref above
-            my @plotinfo = ();
-            my @colors = qw(dark-blue brown dark-green);
-            foreach (@$output) {
-                my $p = $_->[1];
-                push @plotinfo, {
-                    with => 'lines',
-                    legend => $_->[0],
-                    linecolor => shift @colors,
-                }, $xdata, $p;
-            }
-            return @plotinfo;
-        }
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    dema => {
+        name => 'Double Exponential Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_dema with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_dema($inpdl, @args);
+            return [
+                ["DEMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    ema => {
+        name => 'Exponential Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_ema with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_ema($inpdl, @args);
+            return [
+                ["EMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    ht_trendline => {
+        name => 'Hilbert Transform - Instantaneous Trendline',
+        params => [
+            # no params
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_trendline" if $obj->debug;
+            my $outpdl = PDL::ta_ht_trendline($inpdl);
+            return [
+                ['HT-trendline', $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    kama => {
+        name => 'Kaufman Adaptive Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_kama with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_kama($inpdl, @args);
+            return [
+                ["KAMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    ma => {
+        name => 'Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+            # this will show up in a combo list
+            [ 'InMAType', 'Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_ma with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $type = $obj->ma_name->{$args[1]} || 'UNKNOWN';
+            my $outpdl = PDL::ta_ma($inpdl, @args);
+            return [
+                ["MA($period)($type)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    mama => {
+        name => 'MESA Adaptive Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastLimit', 'Upper Limit (0.01 - 0.99)', PDL::double, 0.5],
+            [ 'InSlowLimit', 'Lower Limit (0.01 - 0.99)', PDL::double, 0.05],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_mama with parameters: ", Dumper(\@args) if $obj->debug;
+            my ($omama, $ofama) = PDL::ta_mama($inpdl, @args);
+            return [
+                ["MAMA", $omama],
+                ["FAMA", $ofama],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    mavp => {
+        name => 'Moving Average with Variable Period',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InMinPeriod', 'Minimum Period (2 - 100000)', PDL::long, 2],
+            [ 'InMaxPeriod', 'Maximum Period (2 - 100000)', PDL::long, 30],
+            # this will show up in a combo list
+            [ 'InMAType', 'Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_mavp with parameters: ", Dumper(\@args) if $obj->debug;
+            my $type = $obj->ma_name->{$args[2]} || 'UNKNOWN';
+            my $outpdl = PDL::ta_mavp($inpdl, @args);
+            return [
+                ["MAVP($type)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    midpoint => {
+        name => 'Mid-point over period',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_midpoint with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_midpoint($inpdl, @args);
+            return [
+                ["MIDPOINT($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    midprice => {
+        name => 'Mid-point Price over period',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => ['high', 'low'],
+        code => sub {
+            my ($obj, $highpdl, $lowpdl, @args) = @_;
+            say "Executing ta_midprice parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_midprice($highpdl, $lowpdl, @args);
+            return [
+                ["MIDPRICE($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    sar => {
+        name => 'Parabolic SAR',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InAcceleration', 'Acceleration Factor(>= 0)', PDL::double, 0.02],
+            [ 'InMaximum', 'Max. Acceleration Factor(>= 0)', PDL::double, 0.2],
+        ],
+        input => ['high', 'low'],
+        code => sub {
+            my ($obj, $highpdl, $lowpdl, @args) = @_;
+            say "Executing ta_sar parameters: ", Dumper(\@args) if $obj->debug;
+            my $outpdl = PDL::ta_sar($highpdl, $lowpdl, @args);
+            return [
+                ["SAR", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    sarext => {
+        name => 'Parabolic SAR - Extended',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InStartValue', 'Start Value', PDL::double, 0.0],
+            [ 'InOffsetOnReverse', 'Percent Offset(>= 0)', PDL::double, 0.0],
+            [ 'InAccelerationInitLong', 'Acceleration Factor Initial Long(>= 0)', PDL::double, 0.02],
+            [ 'InAccelerationLong', 'Acceleration Factor Long(>= 0)', PDL::double, 0.02],
+            [ 'InAccelerationMaxLong', 'Acceleration Factor Max. Long(>= 0)', PDL::double, 0.2],
+            [ 'InAccelerationInitShort', 'Acceleration Factor Initial Short(>= 0)', PDL::double, 0.02],
+            [ 'InAccelerationShort', 'Acceleration Factor Short(>= 0)', PDL::double, 0.02],
+            [ 'InAccelerationMaxShort', 'Acceleration Factor Max. Short(>= 0)', PDL::double, 0.2],
+        ],
+        input => ['high', 'low'],
+        code => sub {
+            my ($obj, $highpdl, $lowpdl, @args) = @_;
+            say "Executing ta_sarext parameters: ", Dumper(\@args) if $obj->debug;
+            my $outpdl = PDL::ta_sarext($highpdl, $lowpdl, @args);
+            return [
+                ["SAR-EXT", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    sma => {
+        name => 'Simple Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_sma with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_sma($inpdl, @args);
+            return [
+                ["SMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    t3 => {
+        name => 'Triple Exponential Moving Average (T3)',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 5],
+            [ 'InVFactor', 'Volume Factor(0.0 - 1.0)', PDL::double, 0.7],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_t3 with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_t3($inpdl, @args);
+            return [
+                ["T3-EMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    tema => {
+        name => 'Triple Exponential Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_trima with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_tema($inpdl, @args);
+            return [
+                ["TEMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    trima => {
+        name => 'Triangular Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_trima with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_trima($inpdl, @args);
+            return [
+                ["TRIMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    wma => {
+        name => 'Weighted Moving Average',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_wma with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_wma($inpdl, @args);
+            return [
+                ["WMA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ### SKELETON
     #key => {
@@ -74,14 +401,15 @@ has overlays => {
     #       ['key', 'pretty name', 'type', 'default value'],
     #       #...add more if required...
     #   ],
+    #   input => [qw/high low/] # default is [/close/]
     #   code => sub {
-    #       my ($pdl_finance_ta_obj, $input_pdl, @params) = @_;
+    #       my ($indicator_obj, $input_pdl, @params) = @_;
     #       #...add code here...
     #       # output array-ref
     #       return [ ['Pretty Name', $output_pdl_1],...];
     #   },
     #   gnuplot => sub {
-    #       my ($pdl_finance_ta_obj, $x_axis_pdl, $output_array_ref) = @_;
+    #       my ($indicator_obj, $x_axis_pdl, $output_array_ref) = @_;
     #       #...add plotting arguments here in an array
     #       return @plot_args;
     #   },
@@ -170,8 +498,17 @@ sub execute_ohlc($$) {
             push @args, eval $params->{$k};
         }
     }
-    # only send the close price in
-    return &$coderef($self, $data(,(4)), @args) if ref $coderef eq 'CODE';
+    my $input_cols = $self->$grp->{$fn_key}->{input} || ['close'];
+    $input_cols = ['close'] unless scalar @$input_cols;
+    my @input_pdls = ();
+    foreach (@$input_cols) {
+        push @input_pdls, $data(,(0)) if /time/i;
+        push @input_pdls, $data(,(1)) if /open/i;
+        push @input_pdls, $data(,(2)) if /high/i;
+        push @input_pdls, $data(,(3)) if /low/i;
+        push @input_pdls, $data(,(4)) if /close/i;
+    }
+    return &$coderef($self, @input_pdls, @args) if ref $coderef eq 'CODE';
 }
 
 sub get_plot_args($$$) {

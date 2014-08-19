@@ -509,7 +509,15 @@ sub add_indicator($$$) {
 
 sub indicator_parameter_wizard {
     my ($self, $gbox, $fn_name, $grp, $params) = @_;
-    return unless defined $gbox;
+    if ($gbox) {
+        # remove the current parameter screen
+        my @widgets = $gbox->get_widgets;
+        if (@widgets) {
+            map { $_->close() } @widgets;
+        }
+    } else {
+        return;
+    }
     # if all are defined create the parameter screen
     if (defined $fn_name and defined $grp and defined $params) {
         $gbox->text("$fn_name Parameters");
@@ -521,6 +529,19 @@ sub indicator_parameter_wizard {
         my $sz_y = $size[1] / ($num + 1);
         my $count = 0;
         $self->current->{indicator}->{params} = {};
+        # if no params just write that
+        unless (scalar @$params) {
+            $gbox->insert('Label',
+                text => "There are no parameters to configure.",
+                name => "label_$grp\_noparams",
+                alignment => ta::Left,
+                autoHeight => 1,
+                autoWidth => 1,
+                origin => [$origin[0] + 10,
+                    $origin[1] + $count * $sz_y - 40],
+                font => {height => 16},
+            );
+        }
         foreach my $p (reverse @$params) {
             next unless ref $p eq 'ARRAY';
             my $hkey = $p->[0];
@@ -638,11 +659,6 @@ sub indicator_parameter_wizard {
             $count++;
         }
     } else {
-        # if none are defined remove the parameter screen
-        my @widgets = $gbox->get_widgets;
-        if (@widgets) {
-            map { $_->close() } @widgets;
-        }
         $gbox->text("Indicator Parameters");
         delete $self->current->{indicator}->{params};
     }
@@ -682,7 +698,7 @@ sub indicator_wizard {
         name => 'cbox_groups',
         style => cs::DropDownList,
         height => 30,
-        width => 180,
+        width => 360,
         hScroll => 0,
         multiSelect => 0,
         multiColumn => 0,
@@ -708,6 +724,7 @@ sub indicator_wizard {
                 $owner->cbox_funcs->items([]);
                 $owner->cbox_funcs->focusedItem(-1);
                 $self->indicator_parameter_wizard($owner->gbox_params);
+                $owner->cbox_funcs->text('');
                 $owner->btn_ok->enabled(0);
                 delete $self->current->{indicator}->{group};
             }
@@ -725,7 +742,7 @@ sub indicator_wizard {
         name => 'cbox_funcs',
         style => cs::DropDownList,
         height => 30,
-        width => 180,
+        width => 360,
         hScroll => 0,
         font => { height => 16 },
         multiSelect => 0,
@@ -755,6 +772,7 @@ sub indicator_wizard {
                 $cbox->focusedItem(-1);
                 delete $self->current->{indicator}->{func};
                 $self->indicator_parameter_wizard($owner->gbox_params);
+                $cbox->text('');
             }
         },
     );
