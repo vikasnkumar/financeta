@@ -3,10 +3,10 @@ use warnings;
 use Module::Build;
 
 my $build = Module::Build->new(
-    module_name => 'PDL::Finance::TA',
+    module_name => 'App::financeta',
     license => 'gpl',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
-    dist_abstract => 'PDL::Finance::TA is a Technical Analysis GUI',
+    dist_abstract => 'App::financeta is a Technical Analysis GUI',
     dist_version_from => 'lib/TA.pm',
     create_readme => 0,
     configure_requires => {
@@ -40,8 +40,8 @@ my $build = Module::Build->new(
     add_to_cleanup => [ qw/*.bak _Inline/ ],
     meta_merge => {
         resources => {
-            repository => "https://github.com/vikasnkumar/PDL-Finance-TA",
-            bugtracker => "https://github.com/vikasnkumar/PDL-Finance-TA/issues",
+            repository => "https://github.com/vikasnkumar/financeta",
+            bugtracker => "https://github.com/vikasnkumar/financeta/issues",
         },
         keywords => [qw/ finance technical-analysis technical analysis/],
         no_index => {

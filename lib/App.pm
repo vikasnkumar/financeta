@@ -2,9 +2,8 @@ package App::financeta;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 $VERSION = eval $VERSION;
 
 use PDL::Finance::TA;
@@ -58,7 +57,7 @@ as an application. It handles command line processing of C<financeta>.
 
 =head1 VERSION
 
-0.03
+0.04
 
 =head1 METHODS
 
