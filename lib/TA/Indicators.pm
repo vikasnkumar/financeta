@@ -748,7 +748,7 @@ has momentum => {
             my ($obj, $inpdl, @args) = @_;
             say "Executing ta_macdfix with parameters ", Dumper(\@args) if $obj->debug;
             my $signal = $args[0];
-            my ($omacd, $omacdsig, $omacdhist) = PDL::ta_macd($inpdl, @args);
+            my ($omacd, $omacdsig, $omacdhist) = PDL::ta_macdfix($inpdl, @args);
             return [
                 ["MACD(12/26/$signal)", $omacd],
                 ["MACD Signal(12/26/$signal)", $omacdsig],
@@ -1299,7 +1299,7 @@ has volume => {
     },
 };
 
-has pattern => {
+has candlestick => {
     cdl2crows => {
         name => 'Two Crows',
     },
@@ -1589,7 +1589,7 @@ has group_name => {
     momentum => 'Momentum Indicators',
     cycle => 'Cycle Indicators',
     volume => 'Volume Indicators',
-    pattern => 'Pattern Recognition',
+    candlestick => 'Candlestick Patterns',
     statistic => 'Statistic Functions',
     price => 'Price Transform',
 };
@@ -1600,7 +1600,7 @@ has group_key => {
     'Momentum Indicators' => 'momentum',
     'Cycle Indicators' => 'cycle',
     'Volume Indicators' => 'volume',
-    'Pattern Recognition' => 'pattern',
+    'Candlestick Patterns' => 'candlestick',
     'Statistic Functions' => 'statistic',
     'Price Transform' => 'price',
 };
@@ -1614,7 +1614,7 @@ sub get_groups {
         'Momentum Indicators',
         'Cycle Indicators',
         'Volume Indicators',
-        'Pattern Recognition',
+        'Candlestick Patterns',
         'Statistic Functions',
         'Price Transform',
     );
