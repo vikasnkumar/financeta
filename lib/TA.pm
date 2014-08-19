@@ -127,13 +127,18 @@ sub _menu_items {
         [
             '~Plot' => [
                 [
-                    'plot_ohlc',
+                    '*plot_ohlc',
                     '~OHLC', 'Ctrl+O', '^P',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'OHLC', $indicators);
+                        $win->menu->check('plot_ohlc');
+                        $win->menu->uncheck('plot_ohlcv');
+                        $win->menu->uncheck('plot_close');
+                        $win->menu->uncheck('plot_closev');
+
                     },
                     $self,
                 ],
@@ -145,6 +150,10 @@ sub _menu_items {
                         my $gui = $win->menu->data($item);
                         my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'OHLCV', $indicators);
+                        $win->menu->check('plot_ohlcv');
+                        $win->menu->uncheck('plot_ohlc');
+                        $win->menu->uncheck('plot_close');
+                        $win->menu->uncheck('plot_closev');
                     },
                     $self,
                 ],
@@ -156,6 +165,10 @@ sub _menu_items {
                         my $gui = $win->menu->data($item);
                         my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CLOSE', $indicators);
+                        $win->menu->check('plot_close');
+                        $win->menu->uncheck('plot_ohlc');
+                        $win->menu->uncheck('plot_ohlcv');
+                        $win->menu->uncheck('plot_closev');
                     },
                     $self,
                 ],
@@ -167,6 +180,10 @@ sub _menu_items {
                         my $gui = $win->menu->data($item);
                         my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CLOSEV', $indicators);
+                        $win->menu->check('plot_closev');
+                        $win->menu->uncheck('plot_ohlc');
+                        $win->menu->uncheck('plot_ohlcv');
+                        $win->menu->uncheck('plot_close');
                     },
                     $self,
                 ],
