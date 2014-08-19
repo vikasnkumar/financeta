@@ -478,18 +478,80 @@ has 'momentum' => {
 has 'cycle' => {
     ht_dcperiod => {
         name => 'Hilbert Transform - Dominant Cycle Period',
+        params => [
+            #no params,
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_dcperiod" if $obj->debug;
+            my $outpdl = PDL::ta_ht_dcperiod($inpdl);
+            return [
+                ['HT-DCperiod', $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ht_dcphase => {
         name => 'Hilbert Transform - Dominant Cycle Phase',
+        params => [
+            #no params,
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_dcphase" if $obj->debug;
+            my $outpdl = PDL::ta_ht_dcphase($inpdl);
+            return [
+                ['HT-DCperiod', $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ht_phasor => {
         name => 'Hilbert Transform - Phasor Components',
+        params => [
+            #no params,
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_dcphasor" if $obj->debug;
+            my ($oinphase, $oquad) = PDL::ta_ht_dcphasor($inpdl);
+            return [
+                ['HT-InPhase', $oinphase],
+                ['HT-Quadrature', $oquad],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ht_sine => {
         name => 'Hilbert Transform - Sine Wave',
+        params => [
+            #no params,
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_sine" if $obj->debug;
+            my ($osine, $oleadsine) = PDL::ta_ht_sine($inpdl);
+            return [
+                ['HT-Sine', $osine],
+                ['HT-LeadSine', $oleadsine],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ht_trendmode => {
         name => 'Hilbert Transform - Trend vs Cycle Mode',
+        params => [
+            #no params,
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_trendmode" if $obj->debug;
+            my $outpdl = PDL::ta_ht_trendmode($inpdl);
+            return [
+                ['HT-Trend vs Cycle', $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
 };
 
