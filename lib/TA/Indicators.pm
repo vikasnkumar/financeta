@@ -472,6 +472,7 @@ has 'volatility' => {
 };
 
 has 'momentum' => {
+
 };
 
 has 'cycle' => {
@@ -490,7 +491,70 @@ has 'statistic' => {
 };
 
 has 'price' => {
-
+    avgprice => {
+        name => 'Average Price',
+        params => [
+            # no params
+        ],
+        input => [qw/open high low close/],
+        code => sub {
+            my ($obj, $open, $high, $low, $close) = @_;
+            say "Executing ta_avgprice" if $obj->debug;
+            my $outpdl = PDL::ta_avgprice($open, $high, $low, $close);
+            return [
+                ["Avg. Price", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    medprice => {
+        name => 'Median Price',
+        params => [
+            # no params
+        ],
+        input => [qw/high low/],
+        code => sub {
+            my ($obj, $high, $low) = @_;
+            say "Executing ta_medprice" if $obj->debug;
+            my $outpdl = PDL::ta_medprice($high, $low);
+            return [
+                ["Median Price", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    typprice => {
+        name => 'Typical Price',
+        params => [
+            # no params
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close) = @_;
+            say "Executing ta_typprice" if $obj->debug;
+            my $outpdl = PDL::ta_typprice($high, $low, $close);
+            return [
+                ["Typical Price", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    wclprice => {
+        name => 'Weighted Close Price',
+        params => [
+            # no params
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close) = @_;
+            say "Executing ta_wclprice" if $obj->debug;
+            my $outpdl = PDL::ta_wclprice($high, $low, $close);
+            return [
+                ["Wt. Close Price", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
 };
 
 has group_name => {
