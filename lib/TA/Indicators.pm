@@ -59,6 +59,25 @@ has overlays => {
             return @plotinfo;
         }
     },
+    ### SKELETON
+    #key => {
+    #   name => 'Pretty Name',
+    #   params => [
+    #       ['key', 'pretty name', 'type', 'default value'],
+    #       #...add more if required...
+    #   ],
+    #   code => sub {
+    #       my ($pdl_finance_ta_obj, $input_pdl, @params) = @_;
+    #       #...add code here...
+    #       # output array-ref
+    #       return [ ['Pretty Name', $output_pdl_1],...];
+    #   },
+    #   gnuplot => sub {
+    #       my ($pdl_finance_ta_obj, $x_axis_pdl, $output_array_ref) = @_;
+    #       #...add plotting arguments here in an array
+    #       return @plot_args;
+    #   },
+    #}
 };
 
 sub get_groups {
