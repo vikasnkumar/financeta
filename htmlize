@@ -1,3 +1,25 @@
+#!/bin/bash
+FILE=$1
+test -z $FILE && { 
+    echo "ERROR: $0 <markdown file>"
+    exit 1
+}
+MKD=`which multimarkdown`
+test -z $MKD && {
+    MKD=`which markdown`
+}
+test -z $MKD && {
+    echo "ERROR: Please install 'markdown' or 'multimarkdown'"
+    exit 1
+}
+HTMLFILE=`echo $FILE | sed -e's:\..*:.html:g'`
+IS_OK=`echo $HTMLFILE | grep html | wc -l`
+test $IS_OK -eq 0 && {
+    echo "ERROR: $FILE is not an acceptable filename. Needs an extension."
+    exit 1
+}
+echo "Using $MKD on $FILE to create $HTMLFILE"
+cat > $HTMLFILE << HEADER
 <!DOCTYPE html>
 <html>
   <head>
@@ -30,11 +52,10 @@
     <div class="container">
       <section id="main_content">
 
-<h1 id="app::financeta">App::financeta</h1>
+HEADER
+$MKD $FILE >> $HTMLFILE
 
-<p><strong>App::financeta</strong> or <em>financeta</em> (pronounced: <em>phy-nan-see-ta</em>), is a graphical user interface (GUI) to
-help perform <a href="https://en.wikipedia.org/wiki/Technical_analysis">Technical Analysis</a>
-on stocks.</p>
+cat >> $HTMLFILE << FOOTER
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <code>App::financeta</code>. All copyrights belong to the authors.</p>
@@ -44,3 +65,4 @@ on stocks.</p>
     
   </body>
 </html>
+FOOTER
