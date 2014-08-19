@@ -25,16 +25,17 @@ sub _plot_gnuplot_general {
     my @colors = qw(dark-blue brown dark-green dark-red magenta dark-magenta);
     foreach (@$output) {
         my $p = $_->[1];
+        my %legend = (legend => $_->[0]) if length $_->[0];
         push @plotinfo, {
             with => 'lines',
-            legend => $_->[0],
+            %legend,
             linecolor => shift @colors,
         }, $xdata, $p;
     }
     return @plotinfo;
 }
 
-has ma_names => {
+has ma_name => {
     0 => 'SMA',
     1 => 'EMA',
     2 => 'WMA',
@@ -417,7 +418,7 @@ has overlaps => {
     #}
 };
 
-has 'volatility' => {
+has volatility => {
     atr => {
         name => 'Average True Range',
         params => [
@@ -472,11 +473,347 @@ has 'volatility' => {
     },
 };
 
-has 'momentum' => {
-
+has momentum => {
+    adx => {
+        name => 'Average Directional Movement Index',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_adx with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_adx($high, $low, $close, @args);
+            return [
+                ["ADX($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    adxr => {
+        name => 'Average Directional Movement Index Rating',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_adxr with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_adxr($high, $low, $close, @args);
+            return [
+                ["ADX RATING($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    apo => {
+        name => 'Absolute Price Oscillator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
+            [ 'InSlowPeriod', 'Slow MA Period Window (2 - 100000)', PDL::long, 26],
+            # this will show up in a combo list
+            [ 'InMAType', 'Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_apo with parameters ", Dumper(\@args) if $obj->debug;
+            my $fast = $args[0];
+            my $slow = $args[1];
+            my $type = $obj->ma_name->{$args[2]} || 'UNKNOWN';
+            my $outpdl = PDL::ta_apo($inpdl, @args);
+            return [
+                ["APO($fast,$slow)($type)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    aroon => {
+        name => 'Aroon',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low/],
+        code => sub {
+            my ($obj, $high, $low, @args) = @_;
+            say "Executing ta_aroon with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my ($adown, $aup) = PDL::ta_aroon($high, $low, @args);
+            return [
+                ["AROON($period) DOWN", $adown],
+                ["AROON($period) UP", $aup],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    aroonosc => {
+        name => 'Aroon Oscillator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low/],
+        code => sub {
+            my ($obj, $high, $low, @args) = @_;
+            say "Executing ta_aroonosc with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_aroonosc($high, $low, @args);
+            return [
+                ["AROON OSC($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    bop => {
+        name => 'Balance Of Power',
+        params => [
+            # no params
+        ],
+        input => [qw/open high low close/],
+        code => sub {
+            my ($obj, $open, $high, $low, $close) = @_;
+            say "Executing ta_bop" if $obj->debug;
+            my $outpdl = PDL::ta_bop($open, $high, $low, $close);
+            return [
+                ["Balance of Power", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    cci => {
+        name => 'Commodity Channel Index',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_cci with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_cci($high, $low, $close, @args);
+            return [
+                ["CCI($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    cmo => {
+        name => 'Chande Momentum Oscillator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_cmo with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_cmo($inpdl, @args);
+            return [
+                ["CMO($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    dx => {
+        name => 'Directional Movement Index',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_dx with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_dx($high, $low, $close, @args);
+            return [
+                ["DX($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    macd => {
+        name => 'Moving Average Convergence/Divergence',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
+            [ 'InSlowPeriod', 'Slow MA Period Window (2 - 100000)', PDL::long, 26],
+            [ 'InSignalPeriod', 'Signal Line Smoothing (1 - 100000)', PDL::long, 9],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_macd with parameters ", Dumper(\@args) if $obj->debug;
+            my $fast = $args[0];
+            my $slow = $args[1];
+            my $signal = $args[2];
+            my ($omacd, $omacdsig, $omacdhist) = PDL::ta_macd($inpdl, @args);
+            return [
+                ["MACD($fast/$slow/$signal)", $omacd],
+                ["MACD Signal($fast/$slow/$signal)", $omacdsig],
+                ["MACD Histogram($fast/$slow/$signal)", $omacdhist],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    macdext => {
+        name => 'MACD with differnt Mov. Avg',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
+            # this will show up in a combo list
+            [ 'InFastMAType', 'Fast Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+            [ 'InSlowPeriod', 'Slow MA Period Window (2 - 100000)', PDL::long, 26],
+            # this will show up in a combo list
+            [ 'InSlowMAType', 'Slow Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+            [ 'InSignalPeriod', 'Signal Line Smoothing (1 - 100000)', PDL::long, 9],
+            # this will show up in a combo list
+            [ 'InSignalMAType', 'Signal Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_macdext with parameters ", Dumper(\@args) if $obj->debug;
+            my $fast = $args[0];
+            my $slow = $args[1];
+            my $signal = $args[2];
+            my ($omacd, $omacdsig, $omacdhist) = PDL::ta_macdext($inpdl, @args);
+            return [
+                ["MACDEXT($fast/$slow/$signal)", $omacd],
+                ["MACDEXT Signal($fast/$slow/$signal)", $omacdsig],
+                ["MACDEXT Histogram($fast/$slow/$signal)", $omacdhist],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    macdfix => {
+        name => 'MACD Fixed to 12/26',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InSignalPeriod', 'Signal Line Smoothing (1 - 100000)', PDL::long, 9],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_macdfix with parameters ", Dumper(\@args) if $obj->debug;
+            my $signal = $args[0];
+            my ($omacd, $omacdsig, $omacdhist) = PDL::ta_macd($inpdl, @args);
+            return [
+                ["MACD(12/26/$signal)", $omacd],
+                ["MACD Signal(12/26/$signal)", $omacdsig],
+                ["MACD Histogram(12/26/$signal)", $omacdhist],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    mfi => {
+        name => 'Money Flow Index',
+    },
+    minus_di => {
+        name => 'Minus Directional Indicator',
+    },
+    minus_dm => {
+        name => 'Minus Directional Movement',
+    },
+    mom => {
+        name => 'Momentum',
+    },
+    plus_di => {
+        name => 'Plus Directional Indicator',
+    },
+    plus_dm => {
+        name => 'Plus Directional Indicator',
+    },
+    ppo => {
+        name => 'Percentage Price Oscillator',
+    },
+    roc => {
+        name => 'Rate of Change',
+    },
+    rocp => {
+        name => 'Rate of Change Precentage',
+    },
+    rocr => {
+        name => 'Rate of Change Ratio',
+    },
+    rocr100 => {
+        name => 'Rate of Change Ratio - scale 100',
+    },
+    rsi => {
+        name => 'Relative Strength Index',
+    },
+    stoch => {
+        name => 'Stochastic',
+    },
+    stochf => {
+        name => 'Stochastic Fast',
+    },
+    stochrsi => {
+        name => 'Stochastic Relative Strength Index',
+    },
+    trix => {
+        name => '1-day ROC of Triple Smooth EMA',
+    },
+    ultosc => {
+        name => 'Ultimate Oscillator',
+    },
+    willr => {
+        name => q/Williams' %R/,
+    },
 };
 
-has 'cycle' => {
+has cycle => {
     ht_dcperiod => {
         name => 'Hilbert Transform - Dominant Cycle Period',
         params => [
@@ -556,7 +893,7 @@ has 'cycle' => {
     },
 };
 
-has 'volume' => {
+has volume => {
     ad => {
         name => 'Chaikin A/D line',
         params => [
@@ -611,11 +948,61 @@ has 'volume' => {
     },
 };
 
-has 'pattern' => {
-
+has pattern => {
+    cdl2crows => {
+        name => 'Two Crows',
+    },
+    cdl3blackcrows => {
+        name => 'Three Black Crows',
+    },
+    cdl3inside => {
+        name => 'Three Inside Up/Down',
+    },
+    cdl3linestrike => {
+        name => 'Three Line Strike',
+    },
+    cdl3outside => {
+        name => 'Three Outside Up/Down',
+    },
+    cdl3starsinsouth => {
+        name => 'Three Stars In The South',
+    },
+    cdl3whitesoldiers => {
+        name => 'Three ADvancing White Soldiers',
+    },
+    cdlabandonedbaby => {
+        name => 'Abandoned Baby',
+    },
+    cdladvanceblock => {
+        name => 'Advance Block',
+    },
+    cdlbelthold => {
+        name => 'Belt Hold',
+    },
+    cdlbreakaway => {
+        name => 'Break Away',
+    },
+    cdlclosingmarubozu => {
+        name => 'Closing Marubozu',
+    },
+    cdlconcealbabyswall => {
+        name => 'Concealing Baby Swallow',
+    },
+    cdlcounterattack => {
+        name => 'Counter Attack',
+    },
+    cdldarkcloudcover => {
+        name => 'Dark Cloud Cover',
+    },
+    cdldoji => {
+        name => 'Doji',
+    },
+    cdldojistar => {
+        name => 'Doji Star',
+    },
 };
 
-has 'statistic' => {
+has statistic => {
     beta => {
         name => 'Beta',
         params => [
@@ -778,7 +1165,7 @@ has 'statistic' => {
     },
 };
 
-has 'price' => {
+has price => {
     avgprice => {
         name => 'Average Price',
         params => [

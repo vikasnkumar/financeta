@@ -704,7 +704,7 @@ sub indicator_wizard {
         multiColumn => 0,
         dragable => 0,
         focusedItem => -1,
-        font => { height => 16 },
+        font => { height => 14 },
         items => [ '', @groups],
         origin => [180, 440],
         onChange => sub {
@@ -745,7 +745,7 @@ sub indicator_wizard {
         height => 30,
         width => 360,
         hScroll => 0,
-        font => { height => 16 },
+        font => { height => 14 },
         multiSelect => 0,
         multiColumn => 0,
         dragable => 0,
