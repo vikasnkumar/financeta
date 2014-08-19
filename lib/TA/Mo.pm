@@ -1,4 +1,5 @@
 package PDL::Finance::TA::Mo;
+our $VERSION = '0.04'; $VERSION = eval $VERSION;
 #use Mo qw/build builder default import/;
 #   The following line of code was produced from the previous line by
 #   Mo::Inline version 0.38
