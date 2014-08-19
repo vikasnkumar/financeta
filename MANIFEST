@@ -13,4 +13,5 @@ MANIFEST			This list of files
 META.json
 META.yml
 README
+share/changelogger.sh
 t/00_use.t
