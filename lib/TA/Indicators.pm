@@ -476,11 +476,76 @@ has 'momentum' => {
 };
 
 has 'cycle' => {
-
+    ht_dcperiod => {
+        name => 'Hilbert Transform - Dominant Cycle Period',
+    },
+    ht_dcphase => {
+        name => 'Hilbert Transform - Dominant Cycle Phase',
+    },
+    ht_phasor => {
+        name => 'Hilbert Transform - Phasor Components',
+    },
+    ht_sine => {
+        name => 'Hilbert Transform - Sine Wave',
+    },
+    ht_trendmode => {
+        name => 'Hilbert Transform - Trend vs Cycle Mode',
+    },
 };
 
 has 'volume' => {
-
+    ad => {
+        name => 'Chaikin A/D line',
+        params => [
+            # no params
+        ],
+        input => [qw/high low close volume/],
+        code => sub {
+            my ($obj, $high, $low, $close, $volume) = @_;
+            say "Executing ta_ad" if $obj->debug;
+            my $outpdl = PDL::ta_ad($high, $low, $close, $volume);
+            return [
+                ["Chaikin A/D", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    adosc => {
+        name => 'Chaikin A/D Oscillator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 3],
+            [ 'InSlowPeriod', 'Slow MA Period Window (2 - 100000)', PDL::long, 10],
+        ],
+        input => [qw/high low close volume/],
+        code => sub {
+            my ($obj, $high, $low, $close, $volume, @args) = @_;
+            say "Executing ta_adosc with parameters ", Dumper(\@args) if $obj->debug;
+            my $fast = $args[0];
+            my $slow = $args[1];
+            my $outpdl = PDL::ta_adosc($high, $low, $close, $volume, @args);
+            return [
+                ["Chaikin A/D($fast,$slow)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    obv => {
+        name => 'On Balance Volume',
+        params => [
+            # no params
+        ],
+        input => [qw/close volume/],
+        code => sub {
+            my ($obj, $close, $volume) = @_;
+            say "Executing ta_obv" if $obj->debug;
+            my $outpdl = PDL::ta_obv($close, $volume);
+            return [
+                ["OBV", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
 };
 
 has 'pattern' => {
@@ -645,7 +710,7 @@ sub _find_func_key($$) {
     return $fn_key;
 }
 
-sub execute_ohlc($$) {
+sub execute_ohlcv($$) {
     my ($self, $data, $iref) = @_;
     return unless ref $data eq 'PDL';
     my $fn_key = $self->_find_func_key($iref);
@@ -677,6 +742,7 @@ sub execute_ohlc($$) {
         push @input_pdls, $data(,(2)) if /high/i;
         push @input_pdls, $data(,(3)) if /low/i;
         push @input_pdls, $data(,(4)) if /close/i;
+        push @input_pdls, $data(,(5)) if /volume/i;
     }
     return &$coderef($self, @input_pdls, @args) if ref $coderef eq 'CODE';
 }

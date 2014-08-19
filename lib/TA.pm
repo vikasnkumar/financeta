@@ -493,7 +493,7 @@ sub add_indicator($$$) {
     if ($self->indicator_wizard($win)) {
         my $iref = $self->current->{indicator};
         say Dumper($iref) if $self->debug;
-        my $output = $self->indicator->execute_ohlc($data, $iref);
+        my $output = $self->indicator->execute_ohlcv($data, $iref);
         unless (defined $output) {
             message_box('Indicator Error',
                 "Unable to run the indicator on data.",
