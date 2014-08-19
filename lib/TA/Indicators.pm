@@ -759,57 +759,408 @@ has momentum => {
     },
     mfi => {
         name => 'Money Flow Index',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close volume/],
+        code => sub {
+            my ($obj, $high, $low, $close, $volume, @args) = @_;
+            say "Executing ta_mfi with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_mfi($high, $low, $close, $volume, @args);
+            return [
+                ["MFI($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     minus_di => {
         name => 'Minus Directional Indicator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_minus_di with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_minus_di($high, $low, $close, @args);
+            return [
+                ["MINUS-DI($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     minus_dm => {
         name => 'Minus Directional Movement',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low/],
+        code => sub {
+            my ($obj, $high, $low, @args) = @_;
+            say "Executing ta_minus_dm with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_minus_dm($high, $low, @args);
+            return [
+                ["MINUS-DM($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     mom => {
         name => 'Momentum',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_mom with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_mom($inpdl, @args);
+            return [
+                ["MOM($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     plus_di => {
         name => 'Plus Directional Indicator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_plus_di with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_plus_di($high, $low, $close, @args);
+            return [
+                ["PLUS-DI($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     plus_dm => {
         name => 'Plus Directional Indicator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low/],
+        code => sub {
+            my ($obj, $high, $low, @args) = @_;
+            say "Executing ta_plus_dm with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_plus_dm($high, $low, @args);
+            return [
+                ["PLUS-DM($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ppo => {
         name => 'Percentage Price Oscillator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
+            [ 'InSlowPeriod', 'Slow MA Period Window (2 - 100000)', PDL::long, 26],
+            # this will show up in a combo list
+            [ 'InMAType', 'Fast Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_ppo with parameters ", Dumper(\@args) if $obj->debug;
+            my $fast = $args[0];
+            my $slow = $args[1];
+            my $type = $obj->ma_name->{$args[2]} || 'UNKNOWN';
+            my $outpdl = PDL::ta_ppo($inpdl, @args);
+            return [
+                ["PPO($fast/$slow)($type)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     roc => {
         name => 'Rate of Change',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_roc with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_roc($inpdl, @args);
+            return [
+                ["ROC($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     rocp => {
         name => 'Rate of Change Precentage',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_rocp with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_rocp($inpdl, @args);
+            return [
+                ["ROCP($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     rocr => {
         name => 'Rate of Change Ratio',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_rocr with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_rocr($inpdl, @args);
+            return [
+                ["ROCR($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     rocr100 => {
         name => 'Rate of Change Ratio - scale 100',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_rocr100 with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_rocr100($inpdl, @args);
+            return [
+                ["ROCR*100($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     rsi => {
         name => 'Relative Strength Index',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window(2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_rsi with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_rsi($inpdl, @args);
+            return [
+                ["RSI($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     stoch => {
         name => 'Stochastic',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastK_Period', 'Fast-K Line Period Window (1 - 100000)', PDL::long, 5],
+            [ 'InSlowK_Period', 'Slow-K Line Period Window (1 - 100000)', PDL::long, 3],
+            # this will show up in a combo list
+            [ 'InSlowK_MAType', 'Slow-K Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+            [ 'InSlowD_Period', 'Slow-D Line Period Window (1 - 100000)', PDL::long, 3],
+            # this will show up in a combo list
+            [ 'InSlowD_MAType', 'Slow-D Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_stoch with parameters ", Dumper(\@args) if $obj->debug;
+            my $slowK = $args[1];
+            my $slowD = $args[3];
+            my ($oslowK, $oslowD) = PDL::ta_stoch($high, $low, $close, @args);
+            return [
+                ["Slow-K($slowK)", $oslowK],
+                ["Slow-D($slowD)", $oslowD],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     stochf => {
         name => 'Stochastic Fast',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InFastK_Period', 'Fast-K Line Period Window (1 - 100000)', PDL::long, 5],
+            [ 'InFastD_Period', 'Fast-D Line Period Window (1 - 100000)', PDL::long, 3],
+            # this will show up in a combo list
+            [ 'InFastD_MAType', 'Fast-D Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_stochf with parameters ", Dumper(\@args) if $obj->debug;
+            my $fastK = $args[0];
+            my $fastD = $args[1];
+            my ($ofastK, $ofastD) = PDL::ta_stochf($high, $low, $close, @args);
+            return [
+                ["Fast-K($fastK)", $ofastK],
+                ["Fast-D($fastD)", $ofastD],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     stochrsi => {
         name => 'Stochastic Relative Strength Index',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+            [ 'InFastK_Period', 'Fast-K Line Period Window (1 - 100000)', PDL::long, 5],
+            [ 'InFastD_Period', 'Fast-D Line Period Window (1 - 100000)', PDL::long, 3],
+            # this will show up in a combo list
+            [ 'InFastD_MAType', 'Fast-D Moving Average Type', 'ARRAY',
+                [
+                    'Simple', #SMA
+                    'Exponential', #EMA
+                    'Weighted', #WMA
+                    'Double Exponential', #DEMA
+                    'Triple Exponential', #TEMA
+                    'Triangular', #TRIMA
+                    'Kaufman Adaptive', #KAMA
+                    'MESA Adaptive', #MAMA
+                    'Triple Exponential (T3)', #T3
+                ],
+            ],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_stochrsi with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $fastK = $args[1];
+            my $fastD = $args[2];
+            my ($ofastK, $ofastD) = PDL::ta_stochrsi($high, $low, $close, @args);
+            return [
+                ["Fast-K($fastK, $period)", $ofastK],
+                ["Fast-D($fastD, $period)", $ofastD],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     trix => {
         name => '1-day ROC of Triple Smooth EMA',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 30],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_trix with parameters", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_trix($inpdl, @args);
+            return [
+                ["TRIX($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     ultosc => {
         name => 'Ultimate Oscillator',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod1', 'Period Window (1 - 100000)', PDL::long, 7],
+            [ 'InTimePeriod2', 'Period Window (1 - 100000)', PDL::long, 14],
+            [ 'InTimePeriod3', 'Period Window (1 - 100000)', PDL::long, 28],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_ultosc with parameters ", Dumper(\@args) if $obj->debug;
+            my $p1 = $args[0];
+            my $p2 = $args[1];
+            my $p3 = $args[2];
+            my $outpdl = PDL::ta_ultosc($high, $low, $close, @args);
+            return [
+                ["ULT.OSC.($p1/$p2/$p3)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
     willr => {
         name => q/Williams' %R/,
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => [qw/high low close/],
+        code => sub {
+            my ($obj, $high, $low, $close, @args) = @_;
+            say "Executing ta_willr with parameters ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_willr($high, $low, $close, @args);
+            return [
+                ["WILLR($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
     },
 };
 
@@ -1012,7 +1363,7 @@ has statistic => {
         input => [qw/close1 close2/],
         code => sub {
             my ($obj, $inpdl1, $inpdl2, @args) = @_;
-            say "Executing ta_beta with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_beta with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_beta($inpdl1, $inpdl2, @args);
             return [
@@ -1031,7 +1382,7 @@ has statistic => {
         input => [qw/close1 close2/],
         code => sub {
             my ($obj, $inpdl1, $inpdl2, @args) = @_;
-            say "Executing ta_correl with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_correl with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_correl($inpdl1, $inpdl2, @args);
             return [
@@ -1048,7 +1399,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_linearreg with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_linearreg with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg($inpdl, @args);
             return [
@@ -1065,7 +1416,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_linearreg_angle with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_linearreg_angle with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_angle($inpdl, @args);
             return [
@@ -1082,7 +1433,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_linearreg_intercept with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_linearreg_intercept with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_intercept($inpdl, @args);
             return [
@@ -1099,7 +1450,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_linearreg_slope with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_linearreg_slope with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_slope($inpdl, @args);
             return [
@@ -1117,7 +1468,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_stddev with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_stddev with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $num = $args[1];
             my $outpdl = PDL::ta_stddev($inpdl, @args);
@@ -1135,7 +1486,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_tsf with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_tsf with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $outpdl = PDL::ta_tsf($inpdl, @args);
             return [
@@ -1153,7 +1504,7 @@ has statistic => {
         ],
         code => sub {
             my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_var with arguments", Dumper(\@args) if $obj->debug;
+            say "Executing ta_var with parameters", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $num = $args[1];
             my $outpdl = PDL::ta_var($inpdl, @args);
