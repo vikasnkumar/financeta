@@ -8,6 +8,7 @@ our $VERSION = '0.04';
 $VERSION = eval $VERSION;
 
 use PDL::Finance::TA::Mo;
+use Carp;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Finance::Talib;
@@ -615,6 +616,166 @@ has 'pattern' => {
 };
 
 has 'statistic' => {
+    beta => {
+        name => 'Beta',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 5],
+        ],
+        input => [qw/close1 close2/],
+        code => sub {
+            my ($obj, $inpdl1, $inpdl2, @args) = @_;
+            say "Executing ta_beta with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_beta($inpdl1, $inpdl2, @args);
+            return [
+                ["BETA($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    correl => {
+        name => q/Pearson's Correlation Coefficient/,
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 5],
+        ],
+        #TODO: support this type of indicator
+        input => [qw/close1 close2/],
+        code => sub {
+            my ($obj, $inpdl1, $inpdl2, @args) = @_;
+            say "Executing ta_correl with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_correl($inpdl1, $inpdl2, @args);
+            return [
+                ["CORRELATION($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    linearreg => {
+        name => 'Linear Regression',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_linearreg with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_linearreg($inpdl, @args);
+            return [
+                ["REGRESSION($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    linearreg_angle => {
+        name => 'Linear Regression Angle',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_linearreg_angle with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_linearreg_angle($inpdl, @args);
+            return [
+                ["REGRESSION ANGLE($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    linearreg_intercept => {
+        name => 'Linear Regression Intercept',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_linearreg_intercept with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_linearreg_intercept($inpdl, @args);
+            return [
+                ["REGRESSION INTERCEPT($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    linearreg_slope => {
+        name => 'Linear Regression Slope',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_linearreg_slope with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_linearreg_slope($inpdl, @args);
+            return [
+                ["REGRESSION SLOPE($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    stddev => {
+        name => 'Standard Deviation',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 5],
+            [ 'InNbDev', 'No. of Deviations', PDL::double, 1.0],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_stddev with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $num = $args[1];
+            my $outpdl = PDL::ta_stddev($inpdl, @args);
+            return [
+                ["$num x STD.DEV.($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    tsf => {
+        name => 'Timeseries Forecast',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_tsf with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_tsf($inpdl, @args);
+            return [
+                ["FORECAST($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    var => {
+        name => 'Variance',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 5],
+            [ 'InNbDev', 'No. of Deviations', PDL::double, 1.0],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_var with arguments", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $num = $args[1];
+            my $outpdl = PDL::ta_var($inpdl, @args);
+            return [
+                ["$num x VARIANCE($period)", $outpdl],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
 };
 
 has 'price' => {
@@ -799,12 +960,16 @@ sub execute_ohlcv($$) {
     $input_cols = ['close'] unless scalar @$input_cols;
     my @input_pdls = ();
     foreach (@$input_cols) {
-        push @input_pdls, $data(,(0)) if /time/i;
-        push @input_pdls, $data(,(1)) if /open/i;
-        push @input_pdls, $data(,(2)) if /high/i;
-        push @input_pdls, $data(,(3)) if /low/i;
-        push @input_pdls, $data(,(4)) if /close/i;
-        push @input_pdls, $data(,(5)) if /volume/i;
+        push @input_pdls, $data(,(0)) if $_ eq 'time';
+        push @input_pdls, $data(,(1)) if $_ eq 'open';
+        push @input_pdls, $data(,(2)) if $_ eq 'high';
+        push @input_pdls, $data(,(3)) if $_ eq 'low';
+        push @input_pdls, $data(,(4)) if $_ eq 'close';
+        push @input_pdls, $data(,(5)) if $_ eq 'volume';
+    }
+    unless (scalar @input_pdls) {
+        carp "These input columns are not supported yet: ", Dumper($input_cols);
+        return;
     }
     return &$coderef($self, @input_pdls, @args) if ref $coderef eq 'CODE';
 }
