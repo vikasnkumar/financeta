@@ -56,11 +56,15 @@ HEADER
 $MKD $FILE >> $HTMLFILE
 
 cat >> $HTMLFILE << FOOTER
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <code>App::financeta</code>. All copyrights belong to the authors.</p>
       </section>
     </div>
+    <hr>
+    <footer><div class="container">
+    <h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
+    </div></footer>
 
     
   </body>
