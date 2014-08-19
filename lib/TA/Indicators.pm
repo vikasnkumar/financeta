@@ -46,7 +46,7 @@ has ma_names => {
 };
 
 #TODO: verify parameters that are entered by the user
-has overlays => {
+has overlaps => {
     bbands => {
         name => 'Bollinger Bands',
         params => [
@@ -416,18 +416,72 @@ has overlays => {
     #}
 };
 
+has 'volatility' => {
+};
+
+has 'momentum' => {
+};
+
+has 'cycle' => {
+
+};
+
+has 'volume' => {
+
+};
+
+has 'pattern' => {
+
+};
+
+has 'statistic' => {
+};
+
+has 'price' => {
+
+};
+
+has group_name => {
+    overlaps => 'Overlap Studies',
+    volatility => 'Volatility Indicators',
+    momentum => 'Momentum Indicators',
+    cycle => 'Cycle Indicators',
+    volume => 'Volume Indicators',
+    pattern => 'Pattern Recognition',
+    statistic => 'Statistic Functions',
+    price => 'Price Transform',
+};
+
+has group_key => {
+    'Overlap Studies' => 'overlaps',
+    'Volatility Indicators' => 'volatility',
+    'Momentum Indicators' => 'momentum',
+    'Cycle Indicators' => 'cycle',
+    'Volume Indicators' => 'volume',
+    'Pattern Recognition' => 'pattern',
+    'Statistic Functions' => 'statistic',
+    'Price Transform' => 'price',
+};
+
 sub get_groups {
     my $self = shift;
-    my @groups = qw/
-        overlays
-    /;
-    @groups = map { ucfirst $_ } @groups;
+    ## NEEDS TO BE IN THIS ORDER
+    my @groups = (
+        'Overlap Studies',
+        'Volatility Indicators',
+        'Momentum Indicators',
+        'Cycle Indicators',
+        'Volume Indicators',
+        'Pattern Recognition',
+        'Statistic Functions',
+        'Price Transform',
+    );
     return wantarray ? @groups : \@groups;
 }
 
 sub get_funcs($) {
     my ($self, $grp) = @_;
-    $grp = lc $grp if defined $grp;
+    $grp = $self->group_key->{$grp} if defined $grp;
     if (defined $grp and $self->has($grp)) {
         my $r = $self->$grp;
         my @funcs = ();
@@ -441,7 +495,7 @@ sub get_funcs($) {
 
 sub get_params($$) {
     my ($self, $fn_name, $grp) = @_;
-    $grp = lc $grp if defined $grp;
+    $grp = $self->group_key->{$grp} if defined $grp;
     my $fn;
     # find the function parameters
     if (defined $grp and $self->has($grp)) {
@@ -460,10 +514,9 @@ sub _find_func_key($$) {
     my ($self, $iref) = @_;
     return unless ref $iref eq 'HASH';
     my $params = $iref->{params};
-    my $grp = $iref->{group};
     my $fn_name = $iref->{func};
     my $fn_key;
-    $grp = lc $grp if defined $grp;
+    my $grp = $self->group_key->{$iref->{group}} if defined $iref->{group};
     if (defined $grp and $self->has($grp)) {
         my $r = $self->$grp;
         foreach my $k (sort (keys %$r)) {
@@ -482,7 +535,8 @@ sub execute_ohlc($$) {
     my $fn_key = $self->_find_func_key($iref);
     return unless defined $fn_key;
     # ok now we found the function so let's invoke it
-    my $grp = lc $iref->{group};
+    my $grp = $self->group_key->{$iref->{group}} if defined $iref->{group};
+    return unless defined $grp;
     my $params = $iref->{params};
     my $func = $self->$grp->{$fn_key}->{func};
     my $coderef = $self->$grp->{$fn_key}->{code};
@@ -515,7 +569,8 @@ sub get_plot_args($$$) {
     my ($self, $xdata, $output, $iref) = @_;
     my $fn_key = $self->_find_func_key($iref);
     return unless defined $fn_key;
-    my $grp = lc $iref->{group};
+    my $grp = $self->group_key->{$iref->{group}} if defined $iref->{group};
+    return unless defined $grp;
     my $plotref = $self->$grp->{$fn_key}->{lc($self->plot_engine)};
     return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
 }

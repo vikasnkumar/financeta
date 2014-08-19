@@ -705,7 +705,7 @@ sub indicator_wizard {
         dragable => 0,
         focusedItem => -1,
         font => { height => 16 },
-        items => ['', @groups],
+        items => [ '', @groups],
         origin => [180, 440],
         onChange => sub {
             my $cbox = shift;
@@ -730,6 +730,7 @@ sub indicator_wizard {
             }
         },
     );
+    $w->cbox_groups->text('');
     $w->insert(Label => name => 'label_funcs',
         text => 'Select Function',
         font => { style => fs::Bold, height => 16 },
@@ -749,6 +750,7 @@ sub indicator_wizard {
         multiColumn => 0,
         dragable => 0,
         focusedItem => -1,
+        text => '',
         items => [],
         origin => [180, 400],
         onChange => sub {
