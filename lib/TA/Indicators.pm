@@ -825,8 +825,8 @@ has momentum => {
             my ($obj, $inpdl, @args) = @_;
             say "Executing ta_macdext with parameters ", Dumper(\@args) if $obj->debug;
             my $fast = $args[0];
-            my $slow = $args[1];
-            my $signal = $args[2];
+            my $slow = $args[2];
+            my $signal = $args[4];
             my ($omacd, $omacdsig, $omacdhist) = PDL::ta_macdext($inpdl, @args);
             return [
                 ["MACDEXT($fast/$slow/$signal)", $omacd],
