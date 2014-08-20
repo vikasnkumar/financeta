@@ -9,7 +9,7 @@ GetOptions(\%options,
     "debug", "version", "help") or
     croak "Error in commandline arguments";
 #WTF: when use is used the @ARGV is swallowed
-eval { require App::financeta; };
+eval { require App::financeta; } or croak "Unable to load App::financeta";
 App::financeta->print_warning;
 App::financeta->run(%options);
 
