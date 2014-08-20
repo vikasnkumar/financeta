@@ -1314,7 +1314,7 @@ sub _execute_candlestick {
     } else {
         say "Executing $fn" if $obj->debug;
     }
-    my $outpdl = $fn->($o, $h, $l, $c, @args);
+    my $outpdl = &$fn($o, $h, $l, $c, @args);
     return [
         [$tag, $outpdl],
     ];
