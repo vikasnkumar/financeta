@@ -1089,6 +1089,7 @@ sub plot_data_gnuplot {
     $symbol = $self->current->{symbol} unless defined $symbol;
     $type = $self->current->{plot_type} unless defined $type;
     my @indicator = ();
+    $self->indicator->color_idx(0); # reset color index
     if (defined $indicators and scalar @$indicators) {
         # ok now create a list of indicators to plot
         foreach (@$indicators) {

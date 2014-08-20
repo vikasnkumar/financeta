@@ -17,19 +17,110 @@ use Data::Dumper;
 $PDL::doubleformat = "%0.6lf";
 has debug => 0;
 has plot_engine => 'gnuplot';
+has color_idx => 0;
+has colors => [qw(
+    dark-magenta
+    dark-blue
+    brown
+    dark-green
+    dark-grey
+    dark-cyan
+    dark-orange
+    dark-yellow
+    dark-red
+    pink
+    violet
+    green
+    blue
+    magenta
+    red
+    yellow
+    black
+    purple
+    dark-spring-green
+    royalblue
+    web-green
+    web-blue
+    goldenrod
+    steelblue
+    dark-chartreuse
+    orchid
+    aquamarine
+    turquoise
+    grey
+    light-red
+    light-green
+    light-blue
+    light-magenta
+    light-cyan
+    light-goldenrod
+    light-pink
+    light-turquoise
+    gold
+    spring-green
+    forest-green
+    sea-green
+    midnight-blue
+    navy
+    medium-blue
+    skyblue
+    cyan
+    dark-turquoise
+    dark-pink
+    coral
+    light-coral
+    orange-red
+    salmon
+    dark-salmon
+    khaki
+    dark-khaki
+    dark-goldenrod
+    beige
+    olive
+    orange
+    dark-violet
+    plum
+    dark-plum
+    dark-olivegreen
+    sandybrown
+    light-salmon
+    lemonchiffon
+    bisque
+    honeydew
+    slategrey
+    seagreen
+    chartreuse
+    greenyellow
+    gray
+    light-gray
+    light-grey
+    dark-gray
+    slategray
+    white
+    antiquewhite
+    )];
+
+sub next_color {
+    my $self = shift;
+    my $idx = $self->color_idx; # read
+    my $colors = $self->colors;
+    $idx = 0 if $idx >= scalar @$colors; # reset;
+    say "Using Color Index: $idx" if $self->debug;
+    $self->color_idx($idx + 1); # update
+    return $colors->[$idx];
+}
 
 sub _plot_gnuplot_general {
     my ($self, $xdata, $output) = @_;
     # output is the same as the return value of the code-ref above
     my @plotinfo = ();
-    my @colors = qw(dark-blue brown dark-green dark-red magenta dark-magenta);
     foreach (@$output) {
         my $p = $_->[1];
         my %legend = (legend => $_->[0]) if length $_->[0];
         push @plotinfo, {
             with => 'lines',
             %legend,
-            linecolor => shift @colors,
+            linecolor => $self->next_color,
         }, $xdata, $p;
     }
     return @plotinfo;
