@@ -1103,12 +1103,16 @@ sub plot_data_gnuplot {
         when ('OHLC') {
             $pwin->reset();
             $pwin->plot({
-                    title => "$symbol Open-High-Low-Close",
-                    xlabel => 'Date',
-                    ylabel => 'Price',
+                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                    title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
                     xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, },
-                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                    ytics => {textcolor => 'orange'},
+                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'financebars',
@@ -1122,18 +1126,23 @@ sub plot_data_gnuplot {
         when ('OHLCV') {
             # use multiplot
             $pwin->reset();
-            $pwin->multiplot(title => "$symbol Price & Volume");
+            $pwin->multiplot();
             $pwin->plot({
-                    xlabel => '',
-                    ylabel => 'Price',
+                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
+                    title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
                     xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                    ytics => {textcolor => 'orange'},
                     bmargin => 0,
                     lmargin => 9,
                     rmargin => 2,
                     size => ["1,0.7"], #bug in P:G:G
                     origin => [0, 0.3],
-                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'financebars',
@@ -1144,8 +1153,15 @@ sub plot_data_gnuplot {
                 @indicator,
             );
             $pwin->plot({
-                    ylabel => 'Volume (in 1M)',
-                    xlabel => 'Date',
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
                     tmargin => 0,
                     lmargin => 9,
                     rmargin => 2,
@@ -1153,7 +1169,11 @@ sub plot_data_gnuplot {
                     origin => [0, 0],
                     label => [1, "", at => "graph 0.90,0.03"],
                 },
-                {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
+                {
+                    with => 'impulses',
+                    legend => 'Volume',
+                    linecolor => 'blue',
+                },
                 $data(,(0)), $data(,(5)) / 1e6,
             );
             $pwin->end_multi;
@@ -1162,12 +1182,16 @@ sub plot_data_gnuplot {
             # use candlesticks feature of Gnuplot
             $pwin->reset();
             $pwin->plot({
-                    title => "$symbol Open-High-Low-Close",
-                    xlabel => 'Date',
-                    ylabel => 'Price',
+                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                    title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
+                    ytics => {textcolor => 'orange'},
                     xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, },
-                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'candlesticks',
@@ -1181,18 +1205,24 @@ sub plot_data_gnuplot {
         when ('CANDLEV') {
             # use multiplot
             $pwin->reset();
-            $pwin->multiplot(title => "$symbol Price & Volume");
+            $pwin->multiplot();
             $pwin->plot({
-                    xlabel => '',
-                    ylabel => 'Price',
+                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                    title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
                     xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    ytics => {textcolor => 'orange'},
+                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                    tmargin => '',
                     bmargin => 0,
                     lmargin => 9,
                     rmargin => 2,
                     size => ["1,0.7"], #bug in P:G:G
                     origin => [0, 0.3],
-                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'candlesticks',
@@ -1203,8 +1233,15 @@ sub plot_data_gnuplot {
                 @indicator,
             );
             $pwin->plot({
-                    ylabel => 'Volume (in 1M)',
-                    xlabel => 'Date',
+                    object => '1',
+                    title => '',
+                    ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    xtics => '',
+                    xlabel => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
                     tmargin => 0,
                     lmargin => 9,
                     rmargin => 2,
@@ -1212,7 +1249,11 @@ sub plot_data_gnuplot {
                     origin => [0, 0],
                     label => [1, "", at => "graph 0.90,0.03"],
                 },
-                {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
+                {
+                    with => 'impulses',
+                    legend => 'Volume',
+                    linecolor => 'blue',
+                },
                 $data(,(0)), $data(,(5)) / 1e6,
             );
             $pwin->end_multi;
@@ -1220,30 +1261,42 @@ sub plot_data_gnuplot {
         when ('CLOSEV') {
             # use multiplot
             $pwin->reset();
-            $pwin->multiplot(title => "$symbol Close Price & Volume");
+            $pwin->multiplot();
             $pwin->plot({
-                    xlabel => '',
-                    ylabel => 'Close Price',
+                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                    title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => ['Close Price', textcolor => 'rgb "yellow"'],
+                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
                     xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                    ytics => {textcolor => 'orange'},
                     bmargin => 0,
                     lmargin => 9,
                     rmargin => 2,
                     size => ["1,0.7"], #bug in P:G:G
                     origin => [0, 0.3],
-                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'lines',
-                    linecolor => 'black',
+                    linecolor => 'red',
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),
                 @indicator,
             );
             $pwin->plot({
-                    ylabel => 'Volume (in 1M)',
-                    xlabel => 'Date',
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
                     tmargin => 0,
                     lmargin => 9,
                     rmargin => 2,
@@ -1251,7 +1304,11 @@ sub plot_data_gnuplot {
                     origin => [0, 0],
                     label => [1, "", at => "graph 0.90,0.03"],
                 },
-                {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
+                {
+                    with => 'impulses',
+                    legend => 'Volume',
+                    linecolor => 'blue',
+                },
                 $data(,(0)), $data(,(5)) / 1e6,
             );
             $pwin->end_multi;
@@ -1260,16 +1317,20 @@ sub plot_data_gnuplot {
             $type = 'CLOSE';
             $pwin->reset();
             $pwin->plot({
-                    title => "$symbol Close Price",
-                    xlabel => 'Date',
-                    ylabel => 'Close Price',
+                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                    title => ["$symbol Close Price", textcolor => 'rgb "white"'],
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                    ylabel => ['Close Price', textcolor => 'rgb "yellow"'],
                     xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, },
-                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                    ytics => {textcolor => 'orange'},
+                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'lines',
-                    linecolor => 'black',
+                    linecolor => 'red',
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),

@@ -19,35 +19,38 @@ has debug => 0;
 has plot_engine => 'gnuplot';
 has color_idx => 0;
 has colors => [qw(
-    dark-magenta
-    dark-blue
+    blue
+    pink
+    green
+    white
+    cyan
+    yellow
+    violet
+    magenta
+    purple
     brown
-    dark-green
-    dark-grey
-    dark-cyan
+    gold
+    goldenrod
     dark-orange
+    beige
+    salmon
+    dark-magenta
+    dark-green
+    dark-cyan
     dark-yellow
     dark-red
-    pink
-    violet
-    green
-    blue
-    magenta
+    antiquewhite
     red
-    yellow
-    black
-    purple
     dark-spring-green
     royalblue
     web-green
     web-blue
-    goldenrod
+    dark-blue
     steelblue
     dark-chartreuse
     orchid
     aquamarine
     turquoise
-    grey
     light-red
     light-green
     light-blue
@@ -56,7 +59,6 @@ has colors => [qw(
     light-goldenrod
     light-pink
     light-turquoise
-    gold
     spring-green
     forest-green
     sea-green
@@ -64,18 +66,15 @@ has colors => [qw(
     navy
     medium-blue
     skyblue
-    cyan
     dark-turquoise
     dark-pink
     coral
     light-coral
     orange-red
-    salmon
     dark-salmon
     khaki
     dark-khaki
     dark-goldenrod
-    beige
     olive
     orange
     dark-violet
@@ -94,10 +93,11 @@ has colors => [qw(
     gray
     light-gray
     light-grey
+    grey
+    dark-grey
     dark-gray
     slategray
-    white
-    antiquewhite
+    black
     )];
 
 sub next_color {
