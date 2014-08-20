@@ -35,6 +35,13 @@ sub _plot_gnuplot_general {
     return @plotinfo;
 }
 
+sub _plot_gnuplot_candlestick {
+    my ($self, $xdata, $output) = @_;
+    my @plotinfo = ();
+    #TODO:
+    return @plotinfo;
+}
+
 has ma_name => {
     0 => 'SMA',
     1 => 'EMA',
@@ -1299,189 +1306,468 @@ has volume => {
     },
 };
 
+sub _execute_candlestick {
+    my ($obj, $fn, $tag, $o, $h, $l, $c, @args) = @_;
+    return unless ref $fn eq 'CODE';
+    if (@args) {
+        say "Executing $fn with parameters ", Dumper(\@args) if $obj->debug;
+    } else {
+        say "Executing $fn" if $obj->debug;
+    }
+    my $outpdl = $fn->($o, $h, $l, $c, @args);
+    return [
+        [$tag, $outpdl],
+    ];
+}
+
 has candlestick => {
     cdl2crows => {
         name => 'Two Crows',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl2crows, '2CROWS', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdl3blackcrows => {
         name => 'Three Black Crows',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl3blackcrows, '3BLACKCROWS', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdl3inside => {
         name => 'Three Inside Up/Down',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl3inside, '3INSIDE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdl3linestrike => {
         name => 'Three Line Strike',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl3linestrike, '3LINESTRIKE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdl3outside => {
         name => 'Three Outside Up/Down',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl3outside, '3OUTSIDE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdl3starsinsouth => {
         name => 'Three Stars In The South',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl3starsinsouth, '3STARSSOUTH', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdl3whitesoldiers => {
-        name => 'Three ADvancing White Soldiers',
+        name => 'Three Advancing White Soldiers',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdl3whitesoldiers, '3WHITESOLDIER', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlabandonedbaby => {
         name => 'Abandoned Baby',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.3],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlabandonedbaby, 'ABANDONBABY', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdladvanceblock => {
         name => 'Advance Block',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdladvanceblock, 'ADVANCEBLK', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlbelthold => {
         name => 'Belt Hold',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlbelthold, 'BELTHOLD', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlbreakaway => {
         name => 'Break Away',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlbreakaway, 'BREAKAWAY', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlclosingmarubozu => {
         name => 'Closing Marubozu',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlclosingmarubozu, 'CLOSEMARUBOZU', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlconcealbabyswall => {
         name => 'Concealing Baby Swallow',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlconcealbabyswall, 'BABYSWALLOW', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlcounterattack => {
         name => 'Counter Attack',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlcounterattack, 'CTRATTACK', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdldarkcloudcover => {
         name => 'Dark Cloud Cover',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.5],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdldarkcloudcover, 'DARKCLOUD', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdldoji => {
         name => 'Doji',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdldoji, 'DOJI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdldojistar => {
         name => 'Doji Star',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdldojistar, 'DOJISTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdldragonflydoji => {
         name => 'Dragonfly Doji',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdldragonflydoji, 'DRGNFLYDOJI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlengulfing => {
         name => 'Engulfing Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlengulfing, 'ENGULFING', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdleveningdojistar => {
         name => 'Evening Doji Star',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.3],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdleveningdojistar, 'EVEDOJISTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdleveningstar => {
         name => 'Evening Star',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.3],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdleveningstar, 'EVESTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlgapsidesidewhite => {
         name => 'Up/Down Gap Side-by-Side White Lines',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlgapsidesidewhite, 'GAPSxSWHITE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlgravestonedoji => {
         name => 'Gravestone Doji',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlgravestonedoji, 'GRVSTNDOJI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlhammer => {
         name => 'Hammer',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlhammer, 'HAMMER', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlhangingman => {
         name => 'Hanging Man',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlhangingman, 'HANGMAN', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlharami => {
         name => 'Harami Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlharami, 'HARAMI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlharamicross => {
         name => 'Harami Cross Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlharamicross, 'HARAMI-X',@_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlhighwave => {
         name => 'High-Wave Candle',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlhighwave, 'HIGHWAVE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlhikkake => {
         name => 'Hikkake Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlhikkake, 'HIKKAKE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlhikkakemod => {
         name => 'Modified Hikkake Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlhikkakemod, 'HIKKAKEMOD', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlhomingpigeon => {
         name => 'Homing Pigeon',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlhomingpigeon, 'HOMINGPIGEON', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlidentical3crows => {
         name => 'Identical Three Crows',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlidential3crows, 'ID3CROWS', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlinneck => {
         name => 'In-Neck Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlinneck, 'IN-NECK', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlinvertedhammer => {
         name => 'Inverted Hammer',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlinvertedhammer, 'INVHAMMER', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlkicking => {
         name => 'Kicking',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlkicking, 'KICKING', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlkickingbylength => {
         name => 'Kicking - Marubozu Length based',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlkickingbylength, 'KICKLEN', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlladderbottom => {
         name => 'Ladder Bottom',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlladderbottom, 'LADDERBTM', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdllongleggeddoji => {
         name => 'Long Legged Doji',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdllongleggeddoji, 'LONGDOJI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdllongline => {
         name => 'Long Line Candle',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdllongline, 'LONGLINE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlmarubozu => {
         name => 'Marubozu',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlmarubozu, 'MARUBOZU', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlmatchinglow => {
         name => 'Matching Low',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlmatchinglow, 'MATCHLOW', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlmathold => {
         name => 'Mat Hold',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.5],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlmathold, 'MATHOLD', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlmorningdojistar => {
         name => 'Morning Doji Star',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.3],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlmorningdojistar, 'MORNDOJISTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlmorningstar => {
         name => 'Morning Star',
+        input => [qw(open high low close)],
+        params => [
+            # key, pretty name, type, default value
+            [ 'InPenetration', 'Percentage of penetration of candles (>=0)', PDL::double, 0.3],
+        ],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlmorningstar, 'MORNINGSTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlonneck => {
         name => 'On-Neck Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlonneck, 'ON-NECK', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlpiercing => {
         name => 'Piercing Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlpiercing, 'PIERCING', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlrickshawman => {
         name => 'Rickshaw Man',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlrickshawman, 'RICKSHAW', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlrisefall3methods => {
         name => 'Rising/Falling Three Methods',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlrisefall3methods, 'RISEFALL3M', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlseparatinglines => {
         name => 'Separating Lines',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlseparatinglines, 'SEPARATELINES', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlshootingstar => {
         name => 'Shooting Star',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlshootingstar, 'SHOOTINGSTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlshortline => {
         name => 'Short Line Candle',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlshortline, 'SHORTLINE', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlspinningtop => {
         name => 'Spinning Top',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlspinningtop, 'SPINTOP', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlstalledpattern => {
         name => 'Stalled Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlstalledpattern, 'STALLED', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlsticksandwich => {
         name => 'Stick Sandwich',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlsticksandwich, 'SANDWICH', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdltakuri => {
         name => 'Takuri',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdltakuri, 'TAKURI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdltasukigap => {
         name => 'Tasuki Gap',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdltasukigap, 'TASUKI', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlthrusting => {
         name => 'Thrusting Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlthrusting, 'THRUSTING', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdltristar => {
         name => 'Tristar Pattern',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdltristar, 'TRISTAR', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlunique3river => {
         name => 'Unique Three River',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlunique3river, 'U3RIVER', @_); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlupsidegap2crows => {
         name => 'Upside Gap Two Crows',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlupsidegap2crows, 'UPSIDEGAP2CROWS'); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
     cdlxsidegap3methods => {
         name => 'Upside/Downside Gap Three Methods',
+        params => [],
+        input => [qw(open high low close)],
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlxsidegap3methods, 'XSIDEGAP3M'); },
+        gnuplot => \&_plot_gnuplot_candlestick,
     },
 };
 
