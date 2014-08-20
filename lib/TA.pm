@@ -959,17 +959,41 @@ sub display_data {
     } else {
         $nt->tabs([$symbol]);
     }
-    $tabsize[0] *= 0.98;
-    $tabsize[1] *= 0.96;
-    # take existing items
+    my $pc = $nt->pageCount;
+    say "TabCount: $pc" if $self->debug;
+    my $pageno = $pc;
+    # find the existing tab with the same symbol info and remove the widget
+    # there and get that page number
+    # default headers
     my $headers = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'];
+    my $existing_indicators = [];
+    for my $idx (0 .. $pc) {
+        my @wids = $nt->widgets_from_page($idx);
+        next unless @wids;
+        my @dls = grep { $_->name eq "tab_$symbol" } @wids;
+        if (@dls) {
+            foreach (@dls) {
+                say "Found existing ", $_->name, " at $idx" if $self->debug;
+                $headers = $_->headers if defined $_->headers;
+                push @$existing_indicators, @{$_->{-indicators}} if exists $_->{-indicators};
+                $nt->delete_widget($_);
+            }
+            $pageno = $idx;
+            last;
+        }
+    }
+    # handle the current indicator first
     if ($output and scalar @$output) {
         foreach my $a (@$output) {
             push @$headers, $a->[0];
             # splice the indicator PDL into $data
             $data = $data->glue(1, $a->[1]) if ref $a->[1] eq 'PDL';
         }
+        # add the current indicator to the bottom of the list
+        push @$existing_indicators, {indicator => $iref, data => $output};
     }
+    say "Data dimension: ", Dumper([$data->dims]) if $self->debug;
+    say "Updated headers: ", Dumper($headers) if $self->debug;
     my $items = $data->transpose->unpdl;
     my $tz = $self->timezone;
     # reformat
@@ -980,24 +1004,8 @@ sub display_data {
             $arr->[$i] = '' if $arr->[$i] =~ /BAD/i;
         }
     }
-    my $pc = $nt->pageCount;
-    say "TabCount: $pc" if $self->debug;
-    my $pageno = $pc;
-    # find the existing tab with the same symbol info and remove the widget
-    # there and get that page number
-    for my $idx (0 .. $pc) {
-        my @wids = $nt->widgets_from_page($idx);
-        next unless @wids;
-        my @dls = grep { $_->name eq "tab_$symbol" } @wids;
-        if (@dls) {
-            foreach (@dls) {
-                say "Found existing ", $_->name, " at $idx" if $self->debug;
-                $nt->delete_widget($_);
-            }
-            $pageno = $idx;
-            last;
-        }
-    }
+    $tabsize[0] *= 0.98;
+    $tabsize[1] *= 0.96;
     my $dl = $nt->insert_to_page($pageno, 'DetailedList',
         name => "tab_$symbol",
         pack => { expand => 1, fill => 'both' },
@@ -1028,13 +1036,7 @@ sub display_data {
     $nt->pageIndex($pageno);
     $dl->{-pdl} = $data;
     $dl->{-symbol} = $symbol;
-    if ($output and $iref) {
-        $dl->{-indicators} = [] unless defined $dl->{-indicators};
-        push @{$dl->{-indicators}}, {
-            indicator => $iref,
-            data => $output,
-        };
-    }
+    $dl->{-indicators} = $existing_indicators if defined $existing_indicators;
     1;
 }
 

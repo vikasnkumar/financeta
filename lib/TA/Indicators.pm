@@ -681,7 +681,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_general,
     },
     macdext => {
-        name => 'MACD with differnt Mov. Avg',
+        name => 'MACD with different Mov. Avg',
         params => [
             # key, pretty name, type, default value
             [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
