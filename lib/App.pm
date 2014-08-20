@@ -35,7 +35,9 @@ sub run {
         print "Help: Coming soon\n";
         return;
     }
-    my $gui = PDL::Finance::TA->new(debug => $opts{debug});
+    my $gui = PDL::Finance::TA->new(debug => $opts{debug},
+        brand => __PACKAGE__,
+    );
     $gui->run;
 }
 

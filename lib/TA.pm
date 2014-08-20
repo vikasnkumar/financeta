@@ -1060,6 +1060,7 @@ sub plot_data_gnuplot {
                     ylabel => 'Price',
                     xdata => 'time',
                     xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    label => [1, $self->brand, at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'financebars',
@@ -1084,6 +1085,7 @@ sub plot_data_gnuplot {
                     rmargin => 2,
                     size => ["1,0.7"], #bug in P:G:G
                     origin => [0, 0.3],
+                    label => [1, $self->brand, at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'financebars',
@@ -1101,11 +1103,15 @@ sub plot_data_gnuplot {
                     rmargin => 2,
                     size => ["1,0.3"], #bug in P:G:G
                     origin => [0, 0],
+                    label => [1, "", at => "graph 0.90,0.03"],
                 },
                 {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
                 $data(,(0)), $data(,(5)) / 1e6,
             );
             $pwin->end_multi;
+        }
+        when ('CANDLE') {
+            # use candlesticks feature of Gnuplot
         }
         when ('CLOSEV') {
             # use multiplot
@@ -1121,6 +1127,7 @@ sub plot_data_gnuplot {
                     rmargin => 2,
                     size => ["1,0.7"], #bug in P:G:G
                     origin => [0, 0.3],
+                    label => [1, $self->brand, at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'lines',
@@ -1138,6 +1145,7 @@ sub plot_data_gnuplot {
                     rmargin => 2,
                     size => ["1,0.3"], #bug in P:G:G
                     origin => [0, 0],
+                    label => [1, "", at => "graph 0.90,0.03"],
                 },
                 {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
                 $data(,(0)), $data(,(5)) / 1e6,
@@ -1153,6 +1161,7 @@ sub plot_data_gnuplot {
                     ylabel => 'Close Price',
                     xdata => 'time',
                     xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    label => [1, $self->brand, at => "graph 0.90,0.03"],
                 },
                 {
                     with => 'lines',
