@@ -1351,6 +1351,138 @@ has candlestick => {
     cdldojistar => {
         name => 'Doji Star',
     },
+    cdldragonflydoji => {
+        name => 'Dragonfly Doji',
+    },
+    cdlengulfing => {
+        name => 'Engulfing Pattern',
+    },
+    cdleveningdojistar => {
+        name => 'Evening Doji Star',
+    },
+    cdleveningstar => {
+        name => 'Evening Star',
+    },
+    cdlgapsidesidewhite => {
+        name => 'Up/Down Gap Side-by-Side White Lines',
+    },
+    cdlgravestonedoji => {
+        name => 'Gravestone Doji',
+    },
+    cdlhammer => {
+        name => 'Hammer',
+    },
+    cdlhangingman => {
+        name => 'Hanging Man',
+    },
+    cdlharami => {
+        name => 'Harami Pattern',
+    },
+    cdlharamicross => {
+        name => 'Harami Cross Pattern',
+    },
+    cdlhighwave => {
+        name => 'High-Wave Candle',
+    },
+    cdlhikkake => {
+        name => 'Hikkake Pattern',
+    },
+    cdlhikkakemod => {
+        name => 'Modified Hikkake Pattern',
+    },
+    cdlhomingpigeon => {
+        name => 'Homing Pigeon',
+    },
+    cdlidentical3crows => {
+        name => 'Identical Three Crows',
+    },
+    cdlinneck => {
+        name => 'In-Neck Pattern',
+    },
+    cdlinvertedhammer => {
+        name => 'Inverted Hammer',
+    },
+    cdlkicking => {
+        name => 'Kicking',
+    },
+    cdlkickingbylength => {
+        name => 'Kicking - Marubozu Length based',
+    },
+    cdlladderbottom => {
+        name => 'Ladder Bottom',
+    },
+    cdllongleggeddoji => {
+        name => 'Long Legged Doji',
+    },
+    cdllongline => {
+        name => 'Long Line Candle',
+    },
+    cdlmarubozu => {
+        name => 'Marubozu',
+    },
+    cdlmatchinglow => {
+        name => 'Matching Low',
+    },
+    cdlmathold => {
+        name => 'Mat Hold',
+    },
+    cdlmorningdojistar => {
+        name => 'Morning Doji Star',
+    },
+    cdlmorningstar => {
+        name => 'Morning Star',
+    },
+    cdlonneck => {
+        name => 'On-Neck Pattern',
+    },
+    cdlpiercing => {
+        name => 'Piercing Pattern',
+    },
+    cdlrickshawman => {
+        name => 'Rickshaw Man',
+    },
+    cdlrisefall3methods => {
+        name => 'Rising/Falling Three Methods',
+    },
+    cdlseparatinglines => {
+        name => 'Separating Lines',
+    },
+    cdlshootingstar => {
+        name => 'Shooting Star',
+    },
+    cdlshortline => {
+        name => 'Short Line Candle',
+    },
+    cdlspinningtop => {
+        name => 'Spinning Top',
+    },
+    cdlstalledpattern => {
+        name => 'Stalled Pattern',
+    },
+    cdlsticksandwich => {
+        name => 'Stick Sandwich',
+    },
+    cdltakuri => {
+        name => 'Takuri',
+    },
+    cdltasukigap => {
+        name => 'Tasuki Gap',
+    },
+    cdlthrusting => {
+        name => 'Thrusting Pattern',
+    },
+    cdltristar => {
+        name => 'Tristar Pattern',
+    },
+    cdlunique3river => {
+        name => 'Unique Three River',
+    },
+    cdlupsidegap2crows => {
+        name => 'Upside Gap Two Crows',
+    },
+    cdlxsidegap3methods => {
+        name => 'Upside/Downside Gap Three Methods',
+    },
 };
 
 has statistic => {
