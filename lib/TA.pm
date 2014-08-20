@@ -106,6 +106,8 @@ sub _menu_items {
                             $win->menu->plot_ohlcv->enabled(1);
                             $win->menu->plot_close->enabled(1);
                             $win->menu->plot_closev->enabled(1);
+                            $win->menu->plot_cdl->enabled(1);
+                            $win->menu->plot_cdlv->enabled(1);
                             $win->menu->add_indicator->enabled(1);
                             $gui->progress_bar_close($bar);
                         }
@@ -138,13 +140,14 @@ sub _menu_items {
                         $win->menu->uncheck('plot_ohlcv');
                         $win->menu->uncheck('plot_close');
                         $win->menu->uncheck('plot_closev');
-
+                        $win->menu->uncheck('plot_cdl');
+                        $win->menu->uncheck('plot_cdlv');
                     },
                     $self,
                 ],
                 [
                     'plot_ohlcv',
-                    'OHLC Volume', '', '',
+                    'OHLC & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -154,6 +157,8 @@ sub _menu_items {
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_close');
                         $win->menu->uncheck('plot_closev');
+                        $win->menu->uncheck('plot_cdl');
+                        $win->menu->uncheck('plot_cdlv');
                     },
                     $self,
                 ],
@@ -169,12 +174,14 @@ sub _menu_items {
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
                         $win->menu->uncheck('plot_closev');
+                        $win->menu->uncheck('plot_cdl');
+                        $win->menu->uncheck('plot_cdlv');
                     },
                     $self,
                 ],
                 [
                     'plot_closev',
-                    'Close Price Volume', '', '',
+                    'Close Price & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -184,6 +191,42 @@ sub _menu_items {
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
                         $win->menu->uncheck('plot_close');
+                        $win->menu->uncheck('plot_cdl');
+                        $win->menu->uncheck('plot_cdlv');
+                    },
+                    $self,
+                ],
+                [
+                    'plot_cdl',
+                    'Candlesticks', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CANDLE', $indicators);
+                        $win->menu->check('plot_cdl');
+                        $win->menu->uncheck('plot_ohlc');
+                        $win->menu->uncheck('plot_ohlcv');
+                        $win->menu->uncheck('plot_close');
+                        $win->menu->uncheck('plot_closev');
+                        $win->menu->uncheck('plot_cdlv');
+                    },
+                    $self,
+                ],
+                [
+                    'plot_cdlv',
+                    'Candlesticks & Volume', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CANDLEV', $indicators);
+                        $win->menu->check('plot_cdlv');
+                        $win->menu->uncheck('plot_ohlc');
+                        $win->menu->uncheck('plot_ohlcv');
+                        $win->menu->uncheck('plot_close');
+                        $win->menu->uncheck('plot_closev');
+                        $win->menu->uncheck('plot_cdl');
                     },
                     $self,
                 ],
@@ -247,6 +290,8 @@ sub run {
     $self->main->menu->plot_ohlcv->enabled(0);
     $self->main->menu->plot_close->enabled(0);
     $self->main->menu->plot_closev->enabled(0);
+    $self->main->menu->plot_cdl->enabled(0);
+    $self->main->menu->plot_cdlv->enabled(0);
     $self->main->menu->add_indicator->enabled(0);
     run Prima;
 }
@@ -1112,6 +1157,62 @@ sub plot_data_gnuplot {
         }
         when ('CANDLE') {
             # use candlesticks feature of Gnuplot
+            $pwin->reset();
+            $pwin->plot({
+                    title => "$symbol Open-High-Low-Close",
+                    xlabel => 'Date',
+                    ylabel => 'Price',
+                    xdata => 'time',
+                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                },
+                {
+                    with => 'candlesticks',
+                    linecolor => 'red',
+                    legend => 'Price',
+                },
+                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+                @indicator,
+            );
+        }
+        when ('CANDLEV') {
+            # use multiplot
+            $pwin->reset();
+            $pwin->multiplot(title => "$symbol Price & Volume");
+            $pwin->plot({
+                    xlabel => '',
+                    ylabel => 'Price',
+                    xdata => 'time',
+                    xtics => {format => '%Y-%m-%d', rotate => -90, },
+                    bmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.7"], #bug in P:G:G
+                    origin => [0, 0.3],
+                    label => [1, $self->brand, at => "graph 0.90,0.03"],
+                },
+                {
+                    with => 'candlesticks',
+                    linecolor => 'red',
+                    legend => 'Price',
+                },
+                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+                @indicator,
+            );
+            $pwin->plot({
+                    ylabel => 'Volume (in 1M)',
+                    xlabel => 'Date',
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.3"], #bug in P:G:G
+                    origin => [0, 0],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                {with => 'impulses', legend => 'Volume', linecolor => 'blue'},
+                $data(,(0)), $data(,(5)) / 1e6,
+            );
+            $pwin->end_multi;
         }
         when ('CLOSEV') {
             # use multiplot
