@@ -1,75 +1,103 @@
-Tue Aug 19 10:22:32 2014 -0400
-8c255395624101a45341d40cdb1b71ef6b11722a
-Changelog
+Thu Aug 21 11:13:35 2014 -0400
+35d2ad0099fcf68c34f21499aff0f0be5c2c054f
+Renaming variable for clarity and better search across the code
 
-Tue Aug 19 10:21:15 2014 -0400
-2a95c889d39052b3412062546bf0e12a2ecbefa5
-- upgrading version number for future release - changing the distribution package name to App::financeta
+Wed Aug 20 16:43:12 2014 -0400
+62022902912714b431340cb06127bfba3311a04d
+minor bug in key name
 
-Mon Aug 18 23:07:00 2014 -0400
-c13481b24711a1ef332ba63a7ddce0820d1257e5
-Adding checked menu options for a nice look
+Wed Aug 20 16:39:24 2014 -0400
+0fa689579688378d0acb5e7c2094add96ee63108
+Making the plots look nicer
 
-Mon Aug 18 18:44:32 2014 -0400
-4052ff9ced456df54a5e102378a091b63808d028
-removing unnecessary old script and cruft
+Wed Aug 20 15:38:18 2014 -0400
+01fc0ea5ca1d41442a8a68264a33c7b47c9c4a0f
+minor error check
 
-Mon Aug 18 18:33:23 2014 -0400
-67f798f756f800a84639ac9cadb3f0adb2cfe4b2
-- store indicator information for plots so that variety of plots can still   manage plotting the same indicator per currency - manage tab indexing correctly with uniqueness - add error checking to tabs detection
+Wed Aug 20 14:09:15 2014 -0400
+601af6ac80b3978f8a081e09754b3ab1e43c5fdb
+Managing colors automatically in the gnuplot window when multiple indicators are added.
 
-Mon Aug 18 17:31:34 2014 -0400
-2f6dce1a953c8de3e595221446b696cefbd57f03
-indicator plotting now works
+Wed Aug 20 13:32:19 2014 -0400
+8a03cfa05efa3f02b00fcc9362ba723b3508c8fb
+Managing multiple indicators for single security in one display table correctly
 
-Mon Aug 18 16:55:17 2014 -0400
-b14895fb9f1e1def335a9ad79175fa1e20e939f9
-Execute the indicator and display the output on screen
+Wed Aug 20 11:59:28 2014 -0400
+0aa520138882c9581b34efdc28cefeba2a878a9f
+Adding basic candlestick plotting to the list of default plots
 
-Mon Aug 18 14:58:14 2014 -0400
-2a7ea8bbbc5e93db68be5df3b203ebbba6b78a72
-cosmetic change to version printing
+Wed Aug 20 11:37:46 2014 -0400
+b07609193cc1056fe2a7e8aedac4c21e8696b9d7
+Updating branding of the plots
 
-Mon Aug 18 14:13:58 2014 -0400
-127ec98c0077462b4c34e64f2ee3909f314b5c1f
-- Tracking indicator selection correctly - Adding basic ARGV for financeta
+Wed Aug 20 10:41:02 2014 -0400
+6fc97857086826f77102892145c0cfbf44d47a5d
+awesomeness of vim pattern matching applied to pass the function name as string for debug messages
 
-Mon Aug 18 11:55:22 2014 -0400
-8775e39bfd0ba376b362a3c0e4d5ed2275f9cf9f
-- remove PGPLOT completely - make indicator wizard look neater
+Tue Aug 19 22:25:13 2014 -0400
+b543f429064307b32eaefa9c07cc1b902d13a93a
+method invocation interferes with PDL::NiceSlice. So using old school way
 
-Mon Aug 18 10:56:17 2014 -0400
-81f46b196c57d9e4751a46464f072f180c4bdf94
-license gpl3 warning removed
+Tue Aug 19 22:21:35 2014 -0400
+4c79493011cbef082a789a16a8482a8be8c1a552
+adding all the candlestick indicator information except plotting info
 
-Sun Aug 17 12:51:31 2014 -0400
-0e6695020830e0cd19685d534b7a943eaf9cce20
-adding a simple indicator wizard and getting the enable/disable look right.
+Tue Aug 19 21:08:00 2014 -0400
+ca9ba93c6653d81f0d97fbca34351e41a6f12387
+Adding the hash keys for all the candlesticks.. there are way too many
 
-Sat Aug 16 23:58:46 2014 -0400
-9fb2b949f396163a7f32751deca52f956ac32788
-a sample indicator info is now stored
+Tue Aug 19 17:33:18 2014 -0400
+d7d0da97358bea727503adcc3e93f53eb1e00a87
+bugfix with ta_macdfix and cosmetic name change for all the candlestick patterns
 
-Sat Aug 16 22:12:09 2014 -0400
-a11b851bc09c03f88ea6451371c6f5035f5b7b39
-Work-in-progress analytical wizard
+Tue Aug 19 17:28:17 2014 -0400
+c20d949c7e818b7db18f700f4972fe94abccbe92
+Adding all the remaining Momentum Indicators
 
-Sat Aug 16 21:42:28 2014 -0400
-9f80ba52d3f2d8e27e10970dcc1d64596e313bf6
-Adding a temporary help viewer
+Tue Aug 19 16:58:05 2014 -0400
+ff00b764f7965d4fd8f84c00db7a1c64b5a5fa21
+Half of Momentum indicators added
 
-Sat Aug 16 21:29:25 2014 -0400
-6e47d99f90e5c4f567385546a6829dc845ef0fc7
-moving the POD out of the file
+Tue Aug 19 16:13:37 2014 -0400
+e58e96b6fc7afe147e5cc11cb53fe3f4c8f1f532
+Adding statistic indicators
 
-Sat Aug 16 21:21:02 2014 -0400
-a05f4a12117db354c20ad172b9adc131e62f7b55
-Adding a progress bar to manage the lag time due to downloads
+Tue Aug 19 15:53:31 2014 -0400
+bc7cd31054c49e97d307f7a23969c3eb779170fb
+Cycle indicators added
 
-Sat Aug 16 20:52:06 2014 -0400
-bf641aaabefee8e8a6ebed4f51681f2d2259bc90
-Minor checks for failed downloads
+Tue Aug 19 15:46:50 2014 -0400
+4f2b98064473a78b1329c266c6571510ce4c9ff1
+Volume indicators added
 
-Sat Aug 16 11:43:12 2014 -0400
-d788c4e095f60840d76cba36a65e9a6aee5ba151
-upgrading for release 0.03
+Tue Aug 19 15:32:23 2014 -0400
+296450cfe7ab79e30024df217e669f3687166ae6
+Adding price transform indicators
+
+Tue Aug 19 15:07:49 2014 -0400
+b07f7f972464215db7f7ed911748b969897cbe7f
+Volatility indicator done but plotting left to be desired
+
+Tue Aug 19 14:52:42 2014 -0400
+5a0659e42868108f52649877bf3855edde27e22b
+group names are now pretty printed in the indicator wizard as well
+
+Tue Aug 19 14:18:50 2014 -0400
+826a1c7cd068affc78f031fdeb022d40a7b609ee
+Adding all the overlay indicators to the list of indicators for analysis.
+
+Tue Aug 19 12:52:15 2014 -0400
+99897694de189d954e9dc61e581a00ea6f4a873e
+Changing the abbreviations to full names for user benefit
+
+Tue Aug 19 12:12:44 2014 -0400
+83329b95e31d4ca1e37fa9610c7d9c52d426525d
+adding a sample skeleton for creating more indicators
+
+Tue Aug 19 10:47:55 2014 -0400
+0a9cc0763b22cfe0a33ab5bd568de5983eb31b4b
+Adding version numbering to the inlined Mo class for PAUSE
+
+Tue Aug 19 10:39:58 2014 -0400
+02a86d89f894497f9a13274af64077c6580a8724
+Releasing 0.04
