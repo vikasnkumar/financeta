@@ -1088,7 +1088,7 @@ sub plot_data_gnuplot {
     $win->{plot} = $pwin;
     $symbol = $self->current->{symbol} unless defined $symbol;
     $type = $self->current->{plot_type} unless defined $type;
-    my @indicator = ();
+    my @indicator_plot = ();
     $self->indicator->color_idx(0); # reset color index
     if (defined $indicators and scalar @$indicators) {
         # ok now create a list of indicators to plot
@@ -1096,7 +1096,7 @@ sub plot_data_gnuplot {
             my $iref = $_->{indicator};
             my $idata = $_->{data};
             my @iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
-            push @indicator, @iplot if scalar @iplot;
+            push @indicator_plot, @iplot if scalar @iplot;
         }
     }
     given ($type) {
@@ -1120,7 +1120,7 @@ sub plot_data_gnuplot {
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator,
+                @indicator_plot,
             );
         }
         when ('OHLCV') {
@@ -1150,7 +1150,7 @@ sub plot_data_gnuplot {
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator,
+                @indicator_plot,
             );
             $pwin->plot({
                     object => '1',
@@ -1199,7 +1199,7 @@ sub plot_data_gnuplot {
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator,
+                @indicator_plot,
             );
         }
         when ('CANDLEV') {
@@ -1230,7 +1230,7 @@ sub plot_data_gnuplot {
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator,
+                @indicator_plot,
             );
             $pwin->plot({
                     object => '1',
@@ -1285,7 +1285,7 @@ sub plot_data_gnuplot {
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),
-                @indicator,
+                @indicator_plot,
             );
             $pwin->plot({
                     object => '1',
@@ -1334,7 +1334,7 @@ sub plot_data_gnuplot {
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),
-                @indicator,
+                @indicator_plot,
             );
         }
     }
