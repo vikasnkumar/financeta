@@ -26,3 +26,4 @@ TALib.pm
 *.xs
 PDL-Finance-TA-*tar.gz
 .*.swp
+gh-pages
