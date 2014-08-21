@@ -1,7 +1,7 @@
 #!/bin/bash
-FILE=$1
-test -z $FILE && { 
-    echo "ERROR: $0 <markdown file>"
+COUNT=$#
+test $COUNT -lt 1 && {
+    echo "Usage: $0 <markdown files>"
     exit 1
 }
 MKD=`which multimarkdown`
@@ -12,6 +12,9 @@ test -z $MKD && {
     echo "ERROR: Please install 'markdown' or 'multimarkdown'"
     exit 1
 }
+
+htmlize() {
+FILE=$1
 HTMLFILE=`echo $FILE | sed -e's:\..*:.html:g'`
 IS_OK=`echo $HTMLFILE | grep html | wc -l`
 test $IS_OK -eq 0 && {
@@ -70,3 +73,8 @@ cat >> $HTMLFILE << FOOTER
   </body>
 </html>
 FOOTER
+}
+
+for FILE in $@; do
+    htmlize $FILE
+done
