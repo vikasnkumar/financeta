@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>App::financeta by Vikas N Kumar</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>financeta</h1>
+        <h2>App::financeta is a GUI to perform Technical Analysis for stocks
+        using the <a href="http://pdl.perl.org/">Perl Data Language (PDL)</a></h2>
+
+        <section id="downloads">
+          <a href="https://github.com/vikasnkumar/financeta/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/vikasnkumar/financeta/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/vikasnkumar/financeta" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+
+<h1 id="introduction">Introduction</h1>
+
+<h2 id="history">History</h2>
+
+<p>There are many proprietary and some open source software <em>systems</em> that help an
+individual learn and perform <a href="https://en.wikipedia.org/wiki/Technical_analysis">Technical Analysis</a>
+on stock prices. Some of these you may have heard of - TradeStation&reg;,
+MetaStock&reg; and countless brokerage houses providing their own analysis
+software and tools which you can buy or get for free if you open an account and
+put some money in it.</p>
+
+<p>However, I just wanted to do research on stocks without having to purchase any
+of these software systems, nor did I want to tie myself to a specific brokerage
+account before doing any research. A majority of these software systems have
+their own domain specific languages (DSLs) that are obtuse, unwieldy and just
+ugly to use. Sure they have many thousands of customers who are using them and
+are making money. My aim was to use <a href="http://www.ta-lib.org">ta-lib</a>, which is a
+great open source library that works on various operating systems and has about
+132 technical analysis indicators. I felt that with access to this many
+indicators I could achieve what the other software systems provide without
+having to pay a penny and then when I was ready with possibly working strategies
+I could pick and choose the appropriate brokerage account and do some trading.</p>
+
+<p>Hence came about <em>App::financeta</em>. I initially tried to write this in C++ but
+spending time on the GUI seemed like a waste, when I could have been spending
+time on learning the indicators and trying out various strategies. So I switched
+to using Perl to build the GUI and using the <a href="http://pdl.perl.org">Perl Data
+Language</a> aka PDL to perform a variety of mathematical work.
+I also looked at R before I looked at Perl, but R does not have a decent GUI
+making library and I will have to create a variety of scripts for each
+combination of indicators I wanted to try and various other idiosyncrasies. This
+seemed cumbersome, and I wanted to be able to automatically perform tasks like
+picking indicators, adding them to the data sets and looking at the plots
+in a couple of seconds without having to type anything. Some of you may think why did I not look at
+Python and NumPy, but all I can say is it looks like Visual Basic, and I might
+as well use Microsoft Excel&reg; instead (which is actually a great tool).</p>
+
+<p>So in essence, I wanted to trade my own money (not like those hedge funds and
+banks who are trading with someone else's money) with my own software and with
+the freedom of choice of picking a brokerage account with least commission
+later. I also did not want to do any day trading or high frequency trading like
+work, since I wanted to learn how to do investing like a normal person and not
+worry about having a super high speed internet
+connection and other facilities that cost too much and give too little.</p>
+
+<h2 id="whatwillthissoftwaredo">What will this software do ?</h2>
+
+<p>The aim of <em>App::financeta</em> is to do the following in no order of importance:</p>
+
+<ul>
+<li>download stock quotes of any stock symbol in the open-high-low-close (OHLC) style 
+from Yahoo! for any date range</li>
+<li>plot the data in various formats such as OHLC bars, candlesticks, volume
+plots, overlaying multiple indicators on each other to look at things like
+crossovers etc.</li>
+<li>educate the user on the various technical analysis indicators and what they do</li>
+<li>write custom rules to create buy and sell signals and save as a <em>strategy</em></li>
+<li>calculate profit-and-loss for each strategy on demand</li>
+<li>be able to provide a variety of sample strategies available to any possible
+future users, so that they do not have to reimplement the same strategy over
+and over again (This is a serious problem. There maybe 1000s of people who
+have the same strategy idea that they copied from the internet and implemented
+in their software of choice. If a strategy is common, it will be part of the
+software's sample strategies list. Sharing is good!)</li>
+<li>enable the user to make decisions on how to trade stocks for their personal
+investment portfolio</li>
+<li>use PDL which is an awesome data language tool, and</li>
+<li>many more that I have not thought of yet.</li>
+</ul>
+
+<h2 id="whatwillthissoftwarenotdo">What will this software not do ?</h2>
+
+<p>This software will not do the following, although as time progresses this list may
+change:</p>
+
+<ul>
+<li>high frequency trading strategies</li>
+<li>day trading strategies</li>
+<li>real time trading (as of August 2014, may be added in 2015)</li>
+<li>any connections to a real time trading brokerage (Each brokerage has their own
+API which need not integrate well with this application. However, I may add a
+message queue/socket feature where this application can be probed for signals.
+But this fits in with the real time trading feature which will not be available
+till 2015).</li>
+</ul>
+
+<h2 id="whatkindofusersdoesthesoftwarecaterto">What kind of users does the software cater to ?</h2>
+
+<p>Initially the software will be catered to those who know what they are trying to
+do but as time progresses, the software will be able to help those who just want
+to analyse stocks and make decisions on whether to trade or not. We will get
+there as time progresses and I believe that great documentation and easy
+workflow will be a necessary requirement for this software to progress in that
+regard.</p>
+
+<h2 id="howmuchdoesthissoftwarecost">How much does this software cost ?</h2>
+
+<p>This software is free to use and you can look at the license
+<a href="/financeta/license.html">here</a>.</p>
+
+<h2 id="whatnext">What next ?</h2>
+
+<p>Get started with installing the software as given
+<a href="/financeta/install.html">here</a>, read the <a href="/financeta/faq.html">FAQ</a> and then
+start learning <a href="/finance/usage.html">how</a> to use it.</p>
+
+<p>Hope you have fun using the software as much as I enjoyed writing it!</p>
+
+<p><a href="/financeta/index.html">Back to Home</a></p>
+      </section>
+    </div>
+    <hr>
+    <footer><div class="container">
+    <h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
+    <br/><br/><p style="font-size:10px;">
+        This page was last updated on .
+    </p>
+    </div></footer>
+    
+  </body>
+</html>

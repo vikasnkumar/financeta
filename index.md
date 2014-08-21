@@ -29,3 +29,5 @@ on stocks.
     1. Operating System
     1. User Interface
     1. Technical Analysis
+1. [Usage](/financeta/usage.html)
+1. [Indicators](/financeta/indicators.html)
