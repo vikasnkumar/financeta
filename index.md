@@ -7,9 +7,9 @@ on stocks.
 
 ## TABLE OF CONTENTS
 
-1. [Introduction](/intro.html)
-1. [License and Copyright](/license.html)
-1. [Installing _App::financeta_](/install.html)
+1. [Introduction](/financeta/intro.html)
+1. [License and Copyright](/financeta/license.html)
+1. [Installing _App::financeta_](/financeta/install.html)
     1. Hardware Requirements
     1. Linux and BSD variants
         1. As User
@@ -24,7 +24,7 @@ on stocks.
         1. Cygwin
             1. As User
             1. As Developer
-1. [Frequently Asked Questions](/faq.html)
+1. [Frequently Asked Questions](/financeta/faq.html)
     1. General
     1. Operating System
     1. User Interface
