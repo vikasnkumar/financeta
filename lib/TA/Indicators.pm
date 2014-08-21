@@ -301,8 +301,11 @@ has overlaps => {
     },
     mavp => {
         name => 'Moving Average with Variable Period',
+        #TODO: support this kind of indicator
+        input => [qw/close periods/],
         params => [
             # key, pretty name, type, default value
+            [ 'InPeriods', 'List of periods', 'PDL', PDL::null],
             [ 'InMinPeriod', 'Minimum Period (2 - 100000)', PDL::long, 2],
             [ 'InMaxPeriod', 'Maximum Period (2 - 100000)', PDL::long, 30],
             # this will show up in a combo list
@@ -321,10 +324,10 @@ has overlaps => {
             ],
         ],
         code => sub {
-            my ($obj, $inpdl, @args) = @_;
+            my ($obj, $inpdl, $period_pdl, @args) = @_;
             say "Executing ta_mavp with parameters: ", Dumper(\@args) if $obj->debug;
             my $type = $obj->ma_name->{$args[2]} || 'UNKNOWN';
-            my $outpdl = PDL::ta_mavp($inpdl, @args);
+            my $outpdl = PDL::ta_mavp($inpdl, $period_pdl, @args);
             return [
                 ["MAVP($type)", $outpdl],
             ];
@@ -1869,6 +1872,7 @@ has statistic => {
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 5],
         ],
+        #TODO: support this type of indicator
         input => [qw/close1 close2/],
         code => sub {
             my ($obj, $inpdl1, $inpdl2, @args) = @_;
