@@ -67,14 +67,18 @@ cat >> $HTMLFILE << FOOTER
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
+    <br/><br/><p style="font-size:10px;">
+        This page was last updated on __FDATE__.
+    </p>
     </div></footer>
-
     
   </body>
 </html>
 FOOTER
+    DATE=`git log -1 --pretty="format:%ai" $FILE`
+    sed -i -e "s/__FDATE__/${DATE}/g" $HTMLFILE
 }
 
-for FILE in $@; do
-    htmlize $FILE
+for i in $@; do
+    htmlize $i
 done
