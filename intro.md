@@ -94,7 +94,9 @@ regard.
 ## How much does this software cost ?
 
 This software is free to use and you can look at the license
-[here](./license.html).
+[here](./license.html). We are however not responsible for any profits or losses
+or emotional trauma caused by using this software. Use at your own risk and with
+your own intelligence.
 
 
 ## What next ?

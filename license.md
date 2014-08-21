@@ -4,6 +4,16 @@ _App::financeta_ is licensed under the GNU General Public License which can be
 found [here](https://gnu.org/licenses/gpl.html) and in the source code as the
 `LICENSE` file.
 
+## Disclaimer
+
+This software comes with no warranty whatsoever. Any profits, losses,
+emotional trauma or hardship caused by using this software are solely the
+responsibility of the user and not of the authors or anyone else.
+
+Use the software at your own risk and with your own intelligence.
+
+## Copyright
+
 The copyright is held by the authors listed below:
 * Vikas N Kumar <vikas@cpan.org>
 
