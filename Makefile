@@ -10,6 +10,6 @@ default: all
 all: $(HTMLFILES)
 
 $(HTMLFILES): %.html: %.md
-	$(HTMLIZE) $<
+	/bin/sh $(HTMLIZE) $<
 
 .PHONY: all default
