@@ -20,4 +20,4 @@ All the other Perl packages used as part of the software have their own
 licenses, either BSD, GPLv2, GPLv3 or Perl Artistic License, and you can find
 information on them by searching on [MetaCPAN](http://www.metacpan.org).
 
-[Back to Home](/financeta/index.html) [Next](/financeta/install.html)
+[Back to Home](./index.html) [Next](./install.html)

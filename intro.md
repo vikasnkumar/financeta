@@ -94,16 +94,16 @@ regard.
 ## How much does this software cost ?
 
 This software is free to use and you can look at the license
-[here](/financeta/license.html).
+[here](./license.html).
 
 
 ## What next ?
 
 Get started with installing the software as given
-[here](/financeta/install.html), read the [FAQ](/financeta/faq.html) and then
+[here](./install.html), read the [FAQ](./faq.html) and then
 start learning [how](/finance/usage.html) to use it.
 
 Hope you have fun using the software as much as I enjoyed writing it!
 
 
-[Back to Home](/financeta/index.html) [Next](/financeta/license.html)
+[Back to Home](./index.html) [Next](./license.html)
