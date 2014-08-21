@@ -45,6 +45,120 @@ reports, please let the authors know and we shall include them here.</p>
 
 <p>If you want us to support a different CPU type, please contact the authors.</p>
 
+<h2 id="linuxbsdvariants">Linux &amp; BSD variants</h2>
+
+<p><em>App::financeta</em> has been developed on the GNU/Linux platform. However, it works
+on the BSD platforms (FreeBSD, NetBSD, OpenBSD) as well.
+You will need to have <code>perl</code> installed which is
+present by default on most or all Linux and BSD platforms. The minimum Perl
+version expected is 5.10.1.</p>
+
+<h4 id="installingta-lib">Installing <code>ta-lib</code></h4>
+
+<p>Download the source from sourceforge, compile and install it. You can also
+install it to a custom directory of your choice instead of <code>/usr/local</code> but you
+will need to set the environment variable <code>$PATH</code> appropriately in your shell
+and your <code>.bashrc</code> or <code>.profile</code> or similar shell profile files.</p>
+
+<pre><code>$ wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+$ tar -zxvf ta-lib-0.4.0-src.tar.gz
+$ cd ta-lib
+$ ./configure --prefix=/usr/local &amp;&amp; make &amp;&amp; make check
+$ sudo make install
+</code></pre>
+
+<h4 id="installinggnuplot">Installing Gnuplot</h4>
+
+<p>Currently, the plotting engine of <em>App::financeta</em> is
+<a href="http://www.gnuplot.info">Gnuplot</a> which will be
+available in your distribution's package manager. If not, you can find
+instructions on installing it on their <a href="http://www.gnuplot.info">website</a>.</p>
+
+<h4 id="installingapp::financetafromcpan">Installing App::financeta from CPAN</h4>
+
+<p>Check if the <code>perl</code> and <code>cpan</code> executables are installed on your system and if
+the version number of <code>perl</code> is greater than or equal to 5.10.1. If <code>perl</code>
+and/or <code>cpan</code> are not installed, please consult your distribution's package
+manager. The <code>ta-lib</code> that you have just installed above, needs to be present in
+your <code>$PATH</code> variable if you have not installed it into <code>/usr/local</code>. The
+<code>gnuplot</code> executable also should have been installed and be present in your
+<code>$PATH</code> environment.</p>
+
+<pre><code>$ which perl
+$ perl -V:version
+$ which cpan
+$ which ta-lib-config
+$ which gnuplot
+$ sudo cpan -i App::financeta
+# to run the application
+$ /usr/bin/financeta
+</code></pre>
+
+<p>This will install the package and all its dependencies from CPAN.
+If you choose to install the CPAN package to a custom directory, you will have
+to adjust the <code>$PERL5LIB</code> environment variable appropriately.</p>
+
+<h4 id="installingapp::financetafromgithub">Installing App::financeta from Github</h4>
+
+<p>If you would like to get the bleeding edge of the codebase or if you want to
+send us pull requests, you may want to install the development version from
+<a href="https://github.com/vikasnkumar/financeta.git">Github</a>. You will need to have
+<code>git</code> installed for this to work.</p>
+
+<pre><code>$ which git
+$ git clone https://github.com/vikasnkumar/financeta.git
+$ cd financeta
+$ perl ./Build.PL
+$ ./Build test
+# to run the application
+$ perl -Mblib ./bin/financeta
+</code></pre>
+
+<p>When installing from Github, you may see that your dependencies are not
+installed. To install all the required dependencies, after you have installed
+<code>ta-lib</code> and <code>gnuplot</code> as above, run the below command.</p>
+
+<pre><code>$ sudo cpan -i PDL Prima PDL::Graphics::Gnuplot Finance::QuoteHist \
+    PDL::Finance::Talib POE::Loop::Prima Capture::Tiny DateTime \
+    Software::License Pod::Readme Module::Build
+</code></pre>
+
+<p>Some of these modules may already be available through your distribution's
+package manager.</p>
+
+<h2 id="macosx">Mac OS X</h2>
+
+<p>There are not many differences in the installation of <em>App::financeta</em> on the
+OS X platform, except for the fact that you may be using
+<a href="http://www.macports.org">Macports</a>, <a href="http://finkproject.org">Fink</a> or
+<a href="http://brew.sh">Homebrew</a> as your package manager. We have tested with Macports installed on OS
+X 10.7.</p>
+
+<h4 id="installingusingmacportsandcpan">Installing using Macports and CPAN</h4>
+
+<p>Macports may already come with <code>perl</code> but you could install a more recent
+version if you like.</p>
+
+<pre><code>$ sudo port install ta-lib gnuplot perl5
+$ sudo cpan -i App::financeta
+</code></pre>
+
+<h4 id="installingusingnativemacperl">Installing using native Mac Perl</h4>
+
+<p>Follow the same instructions to install as for the
+Linux/BSD variants <a href="#linuxbsdvariants">here</a>.</p>
+
+<h4 id="installingusingfinkorhomebrew">Installing using Fink or Homebrew</h4>
+
+<p>You may want to look at what packages these package managers provide, and use
+your judgement to pick the appropriate ones as required. You could also always
+just install <code>perl</code> from these package managers and follow the rest of the
+instructions from <a href="#linuxbsdvariants">here</a>.</p>
+
+<h2 id="windows">Windows</h2>
+
+<p><strong>COMING SOON !</strong></p>
+
 <p><a href="./index.html">Back to Home</a> <a href="./faq.html">Next</a></p>
       </section>
     </div>
@@ -55,7 +169,7 @@ reports, please let the authors know and we shall include them here.</p>
 
 <p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on .
+        This page was last updated on 2014-08-21 16:43:31 -0400.
     </p>
     </div></footer>
     

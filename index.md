@@ -11,19 +11,11 @@ on stocks.
 1. [License and Copyright](./license.html)
 1. [Installing _App::financeta_](./install.html)
     1. [Hardware Requirements](./install.html#hardwarerequirements)
-    1. Linux and BSD variants
-        1. As User
-        1. As Developer
-    1. Mac OS X
-        1. As User
-        1. As Developer
-    1. Windows
+    1. [Linux and BSD variants](./install.html#linuxbsdvariants)
+    1. [Mac OS X](./install.html#macosx)
+    1. [Windows](./install.html#windows)
         1. Strawberry Perl
-            1. As User
-            1. As Developer
         1. Cygwin
-            1. As User
-            1. As Developer
 1. [Frequently Asked Questions](./faq.html)
     1. General
     1. Operating System
