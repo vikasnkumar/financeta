@@ -738,6 +738,8 @@ sub indicator_wizard {
         autoHeight => 1,
         autoWidth => 1,
         origin => [20, 440],
+        hint => 'This is a list of indicator groups',
+        hintVisible => 1,
     );
     $w->insert(ComboBox =>
         name => 'cbox_groups',
@@ -783,6 +785,8 @@ sub indicator_wizard {
         autoHeight => 1,
         autoWidth => 1,
         origin => [20, 400],
+        hint => 'Each indicator group has multiple indicators it supports',
+        hintVisible => 1,
     );
     $w->insert(ComboBox =>
         name => 'cbox_funcs',
