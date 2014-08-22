@@ -31,7 +31,7 @@
     <div class="container">
       <section id="main_content">
 
-<h1 id="usingapp::financeta">Using <em>App::financeta</em></h1>
+<h1 id="using_app::financeta_">Using <em>App::financeta</em></h1>
 
 <h2 id="startingtheapplication">Starting the Application</h2>
 
@@ -61,6 +61,32 @@ installed and the application should automatically start it up.</p>
 progresses and if data is freely available, we will be adding options and
 futures to the mix as well. Hence <em>security</em> is a term that groups all of these
 under one.</p>
+
+<p>Using the menu option <em>'Security'</em> followed by <em>'New'</em> as shown in the image below,
+start the <em>'Security Wizard'</em> dialog. Enter a <span
+style="color:red;"><strong>valid</strong></span> stock symbol such as <em>'MSFT'</em> in
+the <em>'Enter Security Symbol'</em> text box, select the start and end dates for which
+you want data for (by default this is set to one year back from today) and hit
+the <em>'OK'</em> button.</p>
+
+<p>You will see a new tab opens with the name of the symbol you entered, which is
+<em>'MSFT'</em> in this case and all the stock data listed in tabular form. You will
+also see a plot drawn in Gnuplot in a separate window and started up as shown.</p>
+
+<p>The steps are outlined as follows:</p>
+
+<ul>
+<li>Select <em>'New'</em> from the <em>'Security'</em> menu option
+<img src="./images/security_new.png" alt="Select New from the 'Security' menu option" title="Select 'New' from the 'Security' menu option" id="selectnewfromthesecuritymenuoption" /></li>
+<li>Enter a <span style="color:red;"><strong>valid</strong></span> stock symbol and date range in the <em>'Security Wizard'</em> such as <em>'MSFT'</em>
+<img src="./images/security_wizard.png" alt="Select a Stock Symbol in the Security Wizard" title="Enter a valid stock symbol in the 'Security Wizard'" id="selectastocksymbolinthesecuritywizard" /></li>
+<li>View the retrieved data in a tab titled <em>'MSFT'</em> or the symbol you have
+chosen
+<img src="./images/security_data.png" alt="View the data retrieved in a tab" title="View the data retrieved in a tab for that symbol" id="viewthedataretrievedinatab" /></li>
+<li>View the open-high-low-close (OHLC) bar plot in Gnuplot that has been started
+by <em>App::financeta</em>
+<img src="./images/security_plot_ohlc.png" alt="OHLC Gnuplot for data" title="View the OHLC default plot in the adjacent Gnuplot window" id="ohlcgnuplotfordata" /></li>
+</ul>
 
 <p><a href="./index.html">Back to Home</a> <a href="./indicators.html">Next</a></p>
       </section>
