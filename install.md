@@ -199,6 +199,11 @@ Install the following packages:
 - libXft-devel
 - libXi-devel
 - libXmu-devel
+- libXpm-devel
+- libfreetype-devel
+- libcrypt-devel
+- libgcrypt-devel
+- libmcrypt-devel
 
  and any other packages that you may want.
 
