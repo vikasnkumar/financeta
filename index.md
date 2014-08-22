@@ -23,4 +23,5 @@ on stocks.
     1. [Technical Analysis](./faq.html#technicalanalysis)
 1. [Usage](./usage.html)
     1. [Starting The Application](./usage.html#startingtheapplication)
+    1. [Selecting a Security](./usage.html#selectingasecurity)
 1. [Indicators](./indicators.html)
