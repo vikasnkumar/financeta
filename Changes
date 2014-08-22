@@ -1,3 +1,27 @@
+Fri Aug 22 12:55:17 2014 -0400
+4d6a5efa3234ac5e984937be46c8835cde52e535
+Release 0.05
+
+Fri Aug 22 10:52:47 2014 -0400
+22dfcfffdc36440ced9c87ac3a2dc208f9c421d1
+gh-pages is a dir
+
+Thu Aug 21 17:52:33 2014 -0400
+0c715f3014aa69be5dd8808811a08c2836ad6984
+updating manifest/.gitignore
+
+Thu Aug 21 12:02:47 2014 -0400
+13d82b182f924e1a84e75c51948de542ca3f6d76
+Hint example added for possible future use.
+
+Thu Aug 21 11:51:08 2014 -0400
+a164d4d3e4de783ee2956a8e5dfe8870c233ebfe
+adding dummy input pdl to avoid MAVP indicator crash
+
+Thu Aug 21 11:16:25 2014 -0400
+85889b5b01075a7782eca3111dd7114e8c7d6190
+updating changes file
+
 Thu Aug 21 11:13:35 2014 -0400
 35d2ad0099fcf68c34f21499aff0f0be5c2c054f
 Renaming variable for clarity and better search across the code
