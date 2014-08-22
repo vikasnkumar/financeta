@@ -81,6 +81,13 @@ instead of having it as a separate application running on the side. However,
 this will take a while since a lot of functionality, already available in
 Gnuplot, will have to be added.
 
+1. Will there be a search and auto-complete feature added to find stock symbols
+   ?
+
+    Yes that is the plan right now but it is lower on our priority list. For
+now, you can use the search feature on [Yahoo!
+Finance](http://finance.yahoo.com) instead.
+
 ## Technical Analysis
 
 1. Why do some indicators not work ?
