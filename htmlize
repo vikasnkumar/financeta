@@ -67,6 +67,11 @@ cat >> $HTMLFILE << FOOTER
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
+    <br/><br/><strong>Disclaimer:</strong>&nbsp;<em>The authors are not
+    responsible for any losses, profits, emotional trauma, hardship or happiness
+    resulting from the use of this application. Use the software at your own risk and
+    with your own intelligence. The application comes with no warranty. For more
+    details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
         This page was last updated on __FDATE__.
     </p>

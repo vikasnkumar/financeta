@@ -6,9 +6,9 @@ found [here](https://gnu.org/licenses/gpl.html) and in the source code as the
 
 ## Disclaimer
 
-This software comes with no warranty whatsoever. Any profits, losses,
-emotional trauma or hardship caused by using this software are solely the
-responsibility of the user and not of the authors or anyone else.
+This software comes with no warranty whatsoever. The authors are not responsible
+for any losses, profits, emotional trauma, hardship or happiness resulting from
+the use of this application. 
 
 Use the software at your own risk and with your own intelligence.
 

@@ -57,7 +57,7 @@ I could pick and choose the appropriate brokerage account and do some trading.</
 <p>Hence came about <em>App::financeta</em>. I initially tried to write this in C++ but
 spending time on the GUI seemed like a waste, when I could have been spending
 time on learning the indicators and trying out various strategies. So I switched
-to using Perl (using the <a href="http://metacpan.org/pod/Prima">Prima</a> package)  to build the GUI and using the <a href="http://pdl.perl.org">Perl Data
+to using Perl (using the <a href="http://metacpan.org/pod/Prima">Prima</a> package) to build the GUI and using the <a href="http://pdl.perl.org">Perl Data
 Language</a> aka PDL to perform a variety of mathematical work.
 I also looked at R before I looked at Perl, but R does not have a decent GUI
 making library. Moreover, I would have to create a variety of scripts for each
@@ -70,7 +70,7 @@ Python and NumPy, but all I can say is the language looks like Visual Basic, and
 as well use Microsoft Excel&reg; instead (which is actually a great tool).</p>
 
 <p>So in essence, I wanted to trade my own money (not like those hedge funds and
-banks who are trading with someone else's money) with my own software, and with
+banks who are trading with someone else&#8217;s money) with my own software, and with
 the freedom of choice of picking a brokerage account with the least commission
 at a later date. I also did not want to do any day trading or high frequency
 trading, since I wanted to learn how to do investing like a normal person and not
@@ -82,22 +82,22 @@ connection and other facilities that cost too much and give too little.</p>
 <p>The aim of <em>App::financeta</em> is to do the following in no order of importance:</p>
 
 <ul>
-<li>download stock quotes of any stock symbol in the open-high-low-close (OHLC) style 
+<li>download stock quotes of any stock symbol in the open-high-low-close (OHLC) style
 from Yahoo! for any date range</li>
 <li>plot the data in various formats such as OHLC bars, candlesticks, volume
-plots, overlaying multiple indicators on each other to look at things like
+ plots, overlaying multiple indicators on each other to look at things like
 crossovers etc.</li>
 <li>educate the user on the various technical analysis indicators and what they do</li>
 <li>write custom rules to create buy and sell signals and save as a <em>strategy</em></li>
 <li>calculate profit-and-loss for each strategy on demand</li>
 <li>be able to provide a variety of sample strategies available to any possible
-future users, so that they do not have to reimplement the same strategy over
+ future users, so that they do not have to reimplement the same strategy over
 and over again (This is a serious problem. There maybe 1000s of people who
 have the same strategy idea that they copied from the internet and implemented
 in their software of choice. If a strategy is common, it will be part of the
-software's sample strategies list. Sharing is good!)</li>
+software&#8217;s sample strategies list. Sharing is good!)</li>
 <li>enable the user to make decisions on when to trade stocks for their personal
-investment portfolio</li>
+ investment portfolio</li>
 <li>use PDL which is an awesome data language tool, and</li>
 <li>many more that I have not thought of yet.</li>
 </ul>
@@ -112,7 +112,7 @@ change:</p>
 <li>day trading strategies</li>
 <li>real time trading (as of August 2014, may be added in 2015)</li>
 <li>any connections to a real time trading brokerage (Each brokerage has their own
-API which need not integrate well with this application. However, I may add a
+ API which need not integrate well with this application. However, I may add a
 message queue/socket feature where this application can be probed for signals.
 But this fits in with the real time trading feature which will not be available
 till 2015).</li>
@@ -151,8 +151,13 @@ start learning <a href="/finance/usage.html">how</a> to use it.</p>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
+    <br/><br/><strong>Disclaimer:</strong>&nbsp;<em>The authors are not
+    responsible for any losses, profits, emotional trauma, hardship or happiness
+    resulting from the use of this application. Use the software at your own risk and
+    with your own intelligence. The application comes with no warranty. For more
+    details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-08-21 16:43:31 -0400.
+        This page was last updated on 2014-08-21 17:50:02 -0400.
     </p>
     </div></footer>
     
