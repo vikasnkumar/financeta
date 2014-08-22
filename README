@@ -1,53 +1,24 @@
 NAME
-    PDL::Finance::TA
+    App::financeta
 
 SYNOPSIS
-    PDL::Finance::TA is a perl module allowing the user to perform technical
-    analysis on financial data stored as PDLs. It is the basis of the
-    graphics application App::financeta which can be used by users to do
-    financial stocks research with Technical Analysis.
+    App::financeta is an application that does Technical Analysis for stocks.
 
 VERSION
-    0.04
+    0.05
 
-METHODS
-    new Creates a new instance of `PDL::Finance::TA'. Takes in various
-        properties that the user might want to override. Check the
-        PROPERTIES section to view the different properties.
+DESCRIPTION
 
-    run This function starts the graphical user interface (GUI) and uses
-        POE::Loop::Prima and Prima to do all its work. This is our current
-        choice of the GUI framework but it need not be in the future.
+    The documentation is detailed at http://vikasnkumar.github.io/financeta/
 
-PROPERTIES
-    debug
-        Turn on debug printing of comments on the terminal. Set it to 1 to
-        enable and 0 or undef to disable.
-
-    timezone
-        Default is set to *America/New_York*.
-
-    brand
-        Default is set to PDL::Finance::TA. Changing this will change the
-        application name. Useful if the user wants to embed
-        `PDL::Finance::TA' in another application.
-
-    icon
-        Picks up the file in `PDL/Finance/TA/images/icon.gif' as the
-        application icon but can be given as a `Prima::Icon' object as well.
-
-    tmpdir
-        The default on Windows is `$ENV{TMP}' or `$ENV{TEMP}' and on Unix
-        based systems is `$ENV{TMPDIR}' if it is set or `/tmp' if none are
-        set. The CSV files that are downloaded and temporary data is stored
-        here.
+    The github repository is at https://github.com/vikasnkumar/financeta.git
 
 SEE ALSO
     PDL::Finance::Talib
         This module will be used to add technical analysis to the charts.
 
-    App::financeta
-        This module just runs the application that calls `PDL::Finance::TA'.
+    PDL::Finance::TA
+        This module just manages everything under the hood.
 
     financeta
         The commandline script that calls `App::financeta'.

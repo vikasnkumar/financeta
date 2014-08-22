@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 $VERSION = eval $VERSION;
 
 use PDL::Finance::TA;
@@ -59,7 +59,7 @@ as an application. It handles command line processing of C<financeta>.
 
 =head1 VERSION
 
-0.04
+0.05
 
 =head1 METHODS
 
