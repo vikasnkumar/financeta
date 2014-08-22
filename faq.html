@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>App::financeta by Vikas N Kumar</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>financeta</h1>
+        <h2>App::financeta is a GUI to perform Technical Analysis for stocks
+        using the <a href="http://pdl.perl.org/">Perl Data Language (PDL)</a></h2>
+
+        <section id="downloads">
+          <a href="https://github.com/vikasnkumar/financeta/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/vikasnkumar/financeta/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/vikasnkumar/financeta" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      <a href="./index.html">Back to Home</a>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+
+<h1 id="frequentlyaskedquestions">Frequently Asked Questions</h1>
+
+<h2 id="general">General</h2>
+
+<ol>
+<li><p>Why is the application name <em>App::financeta</em> ?</p>
+
+<p>The commandline name is <code>financeta</code> but the Perl package that it invokes is
+called <code>App::financeta</code>. The <em>ta</em> in <em>financeta</em> stands for technical analysis.</p></li>
+<li><p>Why did you select Perl to write the language ?</p>
+
+<p>Perl is the only scripting language I know apart from R. Python&#8217;s
+whitespace restrictions are an abomination, hence I do not use it. Once you know Perl, all
+other scripting languages seem like toys (I am looking at you Ruby!).</p></li>
+<li><p>When will real time trading be available ?</p>
+
+<p>In trying to be realistic, we can estimate early to mid 2015.</p></li>
+<li><p>Does this software work only for US stocks ?</p>
+
+<p>We currently use the Perl package
+<a href="http://www.metacpan.org/pod/Finance::QuoteHist">Finance::QuoteHist</a> for handling stock downloads. As long
+as it supports your stock symbol, we support it. Yahoo! is one of
+the main data sources being used in <code>Finance::QuoteHist</code>, but others are also
+available. If you need your custom exchange data or country&#8217;s stock symbols
+added, please contact the <code>Finance::QuoteHist</code> developers and have them add it
+so that we can benefit downstream from their changes.</p></li>
+<li><p>Do I need to know Perl or PDL to write my strategies ?</p>
+
+<p>As of today, yes. We are trying to eliminate that by developing a simple
+syntax for writing the strategies. We are also trying to avoid developing
+something ugly like the existing domain specific languages (DSL) provided by
+proprietary software. So far PDL is pretty awesome.</p></li>
+</ol>
+
+<h2 id="operatingsystem">Operating System</h2>
+
+<ol>
+<li><p>Why isn&#8217;t Microsoft Windows&reg; supported yet ?</p>
+
+<p>Microsoft Windows&reg; will be supported as soon as we have time to test on it and figure out
+the easiest way to install all the dependencies. Currently our focus is to make
+our software <u>just work</u>. If that means, making it <u>just work</u> on some systems
+first, then that is a priority.</p></li>
+<li><p>Will ready-to-install packages be provided for various operating systems ?</p>
+
+<p>As of today we do not have this capability yet, but once all the documentation
+is ready we shall try to create ready-to-install complete packages for all
+supported operating systems.</p></li>
+</ol>
+
+<h2 id="userinterface">User Interface</h2>
+
+<ol>
+<li><p>Why does the UI look like the way it does ?</p>
+
+<p>We use <a href="http://www.metacpan.org/pod/Prima">Prima</a> which is a very easy to
+use GUI toolkit. <code>Prima</code> is cross-platform and works well for our needs.</p></li>
+<li><p>The UI looks ugly, will you make it look shiny ?</p>
+
+<p>Our aim is to have a UI that uses less CPU power, runs fast and doesn&#8217;t get
+in the way of making money. If you care about looks, go look at yourself in the mirror.</p></li>
+<li><p>Why are you using Gnuplot for plotting ?</p>
+
+<p>Two reasons:</p>
+
+<ol>
+<li>Gnuplot is already an awesome plotting engine and the package
+ <code>PDL::Graphics::Gnuplot</code> is well supported and works really well out of the
+box.</li>
+<li>We will eventually try to help the developers of the package
+ <code>PDL::Graphics::Prima</code> add features required by the software, so that we can embed the plots in the UI itself
+instead of having it as a separate application running on the side. However,
+this will take a while since a lot of functionality, already available in
+Gnuplot, will have to be added.</li>
+</ol></li>
+</ol>
+
+<h2 id="technicalanalysis">Technical Analysis</h2>
+
+<ol>
+<li><p>Why do some indicators not work ?</p>
+
+<p>Please let us know what you&#8217;re trying to do so that we can see if the
+problem is the indicator or the data.</p></li>
+</ol>
+
+<p><a href="./index.html">Back to Home</a> <a href="./usage.html">Next</a></p>
+      </section>
+    </div>
+    <hr>
+    <footer><div class="container">
+    <h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>Vikas N Kumar (<a href="https://github.com/vikasnkumar" class="user-mention">@vikasnkumar</a>) is the author of <strong>App::financeta</strong>. All copyrights belong to the authors.</p>
+    <br/><br/><strong>Disclaimer:</strong>&nbsp;<em>The authors are not
+    responsible for any losses, profits, emotional trauma, hardship or happiness
+    resulting from the use of this application. Use the software at your own risk and
+    with your own intelligence. The application comes with no warranty. For more
+    details refer the <a href="./license.html">license</a> page.</em>
+    <br/><br/><p style="font-size:10px;">
+        This page was last updated on .
+    </p>
+    </div></footer>
+    
+  </body>
+</html>

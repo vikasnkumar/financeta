@@ -17,9 +17,9 @@ on stocks.
         1. Strawberry Perl
         1. Cygwin
 1. [Frequently Asked Questions](./faq.html)
-    1. General
-    1. Operating System
-    1. User Interface
-    1. Technical Analysis
+    1. [General](./faq.html#general)
+    1. [Operating System](./faq.html#operatingsystem)
+    1. [User Interface](./faq.html#userinterface)
+    1. [Technical Analysis](./faq.html#technicalanalysis)
 1. [Usage](./usage.html)
 1. [Indicators](./indicators.html)
