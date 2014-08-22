@@ -1086,6 +1086,12 @@ sub plot_data_gnuplot {
             $term = 'aqua' if grep {/aqua/} @terms;
             $term = 'wxt' if grep {/wxt/} @terms;
         };
+    } elsif ($^O =~ /Win32|Cygwin/i) {
+        Capture::Tiny::capture {
+            my @terms = PDL::Graphics::Gnuplot::terminfo();
+            $term = 'windows' if grep {/windows/} @terms;
+            $term = 'wxt' if grep {/wxt/} @terms;
+        };
     }
     say "Using term $term" if $self->debug;
     my $pwin = $win->{plot} || gpwin($term, size => [1024, 768, 'px']);
