@@ -120,7 +120,86 @@ instructions from [here](#linuxbsdvariants).
 
 ## Windows
 
-**COMING SOON !**
+There are two ways to install _App::financeta_ on Windows - using Strawberry
+Perl or Cygwin. Either of these ways is alright to do, although Strawberry Perl
+is definitely nicer to use. We have tested this only on Windows 7 64-bit.
+
+### Strawberry Perl
+
+1. Download Strawberry Perl from their [website](http://strawberryperl.com) and
+install it.
+- You may choose either 32 or 64 bit MSI file depending on what kind of Windows
+you are running.
+- You may choose to download the _PortableZIP_ version of Strawberry Perl which
+includes _extra PDL related libs_ as part of it from <http://strawberryperl.com/releases.html>.
+
+1. Download Gnuplot for Windows from [here](http://gnuplot.info/download.html).
+- Select the option that says "Primary download site on Sourceforge" and pick the
+_exe_ installer from Sourceforge file list.
+- You will need to do the default install but remember to check the option that says add Gnuplot to the `PATH`
+environment.
+
+1. If you have downloaded the _PortableZIP_ version with _extra PDL libs_ you can
+  skip this step.
+- Download _ta-lib_ for Windows from [here](http://ta-lib.org/hdr_dw.html).
+Select the `ta-lib-0.4.0-msvc.zip` file and download it into a directory and
+unzip it.
+- You should see the `ta-lib` folder created after unzipping the file.
+- Note down the directory path. For example, if you unzip the folder in your
+`Documents` directory, then your path on Windows 7 will be
+`%USERPROFILE%\Documents\ta-lib`. The `%USERPROFILE%` environment variable
+automatically picks your home directory on Windows.
+- If you have installed the MSI version, start the Strawberry Perl shell from your _Start Menu_ > _Strawberry
+Perl_ > _Perl (commandline)_. This shell will look like the Windows command
+shell but with all the paths necessary for Perl to run. You will need to set the
+environment variables for installing `PDL::Finance::Talib` as shown below:
+
+Set the environment variables as below, and install the packages
+
+    $ set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr _lta_libc_cmr
+    $ set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include>
+    $ echo %TALIB_LIBS%
+    $ echo %TALIB_CFLAGS%
+    C:\> cpan -i PDL::Finance::Talib
+    C:\> cpan -i PDL::Graphics::Gnuplot
+    C:\> cpan -i App::financeta
+
+If you have used the _PortableZip_ version, you can directly install
+`App::financeta` as below:
+
+    C:\> cpan -i App::financeta
+
+Once this is done, you can run _financeta_ either from the Perl shell or from
+a regular command shell or Power shell by typing the following
+
+    C:\> financeta.bat
+
+### Cygwin
+
+We assume you already have [Cygwin](https://www.cygwin.com/) installed.
+
+Install the `gnuplot`, `perl`, `perl-libwin32`, `gcc-g++`, `autoconf`,
+`automake`, `tar`, `wget` and any other packages that you may want.
+
+Install _ta-lib_ as given below:
+
+    $ wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+    $ tar -zxvf ta-lib-0.4.0-src.tar.gz
+    $ cd ta-lib
+    $ ./configure
+    $ make CFLAGS=-I./include/ta_common
+    $ make check
+    $ make install
+
+Once this is done, let's install `App::financeta` using `cpan`.
+
+    $ cpan
+    cpan> install App::financeta
+
+On success, you will find `financeta` in `/usr/bin` and can start it as
+below:
+
+    $ /usr/bin/financeta
 
 
 [Back to Home](./index.html) [Next](./faq.html)

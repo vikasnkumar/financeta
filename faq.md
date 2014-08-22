@@ -43,12 +43,12 @@ proprietary software. So far PDL is pretty awesome.
 
 ## Operating System
 
-1. Why isn't Microsoft Windows&reg; supported yet ?
+1. Why is it so hard to install on Microsoft Windows&reg; ?
 
-    Microsoft Windows&reg; will be supported as soon as we have time to test on it and figure out
-the easiest way to install all the dependencies. Currently our focus is to make
-our software <u>just work</u>. If that means, making it <u>just work</u> on some systems
-first, then that is a priority.
+    Microsoft Windows&reg; does not natively come with Perl, and Perl was
+originally designed with a Unix-mindset. Hence, installing on Microsoft
+Windows&reg; can be a time consuming task. But once installation is complete, it works as
+well as any other operating system.
 
 1. Will ready-to-install packages be provided for various operating systems ?
 

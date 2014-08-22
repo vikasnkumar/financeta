@@ -4,9 +4,13 @@
 
 We hope that you have successfully installed the application as outlined
 [here](./install.html). If you have installed it from CPAN, you need to start
-the application like this:
+the application like this on Linux or BSD or Mac OS X or Cygwin:
 
     $ financeta
+
+If you're using Strawberry Perl on Windows, you will need to run it like this:
+
+    > financeta.bat
 
 If you have installed the software from Github, you are running it in developer
 mode and you should be running it like this:

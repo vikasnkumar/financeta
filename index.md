@@ -14,8 +14,8 @@ on stocks.
     1. [Linux and BSD variants](./install.html#linuxbsdvariants)
     1. [Mac OS X](./install.html#macosx)
     1. [Windows](./install.html#windows)
-        1. Strawberry Perl
-        1. Cygwin
+        1. [Strawberry Perl](./install.html#strawberryperl)
+        1. [Cygwin](./install.html#cygwin)
 1. [Frequently Asked Questions](./faq.html)
     1. [General](./faq.html#general)
     1. [Operating System](./faq.html#operatingsystem)
