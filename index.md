@@ -22,4 +22,5 @@ on stocks.
     1. [User Interface](./faq.html#userinterface)
     1. [Technical Analysis](./faq.html#technicalanalysis)
 1. [Usage](./usage.html)
+    1. [Starting The Application](./usage.html#startingtheapplication)
 1. [Indicators](./indicators.html)

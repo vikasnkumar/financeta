@@ -7,6 +7,13 @@
     The commandline name is `financeta` but the Perl package that it invokes is
 called `App::financeta`. The _ta_ in _financeta_ stands for technical analysis.
 
+1. Where can I get technical support ?
+
+    You can look for help by citing your issues on the github link
+[here](https://github.com/vikasnkumar/financeta/issues). If you like to find the
+developers on IRC, you can try looking for help on the _#pdl_ channel on
+_irc.perl.org_.
+
 1. Why did you select Perl to write the language ?
 
     Perl is the only scripting language I know apart from R. Python's
