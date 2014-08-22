@@ -178,8 +178,34 @@ a regular command shell or Power shell by typing the following
 
 We assume you already have [Cygwin](https://www.cygwin.com/) installed.
 
-Install the `gnuplot`, `perl`, `perl-libwin32`, `gcc-g++`, `autoconf`,
-`automake`, `tar`, `wget` and any other packages that you may want.
+Install the following packages: 
+- gnuplot
+- perl
+- perl-libwin32
+- gcc-g++
+- autoconf
+- automake
+- tar
+- wget
+- libgif-devel
+- libjasper-devel
+- libpng-devel
+- libtiff-devel
+- perl-Capture-Tiny
+- git
+- xorg-server
+- xorg-server-devel
+- xorg-server-extra
+- xorg-server-common
+- libX11-devel
+- libX11-xcb-devel
+- libXext-devel
+- libXfont-devel
+- libXft-devel
+- libXi-devel
+- libXmu-devel
+
+ and any other packages that you may want.
 
 Install _ta-lib_ as given below:
 
