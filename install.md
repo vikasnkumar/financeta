@@ -141,25 +141,19 @@ environment.
 
 1. If you have downloaded the _PortableZIP_ version with _extra PDL libs_ you can
   skip this step.
-- Download _ta-lib_ for Windows from [here](http://ta-lib.org/hdr_dw.html).
-Select the `ta-lib-0.4.0-msvc.zip` file and download it into a directory and
+    - Download _ta-lib_ for Windows from [here](http://ta-lib.org/hdr_dw.html). Select the `ta-lib-0.4.0-msvc.zip` file and download it into a directory and
 unzip it.
-- You should see the `ta-lib` folder created after unzipping the file.
-- Note down the directory path. For example, if you unzip the folder in your
-`Documents` directory, then your path on Windows 7 will be
-`%USERPROFILE%\Documents\ta-lib`. The `%USERPROFILE%` environment variable
-automatically picks your home directory on Windows.
-- If you have installed the MSI version, start the Strawberry Perl shell from your _Start Menu_ > _Strawberry
-Perl_ > _Perl (commandline)_. This shell will look like the Windows command
-shell but with all the paths necessary for Perl to run. You will need to set the
+    - You should see the `ta-lib` folder created after unzipping the file.
+    - Note down the directory path. For example, if you unzip the folder in your `Documents` directory, then your path on Windows 7 will be `%USERPROFILE%\Documents\ta-lib`. The `%USERPROFILE%` environment variable automatically picks your home directory on Windows.
+    - If you have installed the MSI version, start the Strawberry Perl shell from your _Start Menu_ > _Strawberry Perl_ > _Perl (commandline)_. This shell will look like the Windows command shell but with all the paths necessary for Perl to run. You will need to set the
 environment variables for installing `PDL::Finance::Talib` as shown below:
 
 Set the environment variables as below, and install the packages
-
-    $ set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr _lta_libc_cmr
-    $ set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include>
-    $ echo %TALIB_LIBS%
-    $ echo %TALIB_CFLAGS%
+    
+    C:\> set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr _lta_libc_cmr
+    C:\> set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include>
+    C:\> echo %TALIB_LIBS%
+    C:\> echo %TALIB_CFLAGS%
     C:\> cpan -i PDL::Finance::Talib
     C:\> cpan -i PDL::Graphics::Gnuplot
     C:\> cpan -i App::financeta
@@ -179,6 +173,7 @@ a regular command shell or Power shell by typing the following
 We assume you already have [Cygwin](https://www.cygwin.com/) installed.
 
 Install the following packages: 
+
 - gnuplot
 - perl
 - perl-libwin32

@@ -31,14 +31,14 @@
     <div class="container">
       <section id="main_content">
 
-<h1 id="installing_app::financeta_">Installing <em>App::financeta</em></h1>
+<h1 id="installingapp::financeta">Installing <em>App::financeta</em></h1>
 
 <h2 id="hardwarerequirements">Hardware Requirements</h2>
 
-<p>The software will perform well and fast if you're using an Intel or AMD
+<p>The software will perform well and fast if you&#8217;re using an Intel or AMD
 multi-core CPU made by them after 2007. You will benefit if you have more than
 2GB RAM although the application should run within 300MB, but that depends on
-how much data you're analyzing. PDL does a lot of parallel computations which
+how much data you&#8217;re analyzing. PDL does a lot of parallel computations which
 benefit with a multi-core and/or a multi-cpu system.</p>
 
 <p>The software has not been tested on ARM CPU based systems, and if there are any success
@@ -72,14 +72,14 @@ $ sudo make install
 
 <p>Currently, the plotting engine of <em>App::financeta</em> is
 <a href="http://www.gnuplot.info">Gnuplot</a> which will be
-available in your distribution's package manager. If not, you can find
+available in your distribution&#8217;s package manager. If not, you can find
 instructions on installing it on their <a href="http://www.gnuplot.info">website</a>.</p>
 
 <h4 id="installingapp::financetafromcpan">Installing App::financeta from CPAN</h4>
 
 <p>Check if the <code>perl</code> and <code>cpan</code> executables are installed on your system and if
 the version number of <code>perl</code> is greater than or equal to 5.10.1. If <code>perl</code>
-and/or <code>cpan</code> are not installed, please consult your distribution's package
+and/or <code>cpan</code> are not installed, please consult your distribution&#8217;s package
 manager. The <code>ta-lib</code> that you have just installed above, needs to be present in
 your <code>$PATH</code> variable if you have not installed it into <code>/usr/local</code>. The
 <code>gnuplot</code> executable also should have been installed and be present in your
@@ -124,7 +124,7 @@ installed. To install all the required dependencies, after you have installed
     Software::License Pod::Readme Module::Build
 </code></pre>
 
-<p>Some of these modules may already be available through your distribution's
+<p>Some of these modules may already be available through your distribution&#8217;s
 package manager.</p>
 
 <h2 id="macosx">Mac OS X</h2>
@@ -166,47 +166,35 @@ is definitely nicer to use. We have tested this only on Windows 7 64-bit.</p>
 
 <ol>
 <li><p>Download Strawberry Perl from their <a href="http://strawberryperl.com">website</a> and
-install it.</p>
+install it.</p></li>
+<li><p>You may choose either 32 or 64 bit MSI file depending on what kind of Windows
+you are running.</p></li>
+<li><p>You may choose to download the <em>PortableZIP</em> version of Strawberry Perl which
+includes <em>extra PDL related libs</em> as part of it from <a href="http://strawberryperl.com/releases.html">http://strawberryperl.com/releases.html</a>.</p></li>
+<li><p>Download Gnuplot for Windows from <a href="http://gnuplot.info/download.html">here</a>.</p></li>
+<li><p>Select the option that says &#8220;Primary download site on Sourceforge&#8221; and pick the
+<em>exe</em> installer from Sourceforge file list.</p></li>
+<li><p>You will need to do the default install but remember to check the option that says add Gnuplot to the <code>PATH</code>
+environment.</p></li>
+<li>If you have downloaded the <em>PortableZIP</em> version with <em>extra PDL libs</em> you can
+ skip this step.
 
 <ul>
-<li>You may choose either 32 or 64 bit MSI file depending on what kind of Windows
-you are running.</li>
-<li>You may choose to download the <em>PortableZIP</em> version of Strawberry Perl which
-includes <em>extra PDL related libs</em> as part of it from <a href="http://strawberryperl.com/releases.html">http://strawberryperl.com/releases.html</a>.</li>
-</ul></li>
-<li><p>Download Gnuplot for Windows from <a href="http://gnuplot.info/download.html">here</a>.</p>
-
-<ul>
-<li>Select the option that says "Primary download site on Sourceforge" and pick the
-<em>exe</em> installer from Sourceforge file list.</li>
-<li>You will need to do the default install but remember to check the option that says add Gnuplot to the <code>PATH</code>
-environment.</li>
-</ul></li>
-<li><p>If you have downloaded the <em>PortableZIP</em> version with <em>extra PDL libs</em> you can
-skip this step.</p>
-
-<ul>
-<li>Download <em>ta-lib</em> for Windows from <a href="http://ta-lib.org/hdr_dw.html">here</a>.
-Select the <code>ta-lib-0.4.0-msvc.zip</code> file and download it into a directory and
+<li>Download <em>ta-lib</em> for Windows from <a href="http://ta-lib.org/hdr_dw.html">here</a>. Select the <code>ta-lib-0.4.0-msvc.zip</code> file and download it into a directory and
 unzip it.</li>
 <li>You should see the <code>ta-lib</code> folder created after unzipping the file.</li>
-<li>Note down the directory path. For example, if you unzip the folder in your
-<code>Documents</code> directory, then your path on Windows 7 will be
-<code>%USERPROFILE%\Documents\ta-lib</code>. The <code>%USERPROFILE%</code> environment variable
-automatically picks your home directory on Windows.</li>
-<li>If you have installed the MSI version, start the Strawberry Perl shell from your <em>Start Menu</em> > <em>Strawberry
-Perl</em> > <em>Perl (commandline)</em>. This shell will look like the Windows command
-shell but with all the paths necessary for Perl to run. You will need to set the
+<li>Note down the directory path. For example, if you unzip the folder in your <code>Documents</code> directory, then your path on Windows 7 will be <code>%USERPROFILE%\Documents\ta-lib</code>. The <code>%USERPROFILE%</code> environment variable automatically picks your home directory on Windows.</li>
+<li>If you have installed the MSI version, start the Strawberry Perl shell from your <em>Start Menu</em> &gt; <em>Strawberry Perl</em> &gt; <em>Perl (commandline)</em>. This shell will look like the Windows command shell but with all the paths necessary for Perl to run. You will need to set the
 environment variables for installing <code>PDL::Finance::Talib</code> as shown below:</li>
 </ul></li>
 </ol>
 
 <p>Set the environment variables as below, and install the packages</p>
 
-<pre><code>$ set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr _lta_libc_cmr
-$ set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include&gt;
-$ echo %TALIB_LIBS%
-$ echo %TALIB_CFLAGS%
+<pre><code>C:\&gt; set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr _lta_libc_cmr
+C:\&gt; set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include&gt;
+C:\&gt; echo %TALIB_LIBS%
+C:\&gt; echo %TALIB_CFLAGS%
 C:\&gt; cpan -i PDL::Finance::Talib
 C:\&gt; cpan -i PDL::Graphics::Gnuplot
 C:\&gt; cpan -i App::financeta
@@ -228,32 +216,35 @@ a regular command shell or Power shell by typing the following</p>
 
 <p>We assume you already have <a href="https://www.cygwin.com/">Cygwin</a> installed.</p>
 
-<p>Install the following packages: 
-- gnuplot
-- perl
-- perl-libwin32
-- gcc-g++
-- autoconf
-- automake
-- tar
-- wget
-- libgif-devel
-- libjasper-devel
-- libpng-devel
-- libtiff-devel
-- perl-Capture-Tiny
-- git
-- xorg-server
-- xorg-server-devel
-- xorg-server-extra
-- xorg-server-common
-- libX11-devel
-- libX11-xcb-devel
-- libXext-devel
-- libXfont-devel
-- libXft-devel
-- libXi-devel
-- libXmu-devel</p>
+<p>Install the following packages: </p>
+
+<ul>
+<li>gnuplot</li>
+<li>perl</li>
+<li>perl-libwin32</li>
+<li>gcc-g++</li>
+<li>autoconf</li>
+<li>automake</li>
+<li>tar</li>
+<li>wget</li>
+<li>libgif-devel</li>
+<li>libjasper-devel</li>
+<li>libpng-devel</li>
+<li>libtiff-devel</li>
+<li>perl-Capture-Tiny</li>
+<li>git</li>
+<li>xorg-server</li>
+<li>xorg-server-devel</li>
+<li>xorg-server-extra</li>
+<li>xorg-server-common</li>
+<li>libX11-devel</li>
+<li>libX11-xcb-devel</li>
+<li>libXext-devel</li>
+<li>libXfont-devel</li>
+<li>libXft-devel</li>
+<li>libXi-devel</li>
+<li>libXmu-devel</li>
+</ul>
 
 <p>and any other packages that you may want.</p>
 
@@ -268,7 +259,7 @@ $ make check
 $ make install
 </code></pre>
 
-<p>Once this is done, let's install <code>App::financeta</code> using <code>cpan</code>.</p>
+<p>Once this is done, let&#8217;s install <code>App::financeta</code> using <code>cpan</code>.</p>
 
 <pre><code>$ cpan
 cpan&gt; install App::financeta
@@ -295,7 +286,7 @@ below:</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-08-22 15:56:40 -0400.
+        This page was last updated on 2014-08-22 16:37:52 -0400.
     </p>
     </div></footer>
     
