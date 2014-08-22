@@ -94,18 +94,36 @@ in the <em>'Security Wizard'</em>.</p>
 <p>The steps are outlined as follows:</p>
 
 <ul>
-<li>Select <em>'New'</em> from the <em>'Security'</em> menu option
-<img src="./images/financeta_sec_new.png" alt="Select New from the 'Security' menu option" title="Select 'New' from the 'Security' menu option" id="selectnewfromthesecuritymenuoption" /></li>
-<li>Enter a <span style="color:red;"><strong>valid</strong></span> stock symbol and date range in the <em>'Security Wizard'</em> such as <em>'MSFT'</em>
-<img src="./images/financeta_sec_wizard.png" alt="Select a Stock Symbol in the Security Wizard" title="Enter a valid stock symbol in the 'Security Wizard'" id="selectastocksymbolinthesecuritywizard" /></li>
+<li>Select <em>'New'</em> from the <em>'Security'</em> menu option</li>
+</ul>
+
+<p><img src="./images/financeta_sec_new.png" alt="Select New from the 'Security' menu option" title="Select 'New' from the 'Security' menu option" id="selectnewfromthesecuritymenuoption" /></p>
+
+<ul>
+<li>Enter a <span style="color:red;"><strong>valid</strong></span> stock symbol and date range in the <em>'Security Wizard'</em> such as <em>'MSFT'</em></li>
+</ul>
+
+<p><img src="./images/financeta_sec_wizard.png" alt="Select a Stock Symbol in the Security Wizard" title="Enter a valid stock symbol in the 'Security Wizard'" id="selectastocksymbolinthesecuritywizard" /></p>
+
+<ul>
 <li>View the retrieved data in a tab titled <em>'MSFT'</em> or the symbol you have
-chosen
-<img src="./images/financeta_tab_data.png" alt="View the data retrieved in a tab" title="View the data retrieved in a tab for that symbol" id="viewthedataretrievedinatab" /></li>
+chosen</li>
+</ul>
+
+<p><img src="./images/financeta_tab_data.png" alt="View the data retrieved in a tab" title="View the data retrieved in a tab for that symbol" id="viewthedataretrievedinatab" /></p>
+
+<ul>
 <li>View the open-high-low-close (OHLC) bar plot in Gnuplot that has been started
-by <em>App::financeta</em>
-<img src="./images/financeta_plot_ohlc.png" alt="OHLC Gnuplot for data" title="View the OHLC default plot in the adjacent Gnuplot window" id="ohlcgnuplotfordata" /></li>
+by <em>App::financeta</em></li>
+</ul>
+
+<p><img src="./images/financeta_plot_ohlc.png" alt="OHLC Gnuplot for data" title="View the OHLC default plot in the adjacent Gnuplot window" id="ohlcgnuplotfordata" /></p>
+
+<ul>
 <li>More securities can be added in the same way by following the above steps.</li>
 </ul>
+
+<p>Let us look at the various plot types that the application provides.</p>
 
 <h2 id="selectingaplot">Selecting a Plot</h2>
 
@@ -120,32 +138,96 @@ Gnuplot window will automatically display that plot type.</p>
 <ul>
 <li><em>OHLC</em>: This is the default plot type. It displays the Open-High-Low-Close data
 with the price being on the Y-axis and the date on the X-axis. This is a
-standard finance plot used in the industry.
-<img src="./images/financeta_plot_ohlc.png" alt="OHLC Plot" title="The OHLC plot" id="ohlcplot" /></li>
+standard finance plot used in the industry.</li>
+</ul>
+
+<p><img src="./images/financeta_plot_ohlc.png" alt="OHLC Plot" title="The OHLC plot" id="ohlcplot" /></p>
+
+<ul>
 <li><em>OHLC &amp; Volume</em>: This plot type shows two plots in one window. The top plot is
 the OHLC plot as described above, and the bottom plot shows Volume in units of
 1 million stocks on the Y-axis. There are some Volume based indicators where this kind of
-plot can be very useful.
-<img src="./images/financeta_plot_ohlcv.png" alt="OHLC &amp; Volume Plot" title="The OHLC &amp; Volume plot" id="ohlcvolumeplot" /></li>
+plot can be very useful.</li>
+</ul>
+
+<p><img src="./images/financeta_plot_ohlcv.png" alt="OHLC &amp; Volume Plot" title="The OHLC &amp; Volume plot" id="ohlcvolumeplot" /></p>
+
+<ul>
 <li><em>Close Price</em>: This plot type plots the Close price of the stock as a line
 graph with the Y-axis being the price and the X-axis being the date. This is
 useful when you want to use indicators that prefer using a single price stream such as
-Moving Average indicators.
-<img src="./images/financeta_plot_close.png" alt="Close Price Plot" title="The Close Price plot" id="closepriceplot" /></li>
+Moving Average indicators.</li>
+</ul>
+
+<p><img src="./images/financeta_plot_close.png" alt="Close Price Plot" title="The Close Price plot" id="closepriceplot" /></p>
+
+<ul>
 <li><em>Close Price &amp; Volume</em>: This plot type is similar to the Close price plot type
 above and also has a sub-plot of Volume in units of 1 million stocks on the
-Y-axis.
-<img src="./images/financeta_plot_closev.png" alt="Close Price &amp; Volume Plot" title="The Close Price &amp; Volume plot" id="closepricevolumeplot" /></li>
+Y-axis.</li>
+</ul>
+
+<p><img src="./images/financeta_plot_closev.png" alt="Close Price &amp; Volume Plot" title="The Close Price &amp; Volume plot" id="closepricevolumeplot" /></p>
+
+<ul>
 <li><em>Candlesticks</em>: Some researchers like to use Candlestick charts to understand
 how stock trades move, and for them we have the candlestick plot feature.
 There are about 61 candlestick indicators that <em>ta-lib</em> supports and hence this
-plot is essential to <em>App::financeta</em>.
-<img src="./images/financeta_plot_candle.png" alt="Candlestick Plot" title="The Candlestick plot" id="candlestickplot" /></li>
+plot is essential to <em>App::financeta</em>.</li>
+</ul>
+
+<p><img src="./images/financeta_plot_candle.png" alt="Candlestick Plot" title="The Candlestick plot" id="candlestickplot" /></p>
+
+<ul>
 <li><em>Candlesticks &amp; Volume</em>: This plot is useful if the user wants to do analysis
 with both Candlesticks and Volume indicators. The Volume is plotted in units
 of 1 million stocks as a sub-plot.
 <img src="./images/financeta_plot_candlev.png" alt="Candlestick &amp; Volume Plot" title="The Candlestick &amp; Volume plot" id="candlestickvolumeplot" /></li>
 </ul>
+
+<p>Now it is time to select an indicator to add to the plot.</p>
+
+<h2 id="selectinganindicator">Selecting an Indicator</h2>
+
+<p>To perform analysis on the security selected above, we need to try out some
+indicators. Various types of indicators are available to the user and details
+about each of them are provided in the chapter titled
+<a href="./indicators.html">Indicators</a>. We have counted about 132 indicators that we
+provide as part of <em>App::financeta</em> that are available from <em>ta-lib</em>. However,
+once we are satisfied with the documentation of all the indicators available, and
+the application has all the expected features outlined in the
+<a href="./intro.html">Introduction</a>, we will add our own custom indicators as well.</p>
+
+<p>Let us try to do the simplest indicator - <em>Simple Moving Average</em>. This is a
+form of <em>Overlap</em> indicator, since it overlaps with the actual price data.</p>
+
+<p>The steps to add this indicator are below:
+- Load the data for the security <em>'MSFT'</em> or your favorite stock as shown above.
+  The OHLC or Close Price plots should be selected depending on your prefernce.</p>
+
+<ul>
+<li>Select <em>'Add Indicator'</em> from the <em>'Analysis'</em> menu to start the <em>'Technical
+Analysis Indicator Wizard'</em>.</li>
+</ul>
+
+<p><img src="./images/financeta_add_indic.png" alt="Add Indicator Option" title="Select 'Add Indicator'" id="addindicatoroption" /></p>
+
+<ul>
+<li><p>Select <em>'Overlap Studies'</em> in the Group list, select '<em>Simple Moving Average</em>' in
+the Function list and set the period window parameter to 21 in the text box as
+shown here and hit the <em>OK</em> button.
+<img src="./images/financeta_wiz_sma21.png" alt="Simple Moving Average selection" title="Select Simple Moving Average parameters" id="simplemovingaverageselection" /></p></li>
+<li><p>Once you do this, the simple moving average has been calculated and added to
+the data in the tab under the column <em>SMA(21)</em>  as shown.
+<img src="./images/financeta_tab_datasma21.png" alt="Tab data showing SMA(21)" title="Data table showing SMA[21] column" id="tabdatashowingsma21" /></p></li>
+<li><p>You can also see that the plot window has updated with the moving average line
+as shown.
+<img src="./images/financeta_plot_sma21.png" alt="SMA(21) in the plot window" title="Simple Moving Average with a 21-day period" id="sma21intheplotwindow" /></p></li>
+</ul>
+
+<p>Similarly one can add various indicators to the selected security tab.</p>
+
+<p>Let us move on to understanding the indicators in the <a href="./indicators.html">next chapter</a>.</p>
 
 <p><a href="./index.html">Back to Home</a> <a href="./indicators.html">Next</a></p>
       </section>
@@ -162,7 +244,7 @@ of 1 million stocks as a sub-plot.
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-08-22 11:28:49 -0400.
+        This page was last updated on 2014-08-22 12:11:48 -0400.
     </p>
     </div></footer>
     

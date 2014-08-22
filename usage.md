@@ -57,17 +57,26 @@ in the _'Security Wizard'_.
 The steps are outlined as follows:
 
 - Select _'New'_ from the _'Security'_ menu option
+
 ![Select New from the 'Security' menu option](./images/financeta_sec_new.png "Select 'New' from the 'Security' menu option")
+
 - Enter a <span style="color:red;">**valid**</span> stock symbol and date range in the _'Security Wizard'_ such as _'MSFT'_
+
 ![Select a Stock Symbol in the Security Wizard](./images/financeta_sec_wizard.png "Enter a valid stock symbol in the 'Security Wizard'")
+
 - View the retrieved data in a tab titled _'MSFT'_ or the symbol you have
   chosen
+
 ![View the data retrieved in a tab](./images/financeta_tab_data.png "View the data retrieved in a tab for that symbol")
+
 - View the open-high-low-close (OHLC) bar plot in Gnuplot that has been started
   by _App::financeta_
+
 ![OHLC Gnuplot for data](./images/financeta_plot_ohlc.png "View the OHLC default plot in the adjacent Gnuplot window")
+
 - More securities can be added in the same way by following the above steps.
 
+Let us look at the various plot types that the application provides.
 
 ## Selecting a Plot
 
@@ -82,30 +91,81 @@ The current supported plot types are as follows:
 - _OHLC_: This is the default plot type. It displays the Open-High-Low-Close data
   with the price being on the Y-axis and the date on the X-axis. This is a
 standard finance plot used in the industry.
+
 ![OHLC Plot](./images/financeta_plot_ohlc.png "The OHLC plot")
+
 - _OHLC & Volume_: This plot type shows two plots in one window. The top plot is
   the OHLC plot as described above, and the bottom plot shows Volume in units of
 1 million stocks on the Y-axis. There are some Volume based indicators where this kind of
 plot can be very useful.
+
 ![OHLC & Volume Plot](./images/financeta_plot_ohlcv.png "The OHLC & Volume plot")
+
 - _Close Price_: This plot type plots the Close price of the stock as a line
   graph with the Y-axis being the price and the X-axis being the date. This is
 useful when you want to use indicators that prefer using a single price stream such as
 Moving Average indicators.
+
 ![Close Price Plot](./images/financeta_plot_close.png "The Close Price plot")
+
 - _Close Price & Volume_: This plot type is similar to the Close price plot type
   above and also has a sub-plot of Volume in units of 1 million stocks on the
 Y-axis.
+
 ![Close Price & Volume Plot](./images/financeta_plot_closev.png "The Close Price & Volume plot")
+
 - _Candlesticks_: Some researchers like to use Candlestick charts to understand
   how stock trades move, and for them we have the candlestick plot feature.
 There are about 61 candlestick indicators that _ta-lib_ supports and hence this
 plot is essential to _App::financeta_.
+
 ![Candlestick Plot](./images/financeta_plot_candle.png "The Candlestick plot")
+
 - _Candlesticks & Volume_: This plot is useful if the user wants to do analysis
   with both Candlesticks and Volume indicators. The Volume is plotted in units
 of 1 million stocks as a sub-plot.
 ![Candlestick & Volume Plot](./images/financeta_plot_candlev.png "The Candlestick & Volume plot")
 
+Now it is time to select an indicator to add to the plot.
+
+## Selecting an Indicator
+
+To perform analysis on the security selected above, we need to try out some
+indicators. Various types of indicators are available to the user and details
+about each of them are provided in the chapter titled
+[Indicators](./indicators.html). We have counted about 132 indicators that we
+provide as part of _App::financeta_ that are available from _ta-lib_. However,
+once we are satisfied with the documentation of all the indicators available, and
+the application has all the expected features outlined in the
+[Introduction](./intro.html), we will add our own custom indicators as well.
+
+Let us try to do the simplest indicator - _Simple Moving Average_. This is a
+form of _Overlap_ indicator, since it overlaps with the actual price data.
+
+The steps to add this indicator are below:
+- Load the data for the security _'MSFT'_ or your favorite stock as shown above.
+  The OHLC or Close Price plots should be selected depending on your prefernce.
+
+- Select _'Add Indicator'_ from the _'Analysis'_ menu to start the _'Technical
+  Analysis Indicator Wizard'_.
+
+![Add Indicator Option](./images/financeta_add_indic.png "Select 'Add Indicator'")
+
+- Select _'Overlap Studies'_ in the Group list, select '_Simple Moving Average_' in
+  the Function list and set the period window parameter to 21 in the text box as
+shown here and hit the _OK_ button.
+![Simple Moving Average selection](./images/financeta_wiz_sma21.png "Select Simple Moving Average parameters")
+
+- Once you do this, the simple moving average has been calculated and added to
+  the data in the tab under the column _SMA(21)_  as shown.
+![Tab data showing SMA(21)](./images/financeta_tab_datasma21.png "Data table showing SMA[21] column")
+
+- You can also see that the plot window has updated with the moving average line
+  as shown.
+![SMA(21) in the plot window](./images/financeta_plot_sma21.png "Simple Moving Average with a 21-day period")
+
+Similarly one can add various indicators to the selected security tab.
+
+Let us move on to understanding the indicators in the [next chapter](./indicators.html).
 
 [Back to Home](./index.html) [Next](./indicators.html)
