@@ -5,10 +5,11 @@ CURDIR=$(shell pwd)
 HTMLIZE?=$(CURDIR)/htmlize
 HTMLFILES:=$(patsubst %.md,%.html,$(wildcard *.md))
 
-.PHONY: all default rebuild
 default: all
 
 all: $(HTMLFILES)
 
 $(HTMLFILES): %.html: %.md
 	/bin/sh $(HTMLIZE) $<
+
+.PHONY: all default
