@@ -12,6 +12,7 @@ all: $(HTMLFILES)
 
 rebuild:
 	$(MAKE) -B
+	rm -f *-e
 
 $(HTMLFILES): %.html: %.md
 	/bin/sh $(HTMLIZE) $<
