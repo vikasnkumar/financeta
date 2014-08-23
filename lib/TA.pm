@@ -100,7 +100,8 @@ sub _menu_items {
                             my ($data, $symbol) = $gui->download_data($bar);
                             if (defined $data) {
                                 $gui->display_data($win, $data);
-                                $gui->plot_data($win, $data, $symbol, 'OHLC');
+                                my $type = $gui->current->{plot_type} || 'OHLC';
+                                $gui->plot_data($win, $data, $symbol);
                             }
                             $win->menu->plot_ohlc->enabled(1);
                             $win->menu->plot_ohlcv->enabled(1);
