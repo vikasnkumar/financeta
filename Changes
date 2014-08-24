@@ -1,3 +1,10 @@
+Sat Aug 23 14:30:13 2014 -0400
+4f857070a745a54165585dda312466b531c59e91
+if one tab is using a different plot and a new tab is opened, it should open using the same plot_type as the other tabs
+
+Fri Aug 22 16:04:31 2014 -0400
+1f53aa0d6ad665177f85651543672bd3a249f6d7
+Changes update
 Fri Aug 22 16:04:28 2014 -0400
 61980cb25962ded745684d76172508478a24af56
 Releasing 0.06 with Windows support
