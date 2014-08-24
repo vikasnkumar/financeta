@@ -96,4 +96,4 @@ Finance](http://finance.yahoo.com) instead.
 problem is the indicator or the data.
 
 
-[Back to Home](./index.html) [Next](./usage.html)
+[Table of Contents](./index.html) [Next](./usage.html)

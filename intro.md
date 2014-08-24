@@ -108,4 +108,4 @@ start learning [how](/finance/usage.html) to use it.
 Hope you have fun using the software as much as I enjoyed writing it!
 
 
-[Back to Home](./index.html) [Next](./license.html)
+[Table of Contents](./index.html) [Next](./license.html)

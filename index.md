@@ -11,6 +11,7 @@ on stocks.
 1. [License and Copyright](./license.html)
 1. [Installing _App::financeta_](./install.html)
     1. [Hardware Requirements](./install.html#hardwarerequirements)
+    1. [Download Software](./install.html#downloadsoftware)
     1. [Linux and BSD variants](./install.html#linuxbsdvariants)
     1. [Mac OS X](./install.html#macosx)
     1. [Windows](./install.html#windows)

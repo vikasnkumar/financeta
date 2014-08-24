@@ -172,4 +172,4 @@ Similarly one can add various indicators to the selected security tab.
 
 Let us move on to understanding the indicators in the [next chapter](./indicators.html).
 
-[Back to Home](./index.html) [Next](./indicators.html)
+[Table of Contents](./index.html) [Next](./indicators.html)

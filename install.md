@@ -13,6 +13,22 @@ reports, please let the authors know and we shall include them here.
 
 If you want us to support a different CPU type, please contact the authors.
 
+## Download Software
+
+You can download the software from various sources:
+
+- **CPAN**: The most recent release versions will always be available on CPAN.
+  Instructions on how to install from CPAN are given in the following sections
+on this page.
+
+- **Github**: You can download the software from Github using the following
+  methods:
+<section id="downloads">
+<a href="https://github.com/vikasnkumar/financeta/zipball/master" class="btn">Download as .zip</a>
+<a href="https://github.com/vikasnkumar/financeta/tarball/master" class="btn">Download as .tar.gz</a>
+<a href="https://github.com/vikasnkumar/financeta" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+</section>
+
 ## Linux & BSD variants
 
 _App::financeta_ has been developed on the GNU/Linux platform. However, it works
@@ -228,4 +244,4 @@ below:
     $ /usr/bin/financeta
 
 
-[Back to Home](./index.html) [Next](./faq.html)
+[Table of Contents](./index.html) [Next](./faq.html)
