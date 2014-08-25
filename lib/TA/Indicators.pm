@@ -407,7 +407,7 @@ has overlaps => {
             say "Executing ta_sarext parameters: ", Dumper(\@args) if $obj->debug;
             my $outpdl = PDL::ta_sarext($highpdl, $lowpdl, @args);
             return [
-                ["SAR-EXT", $outpdl],
+                ["SAR-EXT", $outpdl, {with => 'points', pointtype => 7}],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
