@@ -117,6 +117,7 @@ sub _plot_gnuplot_general {
         my $p = $_->[1];
         my %legend = (legend => $_->[0]) if length $_->[0];
         my $args = $_->[2] || {};
+        say Dumper($args) if $self->debug;
         push @plotinfo, {
             with => 'lines',
             %legend,
@@ -383,7 +384,7 @@ has overlaps => {
             say "Executing ta_sar parameters: ", Dumper(\@args) if $obj->debug;
             my $outpdl = PDL::ta_sar($highpdl, $lowpdl, @args);
             return [
-                ["SAR", $outpdl, {with => 'points', pointtype => 7}],
+                ["SAR", $outpdl, {with => 'points pointtype 7'}], #bug in P:G:G
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -407,7 +408,7 @@ has overlaps => {
             say "Executing ta_sarext parameters: ", Dumper(\@args) if $obj->debug;
             my $outpdl = PDL::ta_sarext($highpdl, $lowpdl, @args);
             return [
-                ["SAR-EXT", $outpdl, {with => 'points', pointtype => 7}],
+                ["SAR-EXT", $outpdl, {with => 'points pointtype 7'}], # bug in P:G:G
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
