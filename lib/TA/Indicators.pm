@@ -19,16 +19,16 @@ has debug => 0;
 has plot_engine => 'gnuplot';
 has color_idx => 0;
 has colors => [qw(
-    blue
+    red
+    yellow
     pink
     green
-    white
     cyan
-    yellow
     violet
     magenta
     purple
     brown
+    blue
     gold
     goldenrod
     dark-orange
@@ -40,7 +40,6 @@ has colors => [qw(
     dark-yellow
     dark-red
     antiquewhite
-    red
     dark-spring-green
     royalblue
     web-green

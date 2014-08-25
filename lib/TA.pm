@@ -862,8 +862,6 @@ sub indicator_wizard {
         origin => [20, 60],
         font => { height => 16, style => fs::Bold },
     );
-
-    #TODO:
     my $res = $w->execute();
     $w->end_modal;
     return $res == mb::Ok;
