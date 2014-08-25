@@ -116,10 +116,12 @@ sub _plot_gnuplot_general {
     foreach (@$output) {
         my $p = $_->[1];
         my %legend = (legend => $_->[0]) if length $_->[0];
+        my $args = $_->[2] || {};
         push @plotinfo, {
             with => 'lines',
             %legend,
             linecolor => $self->next_color,
+            %$args,
         }, $xdata, $p;
     }
     return @plotinfo;
@@ -369,7 +371,7 @@ has overlaps => {
         gnuplot => \&_plot_gnuplot_general,
     },
     sar => {
-        name => 'Parabolic SAR',
+        name => 'Parabolic Stop And Reverse (SAR)',
         params => [
             # key, pretty name, type, default value
             [ 'InAcceleration', 'Acceleration Factor(>= 0)', PDL::double, 0.02],
@@ -381,13 +383,13 @@ has overlaps => {
             say "Executing ta_sar parameters: ", Dumper(\@args) if $obj->debug;
             my $outpdl = PDL::ta_sar($highpdl, $lowpdl, @args);
             return [
-                ["SAR", $outpdl],
+                ["SAR", $outpdl, {with => 'points', pointtype => 7}],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
     },
     sarext => {
-        name => 'Parabolic SAR - Extended',
+        name => 'Parabolic Stop And Reverse (SAR) - Extended',
         params => [
             # key, pretty name, type, default value
             [ 'InStartValue', 'Start Value', PDL::double, 0.0],
