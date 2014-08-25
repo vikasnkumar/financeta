@@ -1347,7 +1347,7 @@ has cycle => {
 
 has volume => {
     ad => {
-        name => 'Chaikin A/D line',
+        name => 'Chaikin Accumulation/Distribution line',
         params => [
             # no params
         ],
@@ -1363,7 +1363,7 @@ has volume => {
         gnuplot => \&_plot_gnuplot_general,
     },
     adosc => {
-        name => 'Chaikin A/D Oscillator',
+        name => 'Chaikin Accumulation/Distribution Oscillator',
         params => [
             # key, pretty name, type, default value
             [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 3],

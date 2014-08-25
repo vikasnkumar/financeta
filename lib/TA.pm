@@ -101,7 +101,7 @@ sub _menu_items {
                             if (defined $data) {
                                 $gui->display_data($win, $data);
                                 my $type = $gui->current->{plot_type} || 'OHLC';
-                                $gui->plot_data($win, $data, $symbol);
+                                $gui->plot_data($win, $data, $symbol, $type);
                             }
                             $win->menu->plot_ohlc->enabled(1);
                             $win->menu->plot_ohlcv->enabled(1);
@@ -548,7 +548,7 @@ sub add_indicator($$$) {
         }
         $self->display_data($win, $data, $symbol, $iref, $output);
         my ($ndata, $nsymbol, $indicators) = $self->get_tab_data($win);
-        my $type = $self->current->{plot_type} || 'CLOSE';
+        my $type = $self->current->{plot_type} || 'OHLC';
         $self->plot_data($win, $ndata, $nsymbol, $type, $indicators);
     }
 }
@@ -950,7 +950,7 @@ sub display_data {
                 return if $oldidx == $newidx;
                 # ok find the detailed-list object and use it
                 my ($data, $symbol, $indicators) = $self->_get_tab_data($w, $newidx);
-                my $type = $self->current->{plot_type} || 'CLOSE';
+                my $type = $self->current->{plot_type} || 'OHLC';
                 $self->plot_data($owner, $data, $symbol, $type, $indicators);
             },
         );
@@ -1127,7 +1127,7 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'financebars',
-                    linecolor => 'red',
+                    linecolor => 'white',
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
@@ -1157,7 +1157,7 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'financebars',
-                    linecolor => 'red',
+                    linecolor => 'white',
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
@@ -1183,7 +1183,7 @@ sub plot_data_gnuplot {
                 {
                     with => 'impulses',
                     legend => 'Volume',
-                    linecolor => 'blue',
+                    linecolor => 'cyan',
                 },
                 $data(,(0)), $data(,(5)) / 1e6,
             );
@@ -1206,7 +1206,7 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'candlesticks',
-                    linecolor => 'red',
+                    linecolor => 'white',
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
@@ -1237,7 +1237,7 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'candlesticks',
-                    linecolor => 'red',
+                    linecolor => 'white',
                     legend => 'Price',
                 },
                 $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
@@ -1263,7 +1263,7 @@ sub plot_data_gnuplot {
                 {
                     with => 'impulses',
                     legend => 'Volume',
-                    linecolor => 'blue',
+                    linecolor => 'cyan',
                 },
                 $data(,(0)), $data(,(5)) / 1e6,
             );
@@ -1292,7 +1292,7 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'lines',
-                    linecolor => 'red',
+                    linecolor => 'white',
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),
@@ -1318,7 +1318,7 @@ sub plot_data_gnuplot {
                 {
                     with => 'impulses',
                     legend => 'Volume',
-                    linecolor => 'blue',
+                    linecolor => 'cyan',
                 },
                 $data(,(0)), $data(,(5)) / 1e6,
             );
@@ -1341,7 +1341,7 @@ sub plot_data_gnuplot {
                 },
                 {
                     with => 'lines',
-                    linecolor => 'red',
+                    linecolor => 'white',
                     legend => 'Close Price',
                 },
                 $data(,(0)), $data(,(4)),
