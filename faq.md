@@ -20,6 +20,13 @@ _irc.perl.org_.
 whitespace restrictions are an abomination, hence I do not use it. Once you know Perl, all
 other scripting languages seem like toys (I am looking at you Ruby!).
 
+1. Why is this a desktop application and not browser based ?
+
+    For the very simple reason that if it is a desktop application, your computer
+that you have already paid for is doing the work and not some server that needs to be paid for by me.
+Another reason being that browser fragmentation today is greater than desktop
+fragmentation !
+
 1. When will real time trading be available ?
 
     In trying to be realistic, we can estimate early to mid 2015.
