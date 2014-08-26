@@ -120,8 +120,8 @@ sub _plot_gnuplot_general {
         say Dumper($args) if $self->debug;
         push @plotinfo, {
             with => 'lines',
-            %legend,
             linecolor => $self->next_color,
+            %legend,
             %$args,
         }, $xdata, $p;
     }
@@ -407,8 +407,12 @@ has overlaps => {
             my ($obj, $highpdl, $lowpdl, @args) = @_;
             say "Executing ta_sarext parameters: ", Dumper(\@args) if $obj->debug;
             my $outpdl = PDL::ta_sarext($highpdl, $lowpdl, @args);
+            my $shortpdl = $outpdl;
+            $shortpdl = $shortpdl->setbadif($shortpdl > 0)->abs;
+            $outpdl = $outpdl->setbadif($outpdl < 0);
             return [
-                ["SAR-EXT", $outpdl, {with => 'points pointtype 7'}], # bug in P:G:G
+                ["SAR(long)", $outpdl, {with => 'points pointtype 7', linecolor => 'red'}], # bug in P:G:G
+                ["SAR(short)", $shortpdl, {with => 'points pointtype 7', linecolor => 'green'}], # bug in P:G:G
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
