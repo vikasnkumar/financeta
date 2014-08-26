@@ -107,6 +107,7 @@ sub _menu_items {
                             $win->menu->plot_cdl->enabled(1);
                             $win->menu->plot_cdlv->enabled(1);
                             $win->menu->add_indicator->enabled(1);
+                            $win->menu->remove_indicator->enabled(1);
                             $gui->progress_bar_close($bar);
                         }
                     },
@@ -244,6 +245,18 @@ sub _menu_items {
                     },
                     $self,
                 ],
+                [
+                    'remove_indicator',
+                    'Remove Indicator', 'Ctrl+Shift+I', '^#I',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        # ok remove the indicator and update the plots and
+                        # display tables
+                        $gui->remove_indicator($win);
+                    },
+                    $self,
+                ],
             ],
         ],
         [
@@ -291,6 +304,7 @@ sub run {
     $self->main->menu->plot_cdl->enabled(0);
     $self->main->menu->plot_cdlv->enabled(0);
     $self->main->menu->add_indicator->enabled(0);
+    $self->main->menu->remove_indicator->enabled(0);
     run Prima;
 }
 
@@ -531,9 +545,220 @@ sub security_wizard {
     return $res == mb::Ok;
 }
 
+sub remove_indicator($) {
+    my ($self, $win) = @_;
+    my $result = $self->remove_indicator_wizard($win);
+    if ($result and ref $result eq 'HASH') {
+        say "Removing indicator: ", Dumper($result) if $self->debug;
+        # we know here the name of the indicator, the index of the indicator and
+        # the columns in the data to remove.
+        # let's do that.
+        my ($data, $symbol, $indicators, $headers) = $self->get_tab_data_by_name($win, $result->{tab});
+        return unless $headers;
+        my $total_cols = $data->dim(1);
+        my @ncols = (0 .. $total_cols - 1); # get a list of column numbers
+        my @nhdrs = (@$headers);
+        my @cols2rem = @{$result->{columns}};
+        foreach my $c (@cols2rem) {
+            $ncols[$c] = undef;
+            $nhdrs[$c] = undef;
+        }
+        @nhdrs = grep { defined $_ } @nhdrs;
+        @ncols = grep { defined $_ } @ncols;
+        say "New Headers: ", Dumper(\@nhdrs) if $self->debug;
+        say "Remaining columns: ", Dumper(\@ncols) if $self->debug;
+        my $ndata = $data->dice('X', \@ncols);
+        my $nindics = [];
+        if ($indicators) {
+            my $index = $result->{indicator_index};
+            for (0 .. scalar(@$indicators) - 1) {
+                next if $_ == $index;
+                push @$nindics, $indicators->[$_];
+            }
+        }
+        if ($self->set_tab_data_by_name($win, $result->{tab}, $ndata, $symbol, $nindics, \@nhdrs)) {
+            say "Successfully set data" if $self->debug;
+            $self->display_data($win, $ndata, $symbol);
+            my ($adata, $asymbol, $aindicators) = $self->get_tab_data($win);
+            my $type = $self->current->{plot_type} || 'OHLC';
+            $self->plot_data($win, $adata, $asymbol, $type, $aindicators);
+        }
+    }
+}
+
+sub remove_indicator_wizard {
+    my ($self, $win) = @_;
+    my $w = Prima::Dialog->new(
+        name => 'rem_ind_wizard',
+        centered => 1,
+        origin => [200, 200],
+        size => [640, 280],
+        text => 'Remove Indicator Wizard',
+        icon => $self->icon,
+        visible => 1,
+        taskListed => 0,
+        onExecute => sub {
+            my $dlg = shift;
+            $dlg->cbox_tabs->List->focusedItem(-1);
+            $dlg->cbox_inds->List->focusedItem(-1);
+            $dlg->btn_cancel->enabled(1);
+            $dlg->btn_ok->enabled(0);
+        },
+    );
+    $w->owner($win) if defined $win;
+    my %tabs = $self->get_tab_names($win);
+    say "Current tabs: ", Dumper(\%tabs) if $self->debug;
+    my $result = {};
+    $w->insert(Label => name => 'label_tabs',
+        text => 'Select Security',
+        font => { style => fs::Bold, height => 16 },
+        alignment => ta::Left,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [20, 240],
+        hint => 'This is a list of already open tabs',
+        hintVisible => 1,
+    );
+    $w->insert(ComboBox =>
+        name => 'cbox_tabs',
+        style => cs::DropDownList,
+        height => 30,
+        width => 360,
+        hScroll => 0,
+        multiSelect => 0,
+        multiColumn => 0,
+        dragable => 0,
+        focusedItem => -1,
+        font => { height => 14 },
+        items => ['', keys %tabs],
+        origin => [180, 240],
+        onChange => sub {
+            my $cbox = shift;
+            my $owner = $cbox->owner;
+            my $lbox = $cbox->List;
+            my $index = $lbox->focusedItem;
+            my $txt = $lbox->get_item_text($index);
+            if (defined $txt and length $txt) {
+                my $indicators = $self->get_tab_indicators($owner->owner, $txt);
+                my @inds = ();
+                if ($indicators) {
+                    foreach (@$indicators) {
+                        push @inds, $_->{indicator}->{func};
+                    }
+                }
+                say "Current indicators for tab $txt: ", Dumper(\@inds) if $self->debug;
+                if (scalar @inds) {
+                    $owner->cbox_inds->items(\@inds);
+                    $owner->btn_ok->enabled(1);
+                } else {
+                    $owner->cbox_inds->items([]);
+                    $owner->btn_ok->enabled(0);
+                }
+                $result->{tab} = $txt;
+            } else {
+                $owner->cbox_inds->items([]);
+                $owner->cbox_inds->focusedItem(-1);
+                $owner->cbox_inds->text('');
+                $owner->btn_ok->enabled(0);
+                delete $result->{tab};
+            }
+        },
+    );
+    $w->cbox_tabs->text('');
+    $w->insert(Label => name => 'label_inds',
+        text => 'Select Indicator',
+        font => { style => fs::Bold, height => 16 },
+        alignment => ta::Left,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [20, 200],
+        hint => 'These indicators are already present in the selected tab',
+        hintVisible => 1,
+    );
+    $w->insert(ComboBox =>
+        name => 'cbox_inds',
+        style => cs::DropDownList,
+        height => 30,
+        width => 360,
+        hScroll => 0,
+        font => { height => 14 },
+        multiSelect => 0,
+        multiColumn => 0,
+        dragable => 0,
+        focusedItem => -1,
+        text => '',
+        items => [],
+        origin => [180, 200],
+        onChange => sub {
+            my $cbox = shift;
+            my $owner = $cbox->owner;
+            my $lbox = $cbox->List;
+            my $index = $lbox->focusedItem;
+            my $txt = $lbox->get_item_text($index);
+            if (defined $txt) {
+                $owner->btn_ok->enabled(1);
+                $result->{indicator} = $txt;
+                $result->{indicator_index} = $index;
+            } else {
+                $owner->btn_ok->enabled(0);
+                $cbox->items([]);
+                $cbox->focusedItem(-1);
+                $cbox->text('');
+                delete $result->{indicator};
+                delete $result->{indicator_index};
+            }
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_cancel',
+        text => 'Cancel',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 20, 20 ],
+        modalResult => mb::Cancel,
+        default => 1,
+        enabled => 1,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            $result = {};
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_ok',
+        text => 'OK',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 150, 20 ],
+        modalResult => mb::Ok,
+        default => 0,
+        enabled => 0,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            my $btn = shift;
+            my $owner = $btn->owner;
+            my $indicators = $self->get_tab_indicators($owner->owner, $result->{tab});
+            my @inds = ();
+            if ($indicators) {
+                my $iref = $indicators->[$result->{indicator_index}]->{indicator};
+                if ($iref->{func} eq $result->{indicator}) {
+                    $result->{columns} = $indicators->[$result->{indicator_index}]->{columns};
+                } else {
+                    carp "Cannot find the columns to remove";
+                }
+            } else {
+                carp "Invalid indicators for tab: ", $result->{tab};
+            }
+            say Dumper($result) if $self->debug;
+        },
+    );
+    my $res = $w->execute();
+    $w->end_modal;
+    return ($res == mb::Ok) ? $result : undef;
+}
+
 sub add_indicator($$$) {
     my ($self, $win, $data, $symbol) = @_;
-    if ($self->indicator_wizard($win)) {
+    if ($self->add_indicator_wizard($win)) {
         my $iref = $self->current->{indicator};
         say Dumper($iref) if $self->debug;
         my $output = $self->indicator->execute_ohlcv($data, $iref);
@@ -707,10 +932,10 @@ sub indicator_parameter_wizard {
     }
 }
 
-sub indicator_wizard {
+sub add_indicator_wizard {
     my ($self, $win) = @_;
     my $w = Prima::Dialog->new(
-        name => 'ind_wizard',
+        name => 'add_ind_wizard',
         centered => 1,
         origin => [200, 200],
         size => [640, 480],
@@ -762,6 +987,8 @@ sub indicator_wizard {
                 my @funcs = $self->indicator->get_funcs($txt);
                 if (scalar @funcs) {
                     $owner->cbox_funcs->items(\@funcs);
+                } else {
+                    $owner->cbox_funcs->items([]);
                 }
                 $owner->btn_ok->enabled(1);
                 $self->current->{indicator}->{group} = $txt;
@@ -984,13 +1211,17 @@ sub display_data {
     }
     # handle the current indicator first
     if ($output and scalar @$output) {
+        my @cols = ();
         foreach my $a (@$output) {
+            # add the DetailedList column number
+            push @cols, scalar(@$headers);
+            # add the header
             push @$headers, $a->[0];
             # splice the indicator PDL into $data
             $data = $data->glue(1, $a->[1]) if ref $a->[1] eq 'PDL';
         }
         # add the current indicator to the bottom of the list
-        push @$existing_indicators, {indicator => $iref, data => $output};
+        push @$existing_indicators, {indicator => $iref, data => $output, columns => \@cols};
     }
     say "Data dimension: ", Dumper([$data->dims]) if $self->debug;
     say "Updated headers: ", Dumper($headers) if $self->debug;
@@ -1058,6 +1289,75 @@ sub get_tab_data {
     return unless @tabs;
     my $idx = $win->data_tabs->pageIndex;
     return $self->_get_tab_data($win->data_tabs, $idx);
+}
+
+sub get_tab_data_by_name($$) {
+    my ($self, $win, $name) = @_;
+    return unless $win;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    say "Looking for $name" if $self->debug;
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        if ($dl and $dl->{-symbol} eq $name) {
+            say "Found $name on page $idx" if $self->debug;
+            return ($dl->{-pdl},
+                    $dl->{-symbol},
+                    $dl->{-indicators},
+                    [$dl->headers]);
+        }
+    }
+    return undef;
+}
+
+sub set_tab_data_by_name($$) {
+    my ($self, $win, $name, $p, $s, $ind, $hdr) = @_;
+    return unless $win;
+    return unless $name;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    my $found;
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        if ($dl and $dl->{-symbol} eq $name) {
+            say "Found $name on page $idx" if $self->debug;
+            $dl->{-pdl} = $p;
+            $dl->{-indicators}= $ind;
+            $dl->headers($hdr);
+            return 1;
+        }
+    }
+}
+
+sub get_tab_names($) {
+    my ($self, $win) = @_;
+    return unless $win;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    my %names = ();
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        $names{$dl->{-symbol}} = $dl->name if ($dl);
+    }
+    return wantarray ? %names : \%names;
+}
+
+sub get_tab_indicators {
+    my ($self, $win, $txt) = @_;
+    my ($data, $sym, $indicators, $headers) = $self->get_tab_data_by_name($win, $txt);
+    return $indicators;
 }
 
 sub plot_data {
