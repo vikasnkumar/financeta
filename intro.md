@@ -16,7 +16,7 @@ their own domain specific languages (DSLs) that are obtuse, unwieldy and just
 ugly to use. Sure they have many thousands of customers who are using them and
 are making money. My aim was to use [ta-lib](http://www.ta-lib.org), which is a
 great open source library that works on various operating systems and has about
-132 technical analysis indicators. I felt that with access to this many
+132 technical analysis indicators. I felt that with access to these many
 indicators I could achieve what the other software systems provide without
 having to pay a penny, and then when I was ready with possibly working
 strategies,
