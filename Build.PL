@@ -54,7 +54,6 @@ my $build = Module::Build->new(
     installdirs => ($^O =~ /Darwin/i) ? 'core' : 'site',
 );
 
-$build->add_build_element('image');
 $build->create_build_script;
 $build->dispatch('distmeta');
 $build->dispatch('manifest');
