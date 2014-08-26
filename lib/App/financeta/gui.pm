@@ -100,6 +100,7 @@ sub _menu_items {
                                 my $type = $gui->current->{plot_type} || 'OHLC';
                                 $gui->plot_data($win, $data, $symbol, $type);
                             }
+                            $win->menu->security_close->enabled(1);
                             $win->menu->plot_ohlc->enabled(1);
                             $win->menu->plot_ohlcv->enabled(1);
                             $win->menu->plot_close->enabled(1);
@@ -110,6 +111,16 @@ sub _menu_items {
                             $win->menu->remove_indicator->enabled(1);
                             $gui->progress_bar_close($bar);
                         }
+                    },
+                    $self,
+                ],
+                [
+                    'security_close',
+                    '~Close', 'Ctrl+W', '^W',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        $gui->close_current_tab($win);
                     },
                     $self,
                 ],
@@ -297,6 +308,7 @@ sub run {
     my $self = shift;
     $self->main->show;
     # disable the appropriate menu options
+    $self->main->menu->security_close->enabled(0);
     $self->main->menu->plot_ohlc->enabled(0);
     $self->main->menu->plot_ohlcv->enabled(0);
     $self->main->menu->plot_close->enabled(0);
@@ -1269,6 +1281,27 @@ sub display_data {
     $dl->{-symbol} = $symbol;
     $dl->{-indicators} = $existing_indicators if defined $existing_indicators;
     1;
+}
+
+sub close_current_tab {
+    my ($self, $win) = @_;
+    return unless $win;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $nt = $win->data_tabs;
+    my $idx = $nt->pageIndex;
+    $nt->Notebook->delete_page($idx, 1);
+    #FIXME: buggy
+    if ($nt->pageCount == 0) {
+        $nt->close;
+        if ($win->{plot}) {
+            $win->{plot}->close();
+        }
+        # disable the menu option now that we have nothing open
+        $self->main->menu->security_close->enabled(0);
+    } else {
+        $nt->pageIndex(0);
+    }
 }
 
 sub _get_tab_data {
