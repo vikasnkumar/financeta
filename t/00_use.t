@@ -1,8 +1,8 @@
 use Test::More;
 
-use_ok('PDL::Finance::TA::Mo');
-use_ok('PDL::Finance::TA::Indicators');
-use_ok('PDL::Finance::TA');
+use_ok('App::financeta::mo');
+use_ok('App::financeta::indicators');
+use_ok('App::financeta::gui');
 use_ok('App::financeta');
 
 done_testing();

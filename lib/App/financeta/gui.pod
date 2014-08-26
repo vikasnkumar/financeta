@@ -1,10 +1,10 @@
 =head1 NAME
 
-PDL::Finance::TA
+App::financeta::gui
 
 =head1 SYNOPSIS
 
-PDL::Finance::TA is a perl module allowing the user to perform technical
+App::financeta::gui is a perl module allowing the user to perform technical
 analysis on financial data stored as PDLs. It is the basis of the graphics
 application L<App::financeta> which can be used by users to do financial stocks
 research with Technical Analysis.
@@ -19,7 +19,7 @@ research with Technical Analysis.
 
 =item B<new>
 
-Creates a new instance of C<PDL::Finance::TA>. Takes in various properties that
+Creates a new instance of C<App::financeta::gui>. Takes in various properties that
 the user might want to override. Check the B<PROPERTIES> section to view the
 different properties.
 
@@ -46,13 +46,13 @@ Default is set to I<America/New_York>.
 
 =item B<brand>
 
-Default is set to L<PDL::Finance::TA>. Changing this will change the application
-name. Useful if the user wants to embed C<PDL::Finance::TA> in another
+Default is set to L<App::financeta::gui>. Changing this will change the application
+name. Useful if the user wants to embed C<App::financeta::gui> in another
 application.
 
 =item B<icon>
 
-Picks up the file in C<PDL/Finance/TA/images/icon.gif> as the application icon
+Picks up the file C<icon.gif> from distribution sharedir as the application icon
 but can be given as a C<Prima::Icon> object as well.
 
 =item B<tmpdir>
@@ -73,7 +73,7 @@ This module will be used to add technical analysis to the charts.
 
 =item L<App::financeta>
 
-This module just runs the application that calls C<PDL::Finance::TA>.
+This module just runs the application that calls C<App::financeta::gui>.
 
 =item L<financeta>
 

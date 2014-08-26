@@ -17,7 +17,7 @@ SEE ALSO
     PDL::Finance::Talib
         This module will be used to add technical analysis to the charts.
 
-    PDL::Finance::TA
+    App::financeta::gui
         This module just manages everything under the hood.
 
     financeta

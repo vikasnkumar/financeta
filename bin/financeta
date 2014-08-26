@@ -39,13 +39,13 @@ B<TODO>
 
 =over
 
-=item L<PDL::Finance::TA>
+=item L<App::financeta::gui>
 
 This is the GUI internal details being used by C<App::financeta>.
 
 =item L<App::financeta>
 
-This module just runs the application that calls C<PDL::Finance::TA>.
+This module just runs the application that calls C<App::financeta::gui>.
 
 =back
 
