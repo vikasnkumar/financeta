@@ -6,7 +6,7 @@ use 5.10.0;
 our $VERSION = '0.07';
 $VERSION = eval $VERSION;
 
-use PDL::Finance::TA;
+use App::financeta::gui;
 use Carp;
 
 sub print_warning {
@@ -35,7 +35,7 @@ sub run {
         print "Help: Coming soon\n";
         return;
     }
-    my $gui = PDL::Finance::TA->new(debug => $opts{debug},
+    my $gui = App::financeta::gui->new(debug => $opts{debug},
         brand => __PACKAGE__,
     );
     $gui->run;
@@ -54,7 +54,7 @@ App::financeta
 
 =head1 SYNOPSIS
 
-App::financeta is a high level module that uses PDL::Finance::TA and invokes it
+App::financeta is a high level module that uses App::financeta::gui and invokes it
 as an application. It handles command line processing of C<financeta>.
 
 =head1 VERSION
@@ -74,7 +74,7 @@ DESCRIPTION
 =item B<run>
 
 This function starts the graphical user interface (GUI) and parses command line
-arguments. It invokes L<PDL::Finance::TA>.
+arguments. It invokes L<App::financeta::gui>.
 
 =item B<print_warning>
 
@@ -86,7 +86,7 @@ This function prints license and disclaimer to C<STDERR>.
 
 =over
 
-=item L<PDL::Finance::TA>
+=item L<App::financeta::gui>
 
 This is the GUI internal details being used by C<App::financeta>.
 

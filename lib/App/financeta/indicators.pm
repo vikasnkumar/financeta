@@ -1,4 +1,4 @@
-package PDL::Finance::TA::Indicators;
+package App::financeta::indicators;
 use strict;
 use warnings;
 use 5.10.0;
@@ -7,7 +7,7 @@ use feature 'say';
 our $VERSION = '0.07';
 $VERSION = eval $VERSION;
 
-use PDL::Finance::TA::Mo;
+use App::financeta::mo;
 use Carp;
 use PDL::Lite;
 use PDL::NiceSlice;

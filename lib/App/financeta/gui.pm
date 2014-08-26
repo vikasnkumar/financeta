@@ -1,4 +1,4 @@
-package PDL::Finance::TA;
+package App::financeta::gui;
 use strict;
 use warnings;
 use 5.10.0;
@@ -7,9 +7,10 @@ use feature 'say';
 our $VERSION = '0.07';
 $VERSION = eval $VERSION;
 
-use PDL::Finance::TA::Mo;
+use App::financeta::mo;
 use Carp;
 use File::Spec;
+use File::ShareDir 'dist_file';
 use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
@@ -24,7 +25,7 @@ use PDL::Lite;
 use PDL::IO::Misc;
 use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
-use PDL::Finance::TA::Indicators;
+use App::financeta::indicators;
 use Scalar::Util qw(blessed);
 
 $PDL::doubleformat = "%0.6lf";
@@ -44,17 +45,13 @@ has indicator => (builder => '_build_indicator');
 
 sub _build_indicator {
     my $self = shift;
-    return PDL::Finance::TA::Indicators->new(debug => $self->debug,
+    return App::financeta::indicators->new(debug => $self->debug,
                                             plot_engine => $self->plot_engine);
 }
 
 sub _build_icon {
     my $self = shift;
-    my $pkg = __PACKAGE__ . '.pm';
-    $pkg =~ s|::|/|g;
-    my $pkgpath = File::Spec->canonpath(File::Spec->rel2abs($INC{$pkg}));
-    $pkgpath =~ s|\.pm$||g;
-    my $icon_path = File::Spec->catfile($pkgpath, 'images', 'icon.gif');
+    my $icon_path = dist_file('App-financeta', 'icon.gif');
     my $icon = Prima::Icon->create;
     say "Icon path: $icon_path" if $self->debug;
     $icon->load($icon_path) or carp "Unable to load $icon_path";
@@ -1088,8 +1085,7 @@ sub plot_data_gnuplot {
     } elsif ($^O =~ /Win32|Cygwin/i) {
         Capture::Tiny::capture {
             my @terms = PDL::Graphics::Gnuplot::terminfo();
-            $term = 'windows' if grep {/windows/} @terms;
-            $term = 'wxt' if grep {/wxt/} @terms;
+            $term = (grep {/windows/} @terms) > 0 ? 'windows' : 'wxt';
         };
     }
     say "Using term $term" if $self->debug;

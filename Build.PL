@@ -7,7 +7,7 @@ my $build = Module::Build->new(
     license => 'gpl',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
     dist_abstract => 'App::financeta is a Technical Analysis GUI',
-    dist_version_from => 'lib/TA.pm',
+    dist_version_from => 'lib/App/financeta.pm',
     create_readme => 0,
     configure_requires => {
         'Module::Build' => 0,
@@ -18,12 +18,14 @@ my $build = Module::Build->new(
         'Module::Build' => 0,
         'Test::More' => 0,
         'File::Spec' => 0,
+        'File::ShareDir' => 0,
     },
     requires => {
         'perl' => '5.10.0',
         'Carp' => 0,
         'Data::Dumper' => 0,
         'File::Spec' => 0,
+        'File::ShareDir' => 0,
         'PDL'  => '2.007',
         'DateTime' => 0,
         'Finance::QuoteHist' => 1.20,
@@ -45,21 +47,10 @@ my $build = Module::Build->new(
         },
         keywords => [qw/ finance technical-analysis technical analysis/],
         no_index => {
-            directory => [qw/ t /],
+            directory => [qw/ t share /],
         },
     },
-    pm_files => {
-        'lib/TA.pm' => 'lib/PDL/Finance/TA.pm',
-        'lib/TA/Mo.pm' => 'lib/PDL/Finance/TA/Mo.pm',
-        'lib/TA/Indicators.pm' => 'lib/PDL/Finance/TA/Indicators.pm',
-        'lib/App.pm' => 'lib/App/financeta.pm',
-    },
-    pod_files => {
-        'lib/TA.pod' => 'lib/PDL/Finance/TA.pod',
-    },
-    image_files => {
-        'images/icon.gif' => 'lib/PDL/Finance/TA/images/icon.gif',
-    },
+    share_dir => 'share',
     installdirs => ($^O =~ /Darwin/i) ? 'core' : 'site',
 );
 

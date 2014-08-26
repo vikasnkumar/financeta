@@ -1,4 +1,4 @@
-package PDL::Finance::TA::Mo;
+package App::financeta::mo;
 our $VERSION = '0.07'; $VERSION = eval $VERSION;
 #use Mo qw/build builder default import/;
 #   The following line of code was produced from the previous line by
