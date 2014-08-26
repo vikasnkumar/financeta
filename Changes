@@ -1,3 +1,38 @@
+Tue Aug 26 11:30:28 2014 -0400
+2120fdf31b91534e9a31e201f94f42904e24b529
+updating manifest
+
+Tue Aug 26 11:29:05 2014 -0400
+7bddf9167d8ff5b869f30bb255fd0ade7600276f
+Merge pull request #2 from kmx/master
+some ideas by kmx
+Tue Aug 26 14:48:28 2014 +0200
+72eee7a0d18dba022ddc7122ed761c9e0276e7dd
+some ideas by kmx
+
+Mon Aug 25 19:10:55 2014 -0400
+3b50ea37f7b3d312c1d9ddac4f8375ed317edd86
+adjusting to handle bugs in P:G:G
+
+Mon Aug 25 18:45:50 2014 -0400
+ba30d20a1605a2133a40613792c3f8f930319578
+PSAR-extended also uses dots.
+
+Mon Aug 25 18:24:36 2014 -0400
+7973be6d780b77d3ffee042929a16d2383965c44
+SAR indicator's plotting updated to use different options in the same graph
+
+Mon Aug 25 17:55:16 2014 -0400
+7e94cb5d0cc5adb5987f87c0ef6f3ab13023c169
+rearranging some default colors
+
+Mon Aug 25 17:51:53 2014 -0400
+fb03a37a226b9ab91ef2f8af1eaa0860163761d7
+Color change and setting the default plot to OHLC
+
+Sun Aug 24 09:39:18 2014 -0400
+f5f8629141ec213891fa435c86a9484e0d41ed17
+updating changes
 Sun Aug 24 09:38:50 2014 -0400
 7c9ba25efdc942fc73789cb096bb5c50194c9fa5
 Releasing 0.07
