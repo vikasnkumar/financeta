@@ -1,18 +1,11 @@
 bin/financeta
 Build.PL
 Changes
-images/icon.gif
-images/sm_perl_id_bk_wt.gif
-lib/App.pm
 lib/App/financeta.pm
 lib/App/financeta/gui.pm
 lib/App/financeta/gui.pod
 lib/App/financeta/indicators.pm
 lib/App/financeta/mo.pm
-lib/TA.pm
-lib/TA.pod
-lib/TA/Indicators.pm
-lib/TA/Mo.pm
 LICENSE
 MANIFEST			This list of files
 META.json
