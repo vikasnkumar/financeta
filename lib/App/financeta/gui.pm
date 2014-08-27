@@ -15,7 +15,7 @@ use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
     Application Buttons MsgBox Calendar ComboBox Notebooks
-    ScrollWidget DetailedList HelpViewer
+    ScrollWidget DetailedList
 );
 use Prima::Utils ();
 use Data::Dumper;
@@ -86,8 +86,7 @@ sub _menu_items {
         [
             '~Security' => [
                 [
-                    'security_wizard',
-                    '~New', 'Ctrl+N', '^N',
+                    'security_wizard', '~New', 'Ctrl+N', '^N',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -115,8 +114,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-security_close',
-                    '~Close', 'Ctrl+W', '^W',
+                    '-security_close', '~Close', 'Ctrl+W', '^W',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -125,8 +123,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    'app_exit',
-                    'E~xit', 'Alt+X', '@X',
+                    'app_exit', 'E~xit', 'Ctrl+Q', '^Q',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -139,8 +136,7 @@ sub _menu_items {
         [
             '~Plot' => [
                 [
-                    '-*plot_ohlc',
-                    '~OHLC', 'Ctrl+O', '^P',
+                    '-*plot_ohlc', 'OHLC', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -156,8 +152,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-plot_ohlcv',
-                    'OHLC & Volume', '', '',
+                    '-plot_ohlcv', 'OHLC & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -173,8 +168,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-plot_close',
-                    'Close Price', '', '',
+                    '-plot_close', 'Close Price', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -190,8 +184,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-plot_closev',
-                    'Close Price & Volume', '', '',
+                    '-plot_closev', 'Close Price & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -207,8 +200,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-plot_cdl',
-                    'Candlesticks', '', '',
+                    '-plot_cdl', 'Candlesticks', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -224,8 +216,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-plot_cdlv',
-                    'Candlesticks & Volume', '', '',
+                    '-plot_cdlv', 'Candlesticks & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -245,8 +236,7 @@ sub _menu_items {
         [
             '~Analysis' => [
                 [
-                    '-add_indicator',
-                    'Add Indicator', 'Ctrl+I', '^I',
+                    '-add_indicator', 'Add Indicator', 'Ctrl+I', '^I',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -259,8 +249,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-remove_indicator',
-                    'Remove Indicator', 'Ctrl+Shift+I', '^#I',
+                    '-remove_indicator', 'Remove Indicator', 'Ctrl+Shift+I', '^#I',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -275,18 +264,20 @@ sub _menu_items {
         [
             '~Help' => [
                 [
-                    'help_viewer',
-                    'Help Viewer', '', kb::NoKey,
+                    'help_viewer', 'Documentation', 'F1', kb::F1,
                     sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        $::application->open_help(__PACKAGE__);
+                        my $url = 'https://vikasnkumar.github.io/financeta/';
+                        my $ok = Browser::Open::open_browser($url, 1);
+                        if (not defined $ok) {
+                            message("Error finding a browser to open $url");
+                        } elsif ($ok != 0) {
+                            message("Error opening $url");
+                        }
                     },
                     $self,
                 ],
                 [
-                    'about_logo',
-                    'About Logo', '', kb::NoKey,
+                    'about_logo', 'About Logo', '', kb::NoKey,
                     sub {
                         message_box('About Logo', 'http://www.perl.com',
                                 mb::Ok | mb::Information);
