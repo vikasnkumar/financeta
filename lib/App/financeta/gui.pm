@@ -1501,8 +1501,10 @@ sub plot_data_gnuplot {
             push @indicator_plot, @iplot if scalar @iplot;
         }
     }
+    $pwin->reset();
+    # use multiplot
+    $pwin->multiplot();
     if ($type eq 'OHLC') {
-        $pwin->reset();
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
@@ -1524,9 +1526,6 @@ sub plot_data_gnuplot {
             @indicator_plot,
         );
     } elsif ($type eq 'OHLCV') {
-        # use multiplot
-        $pwin->reset();
-        $pwin->multiplot();
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 xlabel => ['Date', textcolor => 'rgb "yellow"'],
@@ -1576,10 +1575,8 @@ sub plot_data_gnuplot {
             },
             $data(,(0)), $data(,(5)) / 1e6,
         );
-        $pwin->end_multi;
     } elsif ($type eq 'CANDLE') {
         # use candlesticks feature of Gnuplot
-        $pwin->reset();
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
@@ -1601,9 +1598,6 @@ sub plot_data_gnuplot {
             @indicator_plot,
         );
     } elsif ($type eq 'CANDLEV') {
-        # use multiplot
-        $pwin->reset();
-        $pwin->multiplot();
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
@@ -1654,11 +1648,7 @@ sub plot_data_gnuplot {
             },
             $data(,(0)), $data(,(5)) / 1e6,
         );
-        $pwin->end_multi;
     } elsif ($type eq 'CLOSEV') {
-        # use multiplot
-        $pwin->reset();
-        $pwin->multiplot();
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
@@ -1708,10 +1698,8 @@ sub plot_data_gnuplot {
             },
             $data(,(0)), $data(,(5)) / 1e6,
         );
-        $pwin->end_multi;
     } else {
         $type = 'CLOSE';
-        $pwin->reset();
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Close Price", textcolor => 'rgb "white"'],
@@ -1733,6 +1721,7 @@ sub plot_data_gnuplot {
             @indicator_plot,
         );
     }
+    $pwin->end_multi;
     # make the current plot type the type
     $self->current->{plot_type} = $type if defined $type;
 }
