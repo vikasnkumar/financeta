@@ -99,15 +99,15 @@ sub _menu_items {
                                 $gui->display_data($win, $data);
                                 my $type = $gui->current->{plot_type} || 'OHLC';
                                 $gui->plot_data($win, $data, $symbol, $type);
+                                $win->menu->security_close->enabled(1);
+                                $win->menu->plot_ohlc->enabled(1);
+                                $win->menu->plot_ohlcv->enabled(1);
+                                $win->menu->plot_close->enabled(1);
+                                $win->menu->plot_closev->enabled(1);
+                                $win->menu->plot_cdl->enabled(1);
+                                $win->menu->plot_cdlv->enabled(1);
+                                $win->menu->add_indicator->enabled(1);
                             }
-                            $win->menu->security_close->enabled(1);
-                            $win->menu->plot_ohlc->enabled(1);
-                            $win->menu->plot_ohlcv->enabled(1);
-                            $win->menu->plot_close->enabled(1);
-                            $win->menu->plot_closev->enabled(1);
-                            $win->menu->plot_cdl->enabled(1);
-                            $win->menu->plot_cdlv->enabled(1);
-                            $win->menu->add_indicator->enabled(1);
                             $gui->progress_bar_close($bar);
                         }
                     },
@@ -1170,7 +1170,6 @@ sub download_data {
         $self->progress_bar_update($pbar) if $pbar;
         $fq->clear_cache;
         close $fh;
-        say "$csv has downloaded data for analysis" if $self->debug;
         unless (scalar @quotes) {
             message_box('Error',
                 "Failed to download $symbol data. Check if '$symbol' is correct",
@@ -1178,6 +1177,7 @@ sub download_data {
             unlink $csv;
             return;
         }
+        say "$csv has downloaded data for analysis" if $self->debug;
         $self->progress_bar_update($pbar) if $pbar;
         $data = pdl(@quotes)->transpose;
         $self->progress_bar_update($pbar) if $pbar;
