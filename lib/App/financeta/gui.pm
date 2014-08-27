@@ -521,7 +521,7 @@ sub security_wizard {
         autoWidth => 1,
         origin => [ 20, 40 ],
         modalResult => mb::Cancel,
-        default => 1,
+        default => 0,
         enabled => 1,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
@@ -538,7 +538,7 @@ sub security_wizard {
         autoWidth => 1,
         origin => [ 150, 40 ],
         modalResult => mb::Ok,
-        default => 0,
+        default => 1,
         enabled => 0,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
@@ -745,7 +745,7 @@ sub remove_indicator_wizard {
         autoWidth => 1,
         origin => [ 20, 20 ],
         modalResult => mb::Cancel,
-        default => 1,
+        default => 0,
         enabled => 1,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
@@ -759,7 +759,7 @@ sub remove_indicator_wizard {
         autoWidth => 1,
         origin => [ 150, 20 ],
         modalResult => mb::Ok,
-        default => 0,
+        default => 1,
         enabled => 0,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
@@ -1090,7 +1090,7 @@ sub add_indicator_wizard {
         autoWidth => 1,
         origin => [ 20, 20 ],
         modalResult => mb::Cancel,
-        default => 1,
+        default => 0,
         enabled => 1,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
@@ -1102,9 +1102,9 @@ sub add_indicator_wizard {
         text => 'OK',
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 150, 20 ],
+        origin => [ 360, 20 ],
         modalResult => mb::Ok,
-        default => 0,
+        default => 1,
         enabled => 0,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
@@ -1116,8 +1116,8 @@ sub add_indicator_wizard {
         text => 'Indicator Help',
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 360, 20 ],
-        default => 1,
+        origin => [ 150, 20 ],
+        default => 0,
         enabled => 1,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
