@@ -1480,7 +1480,9 @@ sub plot_data_gnuplot {
     } elsif ($^O =~ /Win32|Cygwin/i) {
         Capture::Tiny::capture {
             my @terms = PDL::Graphics::Gnuplot::terminfo();
-            $term = (grep {/windows/} @terms) > 0 ? 'windows' : 'wxt';
+            $term = 'wxt' if (grep {/wxt/} @terms) > 0;
+            $term = 'windows' if (grep {/windows/} @terms) > 0;
+            # on Cygwin it may be x11
         };
     }
     say "Using term $term" if $self->debug;
@@ -1499,244 +1501,237 @@ sub plot_data_gnuplot {
             push @indicator_plot, @iplot if scalar @iplot;
         }
     }
-    given ($type) {
-        when ('OHLC') {
-            $pwin->reset();
-            $pwin->plot({
-                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
-                    title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
-                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
-                    xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
-                    ytics => {textcolor => 'orange'},
-                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'financebars',
-                    linecolor => 'white',
-                    legend => 'Price',
-                },
-                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator_plot,
-            );
-        }
-        when ('OHLCV') {
-            # use multiplot
-            $pwin->reset();
-            $pwin->multiplot();
-            $pwin->plot({
-                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
-                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
-                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
-                    title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
-                    ytics => {textcolor => 'orange'},
-                    bmargin => 0,
-                    lmargin => 9,
-                    rmargin => 2,
-                    size => ["1,0.7"], #bug in P:G:G
-                    origin => [0, 0.3],
-                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'financebars',
-                    linecolor => 'white',
-                    legend => 'Price',
-                },
-                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator_plot,
-            );
-            $pwin->plot({
-                    object => '1',
-                    title => '',
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
-                    xlabel => '',
-                    xtics => '',
-                    ytics => {textcolor => 'orange'},
-                    bmargin => 0,
-                    tmargin => 0,
-                    lmargin => 9,
-                    rmargin => 2,
-                    size => ["1,0.3"], #bug in P:G:G
-                    origin => [0, 0],
-                    label => [1, "", at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'impulses',
-                    legend => 'Volume',
-                    linecolor => 'cyan',
-                },
-                $data(,(0)), $data(,(5)) / 1e6,
-            );
-            $pwin->end_multi;
-        }
-        when ('CANDLE') {
-            # use candlesticks feature of Gnuplot
-            $pwin->reset();
-            $pwin->plot({
-                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
-                    title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
-                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
-                    ytics => {textcolor => 'orange'},
-                    xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
-                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'candlesticks',
-                    linecolor => 'white',
-                    legend => 'Price',
-                },
-                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator_plot,
-            );
-        }
-        when ('CANDLEV') {
-            # use multiplot
-            $pwin->reset();
-            $pwin->multiplot();
-            $pwin->plot({
-                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
-                    title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
-                    ylabel => ['Price', textcolor => 'rgb "yellow"'],
-                    xdata => 'time',
-                    ytics => {textcolor => 'orange'},
-                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
-                    tmargin => '',
-                    bmargin => 0,
-                    lmargin => 9,
-                    rmargin => 2,
-                    size => ["1,0.7"], #bug in P:G:G
-                    origin => [0, 0.3],
-                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'candlesticks',
-                    linecolor => 'white',
-                    legend => 'Price',
-                },
-                $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-                @indicator_plot,
-            );
-            $pwin->plot({
-                    object => '1',
-                    title => '',
-                    ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    xtics => '',
-                    xlabel => '',
-                    ytics => {textcolor => 'orange'},
-                    bmargin => 0,
-                    tmargin => 0,
-                    lmargin => 9,
-                    rmargin => 2,
-                    size => ["1,0.3"], #bug in P:G:G
-                    origin => [0, 0],
-                    label => [1, "", at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'impulses',
-                    legend => 'Volume',
-                    linecolor => 'cyan',
-                },
-                $data(,(0)), $data(,(5)) / 1e6,
-            );
-            $pwin->end_multi;
-        }
-        when ('CLOSEV') {
-            # use multiplot
-            $pwin->reset();
-            $pwin->multiplot();
-            $pwin->plot({
-                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
-                    title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    ylabel => ['Close Price', textcolor => 'rgb "yellow"'],
-                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
-                    xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
-                    ytics => {textcolor => 'orange'},
-                    bmargin => 0,
-                    lmargin => 9,
-                    rmargin => 2,
-                    size => ["1,0.7"], #bug in P:G:G
-                    origin => [0, 0.3],
-                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'lines',
-                    linecolor => 'white',
-                    legend => 'Close Price',
-                },
-                $data(,(0)), $data(,(4)),
-                @indicator_plot,
-            );
-            $pwin->plot({
-                    object => '1',
-                    title => '',
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
-                    xlabel => '',
-                    xtics => '',
-                    ytics => {textcolor => 'orange'},
-                    bmargin => 0,
-                    tmargin => 0,
-                    lmargin => 9,
-                    rmargin => 2,
-                    size => ["1,0.3"], #bug in P:G:G
-                    origin => [0, 0],
-                    label => [1, "", at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'impulses',
-                    legend => 'Volume',
-                    linecolor => 'cyan',
-                },
-                $data(,(0)), $data(,(5)) / 1e6,
-            );
-            $pwin->end_multi;
-        }
-        default {
-            $type = 'CLOSE';
-            $pwin->reset();
-            $pwin->plot({
-                    object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
-                    title => ["$symbol Close Price", textcolor => 'rgb "white"'],
-                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
-                    border => 'linecolor rgbcolor "white"',
-                    xlabel => ['Date', textcolor => 'rgb "yellow"'],
-                    ylabel => ['Close Price', textcolor => 'rgb "yellow"'],
-                    xdata => 'time',
-                    xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
-                    ytics => {textcolor => 'orange'},
-                    label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
-                },
-                {
-                    with => 'lines',
-                    linecolor => 'white',
-                    legend => 'Close Price',
-                },
-                $data(,(0)), $data(,(4)),
-                @indicator_plot,
-            );
-        }
+    if ($type eq 'OHLC') {
+        $pwin->reset();
+        $pwin->plot({
+                object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                ylabel => ['Price', textcolor => 'rgb "yellow"'],
+                xdata => 'time',
+                xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                ytics => {textcolor => 'orange'},
+                label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'financebars',
+                linecolor => 'white',
+                legend => 'Price',
+            },
+            $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+            @indicator_plot,
+        );
+    } elsif ($type eq 'OHLCV') {
+        # use multiplot
+        $pwin->reset();
+        $pwin->multiplot();
+        $pwin->plot({
+                object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                ylabel => ['Price', textcolor => 'rgb "yellow"'],
+                title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                xdata => 'time',
+                xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                ytics => {textcolor => 'orange'},
+                bmargin => 0,
+                lmargin => 9,
+                rmargin => 2,
+                size => ["1,0.7"], #bug in P:G:G
+                origin => [0, 0.3],
+                label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'financebars',
+                linecolor => 'white',
+                legend => 'Price',
+            },
+            $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+            @indicator_plot,
+        );
+        $pwin->plot({
+                object => '1',
+                title => '',
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
+                xlabel => '',
+                xtics => '',
+                ytics => {textcolor => 'orange'},
+                bmargin => 0,
+                tmargin => 0,
+                lmargin => 9,
+                rmargin => 2,
+                size => ["1,0.3"], #bug in P:G:G
+                origin => [0, 0],
+                label => [1, "", at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'impulses',
+                legend => 'Volume',
+                linecolor => 'cyan',
+            },
+            $data(,(0)), $data(,(5)) / 1e6,
+        );
+        $pwin->end_multi;
+    } elsif ($type eq 'CANDLE') {
+        # use candlesticks feature of Gnuplot
+        $pwin->reset();
+        $pwin->plot({
+                object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                ylabel => ['Price', textcolor => 'rgb "yellow"'],
+                ytics => {textcolor => 'orange'},
+                xdata => 'time',
+                xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'candlesticks',
+                linecolor => 'white',
+                legend => 'Price',
+            },
+            $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+            @indicator_plot,
+        );
+    } elsif ($type eq 'CANDLEV') {
+        # use multiplot
+        $pwin->reset();
+        $pwin->multiplot();
+        $pwin->plot({
+                object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                ylabel => ['Price', textcolor => 'rgb "yellow"'],
+                xdata => 'time',
+                ytics => {textcolor => 'orange'},
+                xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                tmargin => '',
+                bmargin => 0,
+                lmargin => 9,
+                rmargin => 2,
+                size => ["1,0.7"], #bug in P:G:G
+                origin => [0, 0.3],
+                label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'candlesticks',
+                linecolor => 'white',
+                legend => 'Price',
+            },
+            $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
+            @indicator_plot,
+        );
+        $pwin->plot({
+                object => '1',
+                title => '',
+                ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                xtics => '',
+                xlabel => '',
+                ytics => {textcolor => 'orange'},
+                bmargin => 0,
+                tmargin => 0,
+                lmargin => 9,
+                rmargin => 2,
+                size => ["1,0.3"], #bug in P:G:G
+                origin => [0, 0],
+                label => [1, "", at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'impulses',
+                legend => 'Volume',
+                linecolor => 'cyan',
+            },
+            $data(,(0)), $data(,(5)) / 1e6,
+        );
+        $pwin->end_multi;
+    } elsif ($type eq 'CLOSEV') {
+        # use multiplot
+        $pwin->reset();
+        $pwin->multiplot();
+        $pwin->plot({
+                object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                ylabel => ['Close Price', textcolor => 'rgb "yellow"'],
+                xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                xdata => 'time',
+                xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                ytics => {textcolor => 'orange'},
+                bmargin => 0,
+                lmargin => 9,
+                rmargin => 2,
+                size => ["1,0.7"], #bug in P:G:G
+                origin => [0, 0.3],
+                label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'lines',
+                linecolor => 'white',
+                legend => 'Close Price',
+            },
+            $data(,(0)), $data(,(4)),
+            @indicator_plot,
+        );
+        $pwin->plot({
+                object => '1',
+                title => '',
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
+                xlabel => '',
+                xtics => '',
+                ytics => {textcolor => 'orange'},
+                bmargin => 0,
+                tmargin => 0,
+                lmargin => 9,
+                rmargin => 2,
+                size => ["1,0.3"], #bug in P:G:G
+                origin => [0, 0],
+                label => [1, "", at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'impulses',
+                legend => 'Volume',
+                linecolor => 'cyan',
+            },
+            $data(,(0)), $data(,(5)) / 1e6,
+        );
+        $pwin->end_multi;
+    } else {
+        $type = 'CLOSE';
+        $pwin->reset();
+        $pwin->plot({
+                object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
+                title => ["$symbol Close Price", textcolor => 'rgb "white"'],
+                key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                border => 'linecolor rgbcolor "white"',
+                xlabel => ['Date', textcolor => 'rgb "yellow"'],
+                ylabel => ['Close Price', textcolor => 'rgb "yellow"'],
+                xdata => 'time',
+                xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
+                ytics => {textcolor => 'orange'},
+                label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+            },
+            {
+                with => 'lines',
+                linecolor => 'white',
+                legend => 'Close Price',
+            },
+            $data(,(0)), $data(,(4)),
+            @indicator_plot,
+        );
     }
     # make the current plot type the type
     $self->current->{plot_type} = $type if defined $type;
