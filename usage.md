@@ -47,6 +47,13 @@ the _'Enter Security Symbol'_ text box, select the start and end dates for which
 you want data for (by default this is set to one year back from today) and hit
 the _'OK'_ button.
 
+If you do not know which symbol you need to enter you can hit
+the _'Symbol Search'_ button and it will start your default web browser and
+visit Yahoo! Finance for you to perform the search there. Since they already
+provide an exhaustive database of symbols and information on symbols, their
+service is complementary to _App::financeta_. We do not feel the need to
+duplicate their efforts.
+
 You will see a new tab opens with the name of the symbol you entered, which is
 _'MSFT'_ in this case and all the stock data listed in tabular form. You will
 also see a plot drawn in Gnuplot in a separate window that is started up and
