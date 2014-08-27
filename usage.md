@@ -164,7 +164,9 @@ The steps to add this indicator are below:
 
 - Select _'Overlap Studies'_ in the Group list, select '_Simple Moving Average_' in
   the Function list and set the period window parameter to 21 in the text box as
-shown here and hit the _OK_ button.
+shown here and hit the _OK_ button. You may hit the '_Indicator Help_' button if
+you want to know more about the indicator. It will open the documentation in a
+browser.
 ![Simple Moving Average selection](./images/financeta_wiz_sma21.png "Select Simple Moving Average parameters")
 
 - Once you do this, the simple moving average has been calculated and added to
@@ -176,6 +178,7 @@ shown here and hit the _OK_ button.
 ![SMA(21) in the plot window](./images/financeta_plot_sma21.png "Simple Moving Average with a 21-day period")
 
 Similarly one can add various indicators to the selected security tab.
+
 
 Let us move on to understanding the indicators in the [next chapter](./indicators.html).
 
