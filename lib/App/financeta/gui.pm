@@ -1235,8 +1235,8 @@ sub display_data {
     if (scalar @$nt_tabs) {
         my %tabnames = map { $_ => 1 } @$nt_tabs;
         say "$symbol tab already exists" if exists $tabnames{$symbol} and $self->debug;
-        say "$symbol tab will be added" unless exists $tabnames{$symbol} and $self->debug;
-        $nt->tabs([@$nt_tabs, $symbol]) unless exists $tabnames{$symbol};
+        say "$symbol tab will be added" if not exists $tabnames{$symbol} and $self->debug;
+        $nt->tabs([@$nt_tabs, $symbol]) if not exists $tabnames{$symbol};
     } else {
         say "$symbol tab will be added" if $self->debug;
         $nt->tabs([$symbol]);
