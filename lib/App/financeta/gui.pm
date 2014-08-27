@@ -1490,15 +1490,29 @@ sub plot_data_gnuplot {
     $win->{plot} = $pwin;
     $symbol = $self->current->{symbol} unless defined $symbol;
     $type = $self->current->{plot_type} unless defined $type;
-    my @indicator_plot = ();
+    my @general_plot = ();
+    my @volume_plot = ();
+    my @addon_plot = ();
     $self->indicator->color_idx(0); # reset color index
     if (defined $indicators and scalar @$indicators) {
         # ok now create a list of indicators to plot
         foreach (@$indicators) {
             my $iref = $_->{indicator};
             my $idata = $_->{data};
-            my @iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
-            push @indicator_plot, @iplot if scalar @iplot;
+            my $iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
+            next unless $iplot;
+            if (ref $iplot eq 'ARRAY') {
+                push @general_plot, @$iplot if scalar @$iplot;
+            } elsif (ref $iplot eq 'HASH') {
+                my $iplot_gen = $iplot->{general};
+                push @general_plot, @$iplot_gen if $iplot_gen and scalar @$iplot_gen;
+                my $iplot_vol = $iplot->{volume};
+                push @volume_plot, @$iplot_vol if $iplot_vol and scalar @$iplot_vol;
+                my $iplot_addon = $iplot->{additional};
+                push @addon_plot, @$iplot_addon if $iplot_addon and scalar @$iplot_addon;
+            } else {
+                carp 'Unable to handle plot arguments in ' . ref($iplot) . ' form!';
+            }
         }
     }
     $pwin->reset();
@@ -1523,7 +1537,7 @@ sub plot_data_gnuplot {
                 legend => 'Price',
             },
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-            @indicator_plot,
+            @general_plot,
         );
     } elsif ($type eq 'OHLCV') {
         $pwin->plot({
@@ -1549,7 +1563,7 @@ sub plot_data_gnuplot {
                 legend => 'Price',
             },
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-            @indicator_plot,
+            @general_plot,
         );
         $pwin->plot({
                 object => '1',
@@ -1574,6 +1588,7 @@ sub plot_data_gnuplot {
                 linecolor => 'cyan',
             },
             $data(,(0)), $data(,(5)) / 1e6,
+            @volume_plot,
         );
     } elsif ($type eq 'CANDLE') {
         # use candlesticks feature of Gnuplot
@@ -1595,7 +1610,7 @@ sub plot_data_gnuplot {
                 legend => 'Price',
             },
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-            @indicator_plot,
+            @general_plot,
         );
     } elsif ($type eq 'CANDLEV') {
         $pwin->plot({
@@ -1622,7 +1637,7 @@ sub plot_data_gnuplot {
                 legend => 'Price',
             },
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
-            @indicator_plot,
+            @general_plot,
         );
         $pwin->plot({
                 object => '1',
@@ -1647,6 +1662,7 @@ sub plot_data_gnuplot {
                 linecolor => 'cyan',
             },
             $data(,(0)), $data(,(5)) / 1e6,
+            @volume_plot,
         );
     } elsif ($type eq 'CLOSEV') {
         $pwin->plot({
@@ -1672,7 +1688,7 @@ sub plot_data_gnuplot {
                 legend => 'Close Price',
             },
             $data(,(0)), $data(,(4)),
-            @indicator_plot,
+            @general_plot,
         );
         $pwin->plot({
                 object => '1',
@@ -1697,6 +1713,7 @@ sub plot_data_gnuplot {
                 linecolor => 'cyan',
             },
             $data(,(0)), $data(,(5)) / 1e6,
+            @volume_plot,
         );
     } else {
         $type = 'CLOSE';
@@ -1718,7 +1735,7 @@ sub plot_data_gnuplot {
                 legend => 'Close Price',
             },
             $data(,(0)), $data(,(4)),
-            @indicator_plot,
+            @general_plot,
         );
     }
     $pwin->end_multi;

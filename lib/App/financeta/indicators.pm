@@ -110,11 +110,11 @@ sub next_color {
 }
 
 sub _plot_gnuplot_general {
-    my ($self, $xdata, $output) = @_;
+    my ($self, $xdata, $output, $scale) = @_;
     # output is the same as the return value of the code-ref above
     my @plotinfo = ();
     foreach (@$output) {
-        my $p = $_->[1];
+        my $p = (defined $scale) ? $_->[1] / $scale : $_->[1];
         my %legend = (legend => $_->[0]) if length $_->[0];
         my $args = $_->[2] || {};
         say Dumper($args) if $self->debug;
@@ -125,7 +125,19 @@ sub _plot_gnuplot_general {
             %$args,
         }, $xdata, $p;
     }
-    return @plotinfo;
+    return wantarray ? @plotinfo : \@plotinfo;
+}
+
+sub _plot_gnuplot_volume {
+    my ($self, $xdata, $output) = @_;
+    my @plotinfo = $self->_plot_gnuplot_general($xdata, $output, 1e6);
+    return { volume => \@plotinfo };
+}
+
+sub _plot_gnuplot_volatility {
+    my ($self, $xdata, $output) = @_;
+    my @plotinfo = $self->_plot_gnuplot_general($xdata, $output);
+    return { additional => \@plotinfo };
 }
 
 sub _plot_gnuplot_candlestick {
@@ -542,7 +554,7 @@ has volatility => {
                 ["ATR($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_volatility,
     },
     natr => {
         name => 'Normalized Average True Range',
@@ -560,7 +572,7 @@ has volatility => {
                 ["NATR($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_volatility,
     },
     trange => {
         name => 'True Range',
@@ -576,7 +588,7 @@ has volatility => {
                 ["True Range", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_volatility,
     },
 };
 
@@ -1366,7 +1378,7 @@ has volume => {
                 ["Chaikin A/D", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_volume,
     },
     adosc => {
         name => 'Chaikin Accumulation/Distribution Oscillator',
@@ -1386,7 +1398,7 @@ has volume => {
                 ["Chaikin A/D($fast,$slow)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_volume,
     },
     obv => {
         name => 'On Balance Volume',
@@ -1402,7 +1414,7 @@ has volume => {
                 ["OBV", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_volume,
     },
 };
 
@@ -2238,6 +2250,7 @@ sub get_plot_args($$$) {
     my $grp = $self->group_key->{$iref->{group}} if defined $iref->{group};
     return unless defined $grp;
     my $plotref = $self->$grp->{$fn_key}->{lc($self->plot_engine)};
+    carp "There is no plotting function available for $fn_key" unless ref $plotref eq 'CODE';
     return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
 }
 
