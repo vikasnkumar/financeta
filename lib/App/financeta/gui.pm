@@ -1177,6 +1177,7 @@ sub display_data {
             origin => [ 0, 0 ],
             style => tns::Simple,
             growMode => gm::Client,
+            visible => 1,
             onChange => sub {
                 my ($w, $oldidx, $newidx) = @_;
                 my $owner = $w->owner;
@@ -1194,8 +1195,11 @@ sub display_data {
     # create unique tab-names
     if (scalar @$nt_tabs) {
         my %tabnames = map { $_ => 1 } @$nt_tabs;
+        say "$symbol tab already exists" if exists $tabnames{$symbol} and $self->debug;
+        say "$symbol tab will be added" unless exists $tabnames{$symbol} and $self->debug;
         $nt->tabs([@$nt_tabs, $symbol]) unless exists $tabnames{$symbol};
     } else {
+        say "$symbol tab will be added" if $self->debug;
         $nt->tabs([$symbol]);
     }
     my $pc = $nt->pageCount;
@@ -1275,6 +1279,7 @@ sub display_data {
         title => $symbol,
         titleSpace => 30,
         size => \@tabsize,
+        visible => 1,
     );
     $nt->pageIndex($pageno);
     $dl->{-pdl} = $data;
@@ -1290,9 +1295,7 @@ sub close_current_tab {
     return unless @tabs;
     my $nt = $win->data_tabs;
     my $idx = $nt->pageIndex;
-    $nt->Notebook->delete_page($idx, 1);
-    #FIXME: buggy
-    if ($nt->pageCount == 0) {
+    if ($nt->pageCount == 1) {
         $nt->close;
         if ($win->{plot}) {
             $win->{plot}->close();
@@ -1300,7 +1303,15 @@ sub close_current_tab {
         # disable the menu option now that we have nothing open
         $self->main->menu->security_close->enabled(0);
     } else {
-        $nt->pageIndex(0);
+        my @wids = $nt->widgets_from_page($idx);
+        # close child widgets explicitly
+        map { $_->close } @wids if @wids;
+        $nt->Notebook->delete_page($idx);
+        my @ntabs = @{$nt->TabSet->tabs};
+        say "Existing tabs: ", Dumper(\@ntabs) if $self->debug;
+        splice(@ntabs, $idx, 1);
+        say "New tabs: ", Dumper(\@ntabs) if $self->debug;
+        $nt->TabSet->tabs(\@ntabs);
     }
 }
 
