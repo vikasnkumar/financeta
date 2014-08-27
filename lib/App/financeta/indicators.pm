@@ -2190,7 +2190,7 @@ sub _find_func_key($$) {
     my $fn_name = $iref->{func};
     my $fn_key;
     my $grp = $self->group_key->{$iref->{group}} if defined $iref->{group};
-    if (defined $grp and $self->has($grp)) {
+    if (defined $grp and $self->has($grp) and $fn_name) {
         my $r = $self->$grp;
         foreach my $k (sort (keys %$r)) {
             $fn_key = $k if $r->{$k}->{name} eq $fn_name;

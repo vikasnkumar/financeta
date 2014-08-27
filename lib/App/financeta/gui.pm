@@ -574,6 +574,7 @@ sub remove_indicator($) {
         my $total_cols = $data->dim(1);
         my @ncols = (0 .. $total_cols - 1); # get a list of column numbers
         my @nhdrs = (@$headers);
+        return unless $result->{columns};
         my @cols2rem = @{$result->{columns}};
         foreach my $c (@cols2rem) {
             $ncols[$c] = undef;
