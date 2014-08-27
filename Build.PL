@@ -37,6 +37,7 @@ my $build = Module::Build->new(
         'Capture::Tiny' => 0,
         'Scalar::Util' => 0,
         'Getopt::Long' => 0,
+        'Browser::Open' => 0,
     },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],

@@ -27,6 +27,7 @@ use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use App::financeta::indicators;
 use Scalar::Util qw(blessed);
+use Browser::Open ();
 
 $PDL::doubleformat = "%0.6lf";
 $| = 1;
@@ -416,15 +417,16 @@ sub security_wizard {
         origin => [ 20, 440],
         autoWidth => 1,
         font => { height => 14, style => fs::Bold },
+        hint => 'Stock symbols are available at Yahoo! Finance',
     );
     $w->insert(
         InputLine => name => 'input_symbol',
         alignment => ta::Left,
         autoHeight => 1,
-        width => 60,
+        width => 100,
         autoTab => 1,
         maxLen => 10,
-        origin => [ 180, 440],
+        origin => [ 200, 440],
         font => { height => 16 },
         onChange => sub {
             my $inp = shift;
@@ -433,6 +435,25 @@ sub security_wizard {
                 $owner->btn_ok->enabled(0);
             } else {
                 $owner->btn_ok->enabled(1);
+            }
+        },
+    );
+    $w->insert(
+        Button => name => 'btn_help',
+        text => 'Symbol Help',
+        height => 20,
+        autoWidth => 1,
+        origin => [340, 440],
+        default => 0,
+        enabled => 1,
+        font => { height => 13, style => fs::Bold },
+        onClick => sub {
+            my $url = 'http://finance.yahoo.com';
+            my $ok = Browser::Open::open_browser($url, 1);
+            if (not defined $ok) {
+                message("Error finding a browser to open $url");
+            } elsif ($ok != 0) {
+                message("Error opening $url");
             }
         },
     );
@@ -1092,6 +1113,25 @@ sub add_indicator_wizard {
             say Dumper($self->current->{indicator}) if $self->debug;
         },
     );
+    $w->insert(
+        Button => name => 'btn_help',
+        text => 'Indicator Help',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 360, 20 ],
+        default => 1,
+        enabled => 1,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            my $url = 'https://vikasnkumar.github.io/financeta/indicators.html';
+            my $ok = Browser::Open::open_browser($url, 1);
+            if (not defined $ok) {
+                message("Error finding a browser to open $url");
+            } elsif ($ok != 0) {
+                message("Error opening $url");
+            }
+        },
+    );
     $w->insert(GroupBox => name => 'gbox_params',
         text => 'Indicator Parameters',
         size => [600, 300],
@@ -1105,7 +1145,6 @@ sub add_indicator_wizard {
 
 sub download_data {
     my ($self, $pbar) = @_;
-#    say Dumper($self->current);
     $self->progress_bar_update($pbar) if $pbar;
     my $start = $self->current->{start_date};
     my $end = $self->current->{end_date};
