@@ -109,14 +109,13 @@ sub _menu_items {
                             $win->menu->plot_cdl->enabled(1);
                             $win->menu->plot_cdlv->enabled(1);
                             $win->menu->add_indicator->enabled(1);
-                            $win->menu->remove_indicator->enabled(1);
                             $gui->progress_bar_close($bar);
                         }
                     },
                     $self,
                 ],
                 [
-                    'security_close',
+                    '-security_close',
                     '~Close', 'Ctrl+W', '^W',
                     sub {
                         my ($win, $item) = @_;
@@ -140,7 +139,7 @@ sub _menu_items {
         [
             '~Plot' => [
                 [
-                    '*plot_ohlc',
+                    '-*plot_ohlc',
                     '~OHLC', 'Ctrl+O', '^P',
                     sub {
                         my ($win, $item) = @_;
@@ -157,7 +156,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    'plot_ohlcv',
+                    '-plot_ohlcv',
                     'OHLC & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
@@ -174,7 +173,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    'plot_close',
+                    '-plot_close',
                     'Close Price', '', '',
                     sub {
                         my ($win, $item) = @_;
@@ -191,7 +190,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    'plot_closev',
+                    '-plot_closev',
                     'Close Price & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
@@ -208,7 +207,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    'plot_cdl',
+                    '-plot_cdl',
                     'Candlesticks', '', '',
                     sub {
                         my ($win, $item) = @_;
@@ -225,7 +224,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    'plot_cdlv',
+                    '-plot_cdlv',
                     'Candlesticks & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
@@ -246,19 +245,21 @@ sub _menu_items {
         [
             '~Analysis' => [
                 [
-                    'add_indicator',
+                    '-add_indicator',
                     'Add Indicator', 'Ctrl+I', '^I',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                         # ok add an indicator which also plots it
-                        $gui->add_indicator($win, $data, $symbol);
+                        if ($gui->add_indicator($win, $data, $symbol)) {
+                            $win->menu->remove_indicator->enabled(1);
+                        }
                     },
                     $self,
                 ],
                 [
-                    'remove_indicator',
+                    '-remove_indicator',
                     'Remove Indicator', 'Ctrl+Shift+I', '^#I',
                     sub {
                         my ($win, $item) = @_;
@@ -308,16 +309,7 @@ sub close_all {
 sub run {
     my $self = shift;
     $self->main->show;
-    # disable the appropriate menu options
-    $self->main->menu->security_close->enabled(0);
-    $self->main->menu->plot_ohlc->enabled(0);
-    $self->main->menu->plot_ohlcv->enabled(0);
-    $self->main->menu->plot_close->enabled(0);
-    $self->main->menu->plot_closev->enabled(0);
-    $self->main->menu->plot_cdl->enabled(0);
-    $self->main->menu->plot_cdlv->enabled(0);
-    $self->main->menu->add_indicator->enabled(0);
-    $self->main->menu->remove_indicator->enabled(0);
+    $self->disable_menu_options; # to be safe
     run Prima;
 }
 
@@ -615,6 +607,10 @@ sub remove_indicator($) {
             my ($adata, $asymbol, $aindicators) = $self->get_tab_data($win);
             my $type = $self->current->{plot_type} || 'OHLC';
             $self->plot_data($win, $adata, $asymbol, $type, $aindicators);
+            # disable remove indicator if there are no indicators left
+            unless (scalar @$aindicators) {
+                $self->main->menu->remove_indicator->enabled(0);
+            }
         }
     }
 }
@@ -805,7 +801,9 @@ sub add_indicator($$$) {
         my ($ndata, $nsymbol, $indicators) = $self->get_tab_data($win);
         my $type = $self->current->{plot_type} || 'OHLC';
         $self->plot_data($win, $ndata, $nsymbol, $type, $indicators);
+        return 1;
     }
+    0;
 }
 
 sub indicator_parameter_wizard {
@@ -1327,6 +1325,21 @@ sub display_data {
     1;
 }
 
+sub disable_menu_options {
+    my $self = shift;
+    my $win = $self->main;
+    # disable the menu option now that we have nothing open
+    $win->menu->security_close->enabled(0);
+    $win->menu->plot_ohlc->enabled(0);
+    $win->menu->plot_ohlcv->enabled(0);
+    $win->menu->plot_close->enabled(0);
+    $win->menu->plot_closev->enabled(0);
+    $win->menu->plot_cdl->enabled(0);
+    $win->menu->plot_cdlv->enabled(0);
+    $win->menu->add_indicator->enabled(0);
+    $win->menu->remove_indicator->enabled(0);
+}
+
 sub close_current_tab {
     my ($self, $win) = @_;
     return unless $win;
@@ -1339,8 +1352,7 @@ sub close_current_tab {
         if ($win->{plot}) {
             $win->{plot}->close();
         }
-        # disable the menu option now that we have nothing open
-        $self->main->menu->security_close->enabled(0);
+        $self->disable_menu_options;
     } else {
         my @wids = $nt->widgets_from_page($idx);
         # close child widgets explicitly
