@@ -134,7 +134,7 @@ sub _plot_gnuplot_volume {
     return { volume => \@plotinfo };
 }
 
-sub _plot_gnuplot_volatility {
+sub _plot_gnuplot_additional {
     my ($self, $xdata, $output) = @_;
     my @plotinfo = $self->_plot_gnuplot_general($xdata, $output);
     return { additional => \@plotinfo };
@@ -563,7 +563,7 @@ has volatility => {
                 ["ATR($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_volatility,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     natr => {
         name => 'Normalized Average True Range',
@@ -581,7 +581,7 @@ has volatility => {
                 ["NATR($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_volatility,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     trange => {
         name => 'True Range',
@@ -597,7 +597,7 @@ has volatility => {
                 ["True Range", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_volatility,
+        gnuplot => \&_plot_gnuplot_additional,
     },
 };
 
@@ -796,10 +796,10 @@ has momentum => {
             return [
                 ["MACD($fast/$slow/$signal)", $omacd],
                 ["MACD Signal($fast/$slow/$signal)", $omacdsig],
-                ["MACD Histogram($fast/$slow/$signal)", $omacdhist],
+                ["MACD Histogram($fast/$slow/$signal)", $omacdhist, { with => 'impulses' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     macdext => {
         name => 'MACD with different Mov. Avg',
@@ -861,10 +861,10 @@ has momentum => {
             return [
                 ["MACDEXT($fast/$slow/$signal)", $omacd],
                 ["MACDEXT Signal($fast/$slow/$signal)", $omacdsig],
-                ["MACDEXT Histogram($fast/$slow/$signal)", $omacdhist],
+                ["MACDEXT Histogram($fast/$slow/$signal)", $omacdhist, { with => 'impulses' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     macdfix => {
         name => 'MACD Fixed to 12/26',
@@ -880,10 +880,10 @@ has momentum => {
             return [
                 ["MACD(12/26/$signal)", $omacd],
                 ["MACD Signal(12/26/$signal)", $omacdsig],
-                ["MACD Histogram(12/26/$signal)", $omacdhist],
+                ["MACD Histogram(12/26/$signal)", $omacdhist, { with => 'impulses' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     mfi => {
         name => 'Money Flow Index',
