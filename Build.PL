@@ -11,8 +11,6 @@ my $build = Module::Build->new(
     create_readme => 0,
     configure_requires => {
         'Module::Build' => 0,
-        'Software::License' => 0,
-        'Pod::Readme' => 0,
     },
     build_requires => {
         'Module::Build' => 0,
