@@ -1519,6 +1519,14 @@ sub plot_data_gnuplot {
     # use multiplot
     $pwin->multiplot();
     if ($type eq 'OHLC') {
+        my %addon_gen = ();
+        if (@addon_plot) {
+            $addon_gen{size} = ["1, 0.7"];
+            $addon_gen{origin} = [0, 0.3];
+            $addon_gen{bmargin} = 0;
+            $addon_gen{lmargin} = 9;
+            $addon_gen{rmargin} = 2;
+        }
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
@@ -1530,6 +1538,7 @@ sub plot_data_gnuplot {
                 xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
                 ytics => {textcolor => 'orange'},
                 label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+                %addon_gen,
             },
             {
                 with => 'financebars',
@@ -1539,7 +1548,42 @@ sub plot_data_gnuplot {
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
             @general_plot,
         );
+        if (@addon_plot) {
+            $pwin->plot({
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => '',
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.3"], #bug in P:G:G
+                    origin => [0, 0],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                @addon_plot,
+            );
+        }
     } elsif ($type eq 'OHLCV') {
+        my %addon_gen = ();
+        my %addon_vol = ();
+        if (@addon_plot) {
+            $addon_gen{size} = ["1, 0.6"]; #bug in P:G:G
+            $addon_gen{origin} = [0, 0.4];
+            $addon_vol{size} = ["1, 0.2"]; #bug in P:G:G
+            $addon_vol{origin} = [0, 0];
+        } else {
+            $addon_gen{size} = ["1, 0.7"]; #bug in P:G:G
+            $addon_gen{origin} = [0, 0.3];
+            $addon_vol{size} = ["1, 0.3"]; #bug in P:G:G
+            $addon_vol{origin} = [0, 0];
+            $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
+        }
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 xlabel => ['Date', textcolor => 'rgb "yellow"'],
@@ -1553,8 +1597,7 @@ sub plot_data_gnuplot {
                 bmargin => 0,
                 lmargin => 9,
                 rmargin => 2,
-                size => ["1,0.7"], #bug in P:G:G
-                origin => [0, 0.3],
+                %addon_gen,
                 label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
             },
             {
@@ -1565,8 +1608,28 @@ sub plot_data_gnuplot {
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
             @general_plot,
         );
+        if (@addon_plot) {
+            $pwin->plot({
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => '',
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.2"], #bug in P:G:G
+                    origin => [0, 0.2],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                @addon_plot,
+            );
+        }
         $pwin->plot({
-                object => '1',
                 title => '',
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
                 border => 'linecolor rgbcolor "white"',
@@ -1578,8 +1641,7 @@ sub plot_data_gnuplot {
                 tmargin => 0,
                 lmargin => 9,
                 rmargin => 2,
-                size => ["1,0.3"], #bug in P:G:G
-                origin => [0, 0],
+                %addon_vol,
                 label => [1, "", at => "graph 0.90,0.03"],
             },
             {
@@ -1591,6 +1653,14 @@ sub plot_data_gnuplot {
             @volume_plot,
         );
     } elsif ($type eq 'CANDLE') {
+        my %addon_gen = ();
+        if (@addon_plot) {
+            $addon_gen{size} = ["1, 0.7"];
+            $addon_gen{origin} = [0, 0.3];
+            $addon_gen{bmargin} = 0;
+            $addon_gen{lmargin} = 9;
+            $addon_gen{rmargin} = 2;
+        }
         # use candlesticks feature of Gnuplot
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
@@ -1603,6 +1673,7 @@ sub plot_data_gnuplot {
                 xdata => 'time',
                 xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
                 label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+                %addon_gen,
             },
             {
                 with => 'candlesticks',
@@ -1612,7 +1683,42 @@ sub plot_data_gnuplot {
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
             @general_plot,
         );
+        if (@addon_plot) {
+            $pwin->plot({
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => '',
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.3"], #bug in P:G:G
+                    origin => [0, 0],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                @addon_plot,
+            );
+        }
     } elsif ($type eq 'CANDLEV') {
+        my %addon_gen = ();
+        my %addon_vol = ();
+        if (@addon_plot) {
+            $addon_gen{size} = ["1, 0.6"]; #bug in P:G:G
+            $addon_gen{origin} = [0, 0.4];
+            $addon_vol{size} = ["1, 0.2"]; #bug in P:G:G
+            $addon_vol{origin} = [0, 0];
+        } else {
+            $addon_gen{size} = ["1, 0.7"]; #bug in P:G:G
+            $addon_gen{origin} = [0, 0.3];
+            $addon_vol{size} = ["1, 0.3"]; #bug in P:G:G
+            $addon_vol{origin} = [0, 0];
+            $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
+        }
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
@@ -1627,8 +1733,7 @@ sub plot_data_gnuplot {
                 bmargin => 0,
                 lmargin => 9,
                 rmargin => 2,
-                size => ["1,0.7"], #bug in P:G:G
-                origin => [0, 0.3],
+                %addon_gen,
                 label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
             },
             {
@@ -1639,8 +1744,28 @@ sub plot_data_gnuplot {
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
             @general_plot,
         );
+        if (@addon_plot) {
+            $pwin->plot({
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => '',
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.2"], #bug in P:G:G
+                    origin => [0, 0.2],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                @addon_plot,
+            );
+        }
         $pwin->plot({
-                object => '1',
                 title => '',
                 ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -1652,8 +1777,7 @@ sub plot_data_gnuplot {
                 tmargin => 0,
                 lmargin => 9,
                 rmargin => 2,
-                size => ["1,0.3"], #bug in P:G:G
-                origin => [0, 0],
+                %addon_vol,
                 label => [1, "", at => "graph 0.90,0.03"],
             },
             {
@@ -1665,6 +1789,20 @@ sub plot_data_gnuplot {
             @volume_plot,
         );
     } elsif ($type eq 'CLOSEV') {
+        my %addon_gen = ();
+        my %addon_vol = ();
+        if (@addon_plot) {
+            $addon_gen{size} = ["1, 0.6"]; #bug in P:G:G
+            $addon_gen{origin} = [0, 0.4];
+            $addon_vol{size} = ["1, 0.2"]; #bug in P:G:G
+            $addon_vol{origin} = [0, 0];
+        } else {
+            $addon_gen{size} = ["1, 0.7"]; #bug in P:G:G
+            $addon_gen{origin} = [0, 0.3];
+            $addon_vol{size} = ["1, 0.3"]; #bug in P:G:G
+            $addon_vol{origin} = [0, 0];
+            $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
+        }
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
@@ -1678,8 +1816,7 @@ sub plot_data_gnuplot {
                 bmargin => 0,
                 lmargin => 9,
                 rmargin => 2,
-                size => ["1,0.7"], #bug in P:G:G
-                origin => [0, 0.3],
+                %addon_gen,
                 label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
             },
             {
@@ -1690,8 +1827,28 @@ sub plot_data_gnuplot {
             $data(,(0)), $data(,(4)),
             @general_plot,
         );
+        if (@addon_plot) {
+            $pwin->plot({
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => '',
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.2"], #bug in P:G:G
+                    origin => [0, 0.2],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                @addon_plot,
+            );
+        }
         $pwin->plot({
-                object => '1',
                 title => '',
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
                 border => 'linecolor rgbcolor "white"',
@@ -1703,8 +1860,7 @@ sub plot_data_gnuplot {
                 tmargin => 0,
                 lmargin => 9,
                 rmargin => 2,
-                size => ["1,0.3"], #bug in P:G:G
-                origin => [0, 0],
+                %addon_vol,
                 label => [1, "", at => "graph 0.90,0.03"],
             },
             {
@@ -1717,6 +1873,14 @@ sub plot_data_gnuplot {
         );
     } else {
         $type = 'CLOSE';
+        my %addon_gen = ();
+        if (@addon_plot) {
+            $addon_gen{size} = ["1, 0.7"];
+            $addon_gen{origin} = [0, 0.3];
+            $addon_gen{bmargin} = 0;
+            $addon_gen{lmargin} = 9;
+            $addon_gen{rmargin} = 2;
+        }
         $pwin->plot({
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Close Price", textcolor => 'rgb "white"'],
@@ -1728,6 +1892,7 @@ sub plot_data_gnuplot {
                 xtics => {format => '%Y-%m-%d', rotate => -90, textcolor => 'orange', },
                 ytics => {textcolor => 'orange'},
                 label => [1, $self->brand, textcolor => 'rgb "cyan"', at => "graph 0.90,0.03"],
+                %addon_gen,
             },
             {
                 with => 'lines',
@@ -1737,6 +1902,27 @@ sub plot_data_gnuplot {
             $data(,(0)), $data(,(4)),
             @general_plot,
         );
+        if (@addon_plot) {
+            $pwin->plot({
+                    object => '1',
+                    title => '',
+                    key => ['on', 'outside', textcolor => 'rgb "yellow"'],
+                    border => 'linecolor rgbcolor "white"',
+                    ylabel => '',
+                    xlabel => '',
+                    xtics => '',
+                    ytics => {textcolor => 'orange'},
+                    bmargin => 0,
+                    tmargin => 0,
+                    lmargin => 9,
+                    rmargin => 2,
+                    size => ["1,0.3"], #bug in P:G:G
+                    origin => [0, 0],
+                    label => [1, "", at => "graph 0.90,0.03"],
+                },
+                @addon_plot,
+            );
+        }
     }
     $pwin->end_multi;
     # make the current plot type the type
