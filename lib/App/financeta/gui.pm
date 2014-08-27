@@ -440,13 +440,13 @@ sub security_wizard {
     );
     $w->insert(
         Button => name => 'btn_help',
-        text => 'Symbol Help',
+        text => 'Symbol Search',
         height => 20,
         autoWidth => 1,
         origin => [340, 440],
         default => 0,
         enabled => 1,
-        font => { height => 13, style => fs::Bold },
+        font => { height => 12, style => fs::Bold },
         onClick => sub {
             my $url = 'http://finance.yahoo.com';
             my $ok = Browser::Open::open_browser($url, 1);
