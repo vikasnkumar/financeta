@@ -1288,6 +1288,8 @@ sub display_data {
         items => $items,
         origin => [ 10, 10 ],
         headers => $headers,
+        hScroll => 1,
+        growMode => gm::Client | gm::GrowHiX | gm::GrowHiY,
         columns => scalar @$headers,
         onSort => sub {
             my ($p, $col, $dir) = @_;

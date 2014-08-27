@@ -140,6 +140,15 @@ sub _plot_gnuplot_volatility {
     return { additional => \@plotinfo };
 }
 
+sub _plot_gnuplot_cycle {
+    my ($self, $xdata, $output) = @_;
+    #TODO: ht-dcperiod and ht-dcphase cannot be overlapped
+    #with other ht-* plots though but we do it anyway. need to either normalize
+    #their values or draw another plot screen
+    my @plotinfo = $self->_plot_gnuplot_general($xdata, $output);
+    return { additional => \@plotinfo };
+}
+
 sub _plot_gnuplot_candlestick {
     my ($self, $xdata, $output) = @_;
     my @plotinfo = ();
@@ -1297,7 +1306,7 @@ has cycle => {
                 ['HT-DCperiod', $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_cycle,
     },
     ht_dcphase => {
         name => 'Hilbert Transform - Dominant Cycle Phase',
@@ -1312,7 +1321,7 @@ has cycle => {
                 ['HT-DCperiod', $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_cycle,
     },
     ht_phasor => {
         name => 'Hilbert Transform - Phasor Components',
@@ -1321,14 +1330,14 @@ has cycle => {
         ],
         code => sub {
             my ($obj, $inpdl) = @_;
-            say "Executing ta_ht_dcphasor" if $obj->debug;
-            my ($oinphase, $oquad) = PDL::ta_ht_dcphasor($inpdl);
+            say "Executing ta_ht_phasor" if $obj->debug;
+            my ($oinphase, $oquad) = PDL::ta_ht_phasor($inpdl);
             return [
                 ['HT-InPhase', $oinphase],
                 ['HT-Quadrature', $oquad],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_cycle,
     },
     ht_sine => {
         name => 'Hilbert Transform - Sine Wave',
@@ -1344,7 +1353,7 @@ has cycle => {
                 ['HT-LeadSine', $oleadsine],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_cycle,
     },
     ht_trendmode => {
         name => 'Hilbert Transform - Trend vs Cycle Mode',
@@ -1356,10 +1365,10 @@ has cycle => {
             say "Executing ta_ht_trendmode" if $obj->debug;
             my $outpdl = PDL::ta_ht_trendmode($inpdl);
             return [
-                ['HT-Trend vs Cycle', $outpdl],
+                ['HT-Trend vs Cycle', $outpdl, { with => 'impulses' },],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_cycle,
     },
 };
 
