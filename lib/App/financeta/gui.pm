@@ -1487,6 +1487,7 @@ sub plot_data_gnuplot {
     my @general_plot = ();
     my @volume_plot = ();
     my @addon_plot = ();
+    my @candle_plot = ();
     $self->indicator->color_idx(0); # reset color index
     if (defined $indicators and scalar @$indicators) {
         # ok now create a list of indicators to plot
@@ -1504,6 +1505,8 @@ sub plot_data_gnuplot {
                 push @volume_plot, @$iplot_vol if $iplot_vol and scalar @$iplot_vol;
                 my $iplot_addon = $iplot->{additional};
                 push @addon_plot, @$iplot_addon if $iplot_addon and scalar @$iplot_addon;
+                my $iplot_cdl = $iplot->{candle};
+                push @candle_plot, @$iplot_cdl if $iplot_cdl and scalar @$iplot_cdl;
             } else {
                 carp 'Unable to handle plot arguments in ' . ref($iplot) . ' form!';
             }
@@ -1676,6 +1679,7 @@ sub plot_data_gnuplot {
             },
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
             @general_plot,
+            @candle_plot,
         );
         if (@addon_plot) {
             $pwin->plot({
@@ -1737,6 +1741,7 @@ sub plot_data_gnuplot {
             },
             $data(,(0)), $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)),
             @general_plot,
+            @candle_plot,
         );
         if (@addon_plot) {
             $pwin->plot({

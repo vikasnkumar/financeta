@@ -144,8 +144,20 @@ sub _plot_gnuplot_additional {
 sub _plot_gnuplot_candlestick {
     my ($self, $xdata, $output) = @_;
     my @plotinfo = ();
-    #TODO:
-    return @plotinfo;
+    foreach (@$output) {
+        my $p = $_->[1];
+        my %legend = (legend => $_->[0]) if length $_->[0];
+        my $args = $_->[2] || {};
+        say Dumper($args) if $self->debug;
+        push @plotinfo, {
+            with => 'impulses',
+            axes => 'x1y2',
+            linecolor => $self->next_color,
+            %legend,
+            %$args,
+        }, $xdata, $p;
+    }
+    return { candle => \@plotinfo };
 }
 
 has ma_name => {
