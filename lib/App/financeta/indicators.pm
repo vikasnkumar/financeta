@@ -893,7 +893,7 @@ has momentum => {
                 ["MFI($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     minus_di => {
         name => 'Minus Directional Indicator',
@@ -911,7 +911,7 @@ has momentum => {
                 ["MINUS-DI($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     minus_dm => {
         name => 'Minus Directional Movement',
@@ -929,7 +929,7 @@ has momentum => {
                 ["MINUS-DM($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     mom => {
         name => 'Momentum',
@@ -946,7 +946,7 @@ has momentum => {
                 ["MOM($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     plus_di => {
         name => 'Plus Directional Indicator',
@@ -964,7 +964,7 @@ has momentum => {
                 ["PLUS-DI($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     plus_dm => {
         name => 'Plus Directional Indicator',
@@ -982,7 +982,7 @@ has momentum => {
                 ["PLUS-DM($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     ppo => {
         name => 'Percentage Price Oscillator',
@@ -1016,7 +1016,7 @@ has momentum => {
                 ["PPO($fast/$slow)($type)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     roc => {
         name => 'Rate of Change',
@@ -1033,7 +1033,7 @@ has momentum => {
                 ["ROC($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     rocp => {
         name => 'Rate of Change Precentage',
@@ -1050,7 +1050,7 @@ has momentum => {
                 ["ROCP($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     rocr => {
         name => 'Rate of Change Ratio',
@@ -1067,7 +1067,7 @@ has momentum => {
                 ["ROCR($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     rocr100 => {
         name => 'Rate of Change Ratio - scale 100',
@@ -1084,7 +1084,7 @@ has momentum => {
                 ["ROCR*100($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     rsi => {
         name => 'Relative Strength Index',
@@ -1101,7 +1101,7 @@ has momentum => {
                 ["RSI($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     stoch => {
         name => 'Stochastic',
@@ -1151,7 +1151,7 @@ has momentum => {
                 ["Slow-D($slowD)", $oslowD],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     stochf => {
         name => 'Stochastic Fast',
@@ -1186,7 +1186,7 @@ has momentum => {
                 ["Fast-D($fastD)", $ofastD],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     stochrsi => {
         name => 'Stochastic Relative Strength Index',
@@ -1223,7 +1223,7 @@ has momentum => {
                 ["Fast-D($fastD, $period)", $ofastD],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     trix => {
         name => '1-day ROC of Triple Smooth EMA',
@@ -1240,7 +1240,7 @@ has momentum => {
                 ["TRIX($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     ultosc => {
         name => 'Ultimate Oscillator',
@@ -1262,7 +1262,7 @@ has momentum => {
                 ["ULT.OSC.($p1/$p2/$p3)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     willr => {
         name => q/Williams' %R/,
@@ -1280,7 +1280,7 @@ has momentum => {
                 ["WILLR($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
 };
 
