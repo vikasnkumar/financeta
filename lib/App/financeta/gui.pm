@@ -15,7 +15,7 @@ use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
     Application Buttons MsgBox Calendar ComboBox Notebooks
-    ScrollWidget DetailedList
+    ScrollWidget DetailedList StdDlg
 );
 use Prima::Utils ();
 use Data::Dumper;
@@ -28,6 +28,7 @@ use PDL::Graphics::Gnuplot;
 use App::financeta::indicators;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
+use YAML::Any ();
 
 $PDL::doubleformat = "%0.6lf";
 $| = 1;
@@ -99,6 +100,7 @@ sub _menu_items {
                                 $gui->display_data($win, $data);
                                 my $type = $gui->current->{plot_type} || 'OHLC';
                                 $gui->plot_data($win, $data, $symbol, $type);
+                                $win->menu->security_save->enabled(1);
                                 $win->menu->security_close->enabled(1);
                                 $win->menu->plot_ohlc->enabled(1);
                                 $win->menu->plot_ohlcv->enabled(1);
@@ -110,6 +112,15 @@ sub _menu_items {
                             }
                             $gui->progress_bar_close($bar);
                         }
+                    },
+                    $self,
+                ],
+                [
+                    '-security_save', '~Save', 'Ctrl+S', '^S',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        $gui->save_current_tab($win);
                     },
                     $self,
                 ],
@@ -769,7 +780,7 @@ sub remove_indicator_wizard {
             } else {
                 carp "Invalid indicators for tab: ", $result->{tab};
             }
-            say Dumper($result) if $self->debug;
+            say "Result: ", Dumper($result) if $self->debug;
         },
     );
     my $res = $w->execute();
@@ -1127,7 +1138,7 @@ sub add_indicator_wizard {
                 # $params is an array-ref
                 my $params = $self->indicator->get_params($txt, $grp);
                 $self->current->{indicator}->{func} = $txt;
-                say Dumper($params) if $self->debug;
+                say "Params: ", Dumper($params) if $self->debug;
                 $owner->btn_ok->enabled(1);
                 $self->indicator_parameter_wizard($owner->gbox_params,
                         $txt, $grp, $params);
@@ -1391,6 +1402,7 @@ sub disable_menu_options {
     my $self = shift;
     my $win = $self->main;
     # disable the menu option now that we have nothing open
+    $win->menu->security_save->enabled(0);
     $win->menu->security_close->enabled(0);
     $win->menu->plot_ohlc->enabled(0);
     $win->menu->plot_ohlcv->enabled(0);
@@ -1400,6 +1412,51 @@ sub disable_menu_options {
     $win->menu->plot_cdlv->enabled(0);
     $win->menu->add_indicator->enabled(0);
     $win->menu->remove_indicator->enabled(0);
+}
+
+#rudimentary
+sub save_current_tab {
+    my ($self, $win) = @_;
+    return unless $win;
+    my ($data, $symbol, $indicators) = $self->get_tab_data($win);
+    if (defined $data and defined $symbol) {
+        my $sd = $data->at(0, 0);
+        my $ed = $data->at($data->dim(0) - 1, 0);
+        my $tz = $self->timezone;
+        my %saved = (
+            start_date => $sd,
+            end_date => $ed,
+            symbol => $symbol,
+        );
+        if ($indicators and ref $indicators eq 'ARRAY') {
+            my $arr = [];
+            foreach (@$indicators) {
+                push @$arr, $_->{indicator};
+            }
+            $saved{indicators} = $arr;
+        } elsif ($indicators and ref $indicators eq 'HASH') {
+            $saved{indicators} = [$indicators->{indicator}];
+        }
+        $saved{saved_at} = DateTime->now(time_zone => $tz)->iso8601();
+        my $dlg = Prima::SaveDialog->new(
+            defaultExt => 'yml',
+            fileName => $symbol,
+            filter => [
+                ['financeta files' => '*.yml'],
+                ['All files' => '*'],
+            ],
+            filterIndex => 0,
+            overwritePrompt => 1,
+        );
+        my $mfile = $dlg->fileName if $dlg->execute;
+        if ($mfile) {
+            $saved{filename} = $mfile;
+            say "You have selected $mfile to save the tab info into." if $self->debug;
+            YAML::Any::DumpFile($mfile, \%saved) or message("Unable to save to $mfile");
+        } else {
+            carp "Saving the tab was canceled.";
+        }
+    }
 }
 
 sub close_current_tab {

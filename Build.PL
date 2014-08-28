@@ -37,6 +37,7 @@ my $build = Module::Build->new(
         'Scalar::Util' => 0,
         'Getopt::Long' => 0,
         'Browser::Open' => 0,
+        'YAML::Any' => 0,
     },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],

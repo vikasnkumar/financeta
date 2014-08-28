@@ -118,7 +118,7 @@ sub _plot_gnuplot_general {
         my $p = (defined $scale) ? $_->[1] / $scale : $_->[1];
         my %legend = (legend => $_->[0]) if length $_->[0];
         my $args = $_->[2] || {};
-        say Dumper($args) if $self->debug;
+        say "Plot args: ", Dumper($args) if $self->debug;
         push @plotinfo, {
             with => 'lines',
             axes => 'x1y1',
@@ -149,7 +149,7 @@ sub _plot_gnuplot_candlestick {
         my $p = $_->[1];
         my %legend = (legend => $_->[0]) if length $_->[0];
         my $args = $_->[2] || {};
-        say Dumper($args) if $self->debug;
+        say "Plot args: ", Dumper($args) if $self->debug;
         push @plotinfo, {
             with => 'impulses',
             axes => 'x1y2',
