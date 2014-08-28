@@ -930,6 +930,45 @@ sub indicator_parameter_wizard {
                         $self->current->{indicator}->{params}->{$hkey} = $val;
                     },
                 );
+            } elsif (defined $type and $type eq 'PDL') {
+                # use InputLine for all numbers
+                $self->current->{indicator}->{params}->{$hkey} = $value;
+                $self->current->{indicator}->{params}->{$hkey . '_pdl'} = 1;
+                $gbox->insert(Label => text => $label,
+                    name => "label_$grp\_$count",
+                    alignment => ta::Left,
+                    autoHeight => 1,
+                    autoWidth => 1,
+                    origin => [$origin[0] + 10,
+                                $origin[1] + $count * $sz_y - 40],
+                    font => {height => 13},
+                    hint => 'This should be a comma-separated list of integers',
+                );
+                $gbox->insert(InputLine => name => "input_$grp\_$count",
+                    alignment => ta::Left,
+                    autoHeight => 1,
+                    width => $sz_x - 50,
+                    autoTab => 1,
+                    maxLen => 256,
+                    origin => [$origin[0] + 10 + $sz_x,
+                                $origin[1] + $count * $sz_y - 40],
+                    text => $value,
+                    font => {height => 16},
+                    onChange => sub {
+                        my $il = shift;
+                        my $val = undef;
+                        my $txt = $il->text;
+                        return unless length $txt;
+                        if ($txt !~ /\d[\d,\s]*/) {
+                            message_box('Parameter Error',
+                                "$label has to be a comma-separated list of integers",
+                                mb::Ok | mb::Error);
+                            return;
+                        }
+                        $self->current->{indicator}->{params}->{$hkey} = $txt;
+                        $self->current->{indicator}->{params}->{$hkey . '_pdl'} = 1;
+                    },
+                );
             } else {
                 # use checkbox
                 $self->current->{indicator}->{params}->{$hkey} = ($value) ? 1 : 0;
@@ -1100,7 +1139,7 @@ sub add_indicator_wizard {
         enabled => 0,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
-            say Dumper($self->current->{indicator}) if $self->debug;
+            say "Final parameters selected: ", Dumper($self->current->{indicator}) if $self->debug;
         },
     );
     $w->insert(

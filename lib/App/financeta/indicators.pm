@@ -328,11 +328,10 @@ has overlaps => {
     },
     mavp => {
         name => 'Moving Average with Variable Period',
-        #TODO: support this kind of indicator
-        input => [qw/close periods/],
+        input => [qw/close/],
         params => [
             # key, pretty name, type, default value
-            [ 'InPeriods', 'List of periods', 'PDL', PDL::null],
+            [ 'InPeriods', 'List of periods (comma separated values)', 'PDL', ''],
             [ 'InMinPeriod', 'Minimum Period (2 - 100000)', PDL::long, 2],
             [ 'InMaxPeriod', 'Maximum Period (2 - 100000)', PDL::long, 30],
             # this will show up in a combo list
@@ -352,8 +351,25 @@ has overlaps => {
         ],
         code => sub {
             my ($obj, $inpdl, $period_pdl, @args) = @_;
-            say "Executing ta_mavp with parameters: ", Dumper(\@args) if $obj->debug;
+            say "Executing ta_mavp with parameters: ", $period_pdl, "\t", Dumper(\@args) if $obj->debug;
             my $type = $obj->ma_name->{$args[2]} || 'UNKNOWN';
+            if ($period_pdl->isnull) {
+                carp "The list of periods cannot be null";
+                return;
+            }
+            # the period-pdl has to be the same size as the input-pdl
+            my @a = $period_pdl->list;
+            my $sz = $inpdl->dim(0); #1-D pdl
+            until (scalar(@a) >= $sz) {
+                my @b = $period_pdl->list;
+                push @a, @b;
+            }
+            splice @a, $sz;
+            $period_pdl = PDL->new(@a);
+            if ($period_pdl->dim(0) != $sz) {
+                carp "Sizes of the PDLs are not the same" if $period_pdl->dim(0) != $sz;
+                return;
+            }
             my $outpdl = PDL::ta_mavp($inpdl, $period_pdl, @args);
             return [
                 ["MAVP($type)", $outpdl],
@@ -2211,7 +2227,7 @@ sub _find_func_key($$) {
         }
     }
     return unless defined $fn_key;
-    say "Found $fn_key" if $self->debug;
+    say "Found function key: $fn_key" if $self->debug;
     return $fn_key;
 }
 
@@ -2234,6 +2250,12 @@ sub execute_ohlcv($$) {
         if (exists $params->{$k . '_index'}) {
             # handle ARRAY
             push @args, $params->{$k . '_index'};
+        } elsif (exists $params->{$k . '_pdl'}) {
+            my $csv = $params->{$k};
+            $csv =~ s/\s//g if length $csv;
+            my @a = split /,/, $csv if length $csv;
+            push @args, PDL->new(@a) if @a;
+            push @args, PDL::null unless @a;
         } else {
             push @args, eval $params->{$k};
         }
