@@ -88,7 +88,7 @@ sub _menu_items {
         [
             '~Security' => [
                 [
-                    'security_wizard', '~New', 'Ctrl+N', '^N',
+                    'security_new', '~New', 'Ctrl+N', '^N',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -100,18 +100,19 @@ sub _menu_items {
                                 $gui->display_data($win, $data);
                                 my $type = $gui->current->{plot_type} || 'OHLC';
                                 $gui->plot_data($win, $data, $symbol, $type);
-                                $win->menu->security_save->enabled(1);
-                                $win->menu->security_close->enabled(1);
-                                $win->menu->plot_ohlc->enabled(1);
-                                $win->menu->plot_ohlcv->enabled(1);
-                                $win->menu->plot_close->enabled(1);
-                                $win->menu->plot_closev->enabled(1);
-                                $win->menu->plot_cdl->enabled(1);
-                                $win->menu->plot_cdlv->enabled(1);
-                                $win->menu->add_indicator->enabled(1);
+                                $gui->enable_menu_options($win);
                             }
                             $gui->progress_bar_close($bar);
                         }
+                    },
+                    $self,
+                ],
+                [
+                    'security_open', '~Open', 'Ctrl+O', '^O',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        $gui->load_new_tab($win);
                     },
                     $self,
                 ],
@@ -121,6 +122,15 @@ sub _menu_items {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         $gui->save_current_tab($win);
+                    },
+                    $self,
+                ],
+                [
+                    '-security_saveas', 'Save As', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        $gui->save_current_tab($win, 1);
                     },
                     $self,
                 ],
@@ -317,7 +327,7 @@ sub run {
 
 sub progress_bar_create {
     my ($self, $win, $text) = @_;
-    $text = 'Loading...' unless length $text;
+    $text = $text || 'Loading...';
     my $bar = Prima::Window->create(
         name => 'progress_bar',
         text => $text,
@@ -1398,11 +1408,28 @@ sub display_data {
     1;
 }
 
+sub enable_menu_options {
+    my $self = shift;
+    my $win = shift || $self->main;
+    # enable the menu option now that we have something open
+    $win->menu->security_save->enabled(1);
+    $win->menu->security_saveas->enabled(1);
+    $win->menu->security_close->enabled(1);
+    $win->menu->plot_ohlc->enabled(1);
+    $win->menu->plot_ohlcv->enabled(1);
+    $win->menu->plot_close->enabled(1);
+    $win->menu->plot_closev->enabled(1);
+    $win->menu->plot_cdl->enabled(1);
+    $win->menu->plot_cdlv->enabled(1);
+    $win->menu->add_indicator->enabled(1);
+}
+
 sub disable_menu_options {
     my $self = shift;
     my $win = $self->main;
     # disable the menu option now that we have nothing open
     $win->menu->security_save->enabled(0);
+    $win->menu->security_saveas->enabled(0);
     $win->menu->security_close->enabled(0);
     $win->menu->plot_ohlc->enabled(0);
     $win->menu->plot_ohlcv->enabled(0);
@@ -1415,10 +1442,8 @@ sub disable_menu_options {
 }
 
 #rudimentary
-sub save_current_tab {
-    my ($self, $win) = @_;
-    return unless $win;
-    my ($data, $symbol, $indicators) = $self->get_tab_data($win);
+sub get_model {
+    my ($self, $data, $symbol, $indicators) = @_;
     if (defined $data and defined $symbol) {
         my $sd = $data->at(0, 0);
         my $ed = $data->at($data->dim(0) - 1, 0);
@@ -1437,7 +1462,26 @@ sub save_current_tab {
         } elsif ($indicators and ref $indicators eq 'HASH') {
             $saved{indicators} = [$indicators->{indicator}];
         }
-        $saved{saved_at} = DateTime->now(time_zone => $tz)->iso8601();
+        return wantarray ? %saved : \%saved;
+    }
+}
+
+#rudimentary
+sub save_current_tab {
+    my ($self, $win, $save_as) = @_;
+    return unless $win;
+    my ($data, $symbol, $indicators) = $self->get_tab_data($win);
+    # in save-as mode do not get historical file name
+    my $info = $self->get_tab_info($win) unless $save_as;
+    my $saved = $self->get_model($data, $symbol, $indicators);
+    return unless $saved;
+    my $tz = $self->timezone;
+    $saved->{saved_at} = DateTime->now(time_zone => $tz)->iso8601();
+    say "Saving the model: ", Dumper($saved) if $self->debug;
+    my $mfile;
+    if ($info and $info->{filename}) {
+        $mfile = $info->{filename};
+    } else {
         my $dlg = Prima::SaveDialog->new(
             defaultExt => 'yml',
             fileName => $symbol,
@@ -1446,17 +1490,59 @@ sub save_current_tab {
                 ['All files' => '*'],
             ],
             filterIndex => 0,
+            multiSelect => 0,
             overwritePrompt => 1,
+            pathMustExist => 1,
         );
-        my $mfile = $dlg->fileName if $dlg->execute;
-        if ($mfile) {
-            $saved{filename} = $mfile;
-            say "You have selected $mfile to save the tab info into." if $self->debug;
-            YAML::Any::DumpFile($mfile, \%saved) or message("Unable to save to $mfile");
-        } else {
-            carp "Saving the tab was canceled.";
-        }
+        $mfile = $dlg->fileName if $dlg->execute;
     }
+    if ($mfile) {
+        $saved->{filename} = $mfile;
+        say "You have selected $mfile to save the tab info into." if $self->debug;
+        YAML::Any::DumpFile($mfile, $saved) or message("Unable to save to $mfile");
+    } else {
+        carp "Saving the tab was canceled.";
+    }
+}
+
+#rudimentary
+sub load_new_tab {
+    my ($self, $win) = @_;
+    return unless $win;
+    my $dlg = Prima::OpenDialog->new(
+        defaultExt => 'yml',
+        filter => [
+            ['financeta files' => '*.yml'],
+            ['All files' => '*'],
+        ],
+        filterIndex => 0,
+        fileMustExist => 1,
+        multiSelect => 0,
+    );
+    my $mfile = $dlg->fileName if $dlg->execute;
+    return unless $mfile;
+    return unless -e $mfile;
+    my $saved = YAML::Any::LoadFile($mfile);
+    return unless $saved;
+    my $tz = $self->timezone;
+    my $current = {
+        start_date => DateTime->from_epoch(epoch => $saved->{start_date}, time_zone => $tz),
+        end_date => DateTime->from_epoch(epoch => $saved->{end_date}, time_zone => $tz),
+        symbol => $saved->{symbol},
+        force_download => 0,
+    };
+    my $bar = $self->progress_bar_create($win, 'Loading...');
+    my ($data, $symbol) = $self->download_data($bar, $current);
+    say "Loading the data into tab" if $self->debug;
+    $self->display_data($win, $data, $symbol);
+    $self->enable_menu_options($win);
+    say "Running the indicators and updating tab" if $self->debug;
+    #TODO
+    my ($adata, $asym, $aind) = $self->get_tab_data($win);
+    $self->set_tab_info($win, $saved);
+    my $type = $self->current->{plot_type} || 'OHLC';
+    $self->plot_data($win, $adata, $asym, $type, $aind);
+    $self->progress_bar_close($bar);
 }
 
 sub close_current_tab {
@@ -1535,6 +1621,37 @@ sub get_tab_data_by_name($$) {
         }
     }
     return undef;
+}
+
+sub get_tab_info {
+    my ($self, $win) = @_;
+    return unless $win;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $idx = $win->data_tabs->pageIndex;
+    my @nt = $win->data_tabs->widgets_from_page($idx);
+    return unless @nt;
+    my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+    if ($dl) {
+        say "Found ", $dl->name if $self->debug;
+        return $dl->{-info};
+    }
+}
+
+sub set_tab_info($$) {
+    my ($self, $win, $info) = @_;
+    return unless $win;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $idx = $win->data_tabs->pageIndex;
+    my @nt = $win->data_tabs->widgets_from_page($idx);
+    return unless @nt;
+    my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+    if ($dl) {
+        say "Found ", $dl->name if $self->debug;
+        $dl->{-info} = $info;
+        return 1;
+    }
 }
 
 sub set_tab_data_by_name($$) {
