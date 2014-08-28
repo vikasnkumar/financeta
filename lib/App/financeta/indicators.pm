@@ -120,6 +120,7 @@ sub _plot_gnuplot_general {
         say Dumper($args) if $self->debug;
         push @plotinfo, {
             with => 'lines',
+            axes => 'x1y1',
             linecolor => $self->next_color,
             %legend,
             %$args,
@@ -136,15 +137,6 @@ sub _plot_gnuplot_volume {
 
 sub _plot_gnuplot_additional {
     my ($self, $xdata, $output) = @_;
-    my @plotinfo = $self->_plot_gnuplot_general($xdata, $output);
-    return { additional => \@plotinfo };
-}
-
-sub _plot_gnuplot_cycle {
-    my ($self, $xdata, $output) = @_;
-    #TODO: ht-dcperiod and ht-dcphase cannot be overlapped
-    #with other ht-* plots though but we do it anyway. need to either normalize
-    #their values or draw another plot screen
     my @plotinfo = $self->_plot_gnuplot_general($xdata, $output);
     return { additional => \@plotinfo };
 }
@@ -1303,10 +1295,10 @@ has cycle => {
             say "Executing ta_ht_dcperiod" if $obj->debug;
             my $outpdl = PDL::ta_ht_dcperiod($inpdl);
             return [
-                ['HT-DCperiod', $outpdl],
+                ['HT-DCperiod', $outpdl, { axes => 'x1y2' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_cycle,
+        gnuplot => \&_plot_gnuplot_general,
     },
     ht_dcphase => {
         name => 'Hilbert Transform - Dominant Cycle Phase',
@@ -1318,10 +1310,10 @@ has cycle => {
             say "Executing ta_ht_dcphase" if $obj->debug;
             my $outpdl = PDL::ta_ht_dcphase($inpdl);
             return [
-                ['HT-DCperiod', $outpdl],
+                ['HT-DCphase', $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_cycle,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     ht_phasor => {
         name => 'Hilbert Transform - Phasor Components',
@@ -1337,7 +1329,7 @@ has cycle => {
                 ['HT-Quadrature', $oquad],
             ];
         },
-        gnuplot => \&_plot_gnuplot_cycle,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     ht_sine => {
         name => 'Hilbert Transform - Sine Wave',
@@ -1349,11 +1341,11 @@ has cycle => {
             say "Executing ta_ht_sine" if $obj->debug;
             my ($osine, $oleadsine) = PDL::ta_ht_sine($inpdl);
             return [
-                ['HT-Sine', $osine],
-                ['HT-LeadSine', $oleadsine],
+                ['HT-Sine', $osine, { axes => 'x1y2' }],
+                ['HT-LeadSine', $oleadsine, { axes => 'x1y2' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_cycle,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     ht_trendmode => {
         name => 'Hilbert Transform - Trend vs Cycle Mode',
@@ -1365,10 +1357,10 @@ has cycle => {
             say "Executing ta_ht_trendmode" if $obj->debug;
             my $outpdl = PDL::ta_ht_trendmode($inpdl);
             return [
-                ['HT-Trend vs Cycle', $outpdl, { with => 'impulses' },],
+                ['HT-Trend vs Cycle', $outpdl, { with => 'impulses', axes => 'x1y2' },],
             ];
         },
-        gnuplot => \&_plot_gnuplot_cycle,
+        gnuplot => \&_plot_gnuplot_additional,
     },
 };
 
@@ -1929,7 +1921,7 @@ has statistic => {
                 ["CORRELATION($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     linearreg => {
         name => 'Linear Regression',
@@ -1960,7 +1952,7 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_angle($inpdl, @args);
             return [
-                ["REGRESSION ANGLE($period)", $outpdl],
+                ["REGRESSION ANGLE($period)", $outpdl, { axes => 'x1y2' }],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -1994,10 +1986,10 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_slope($inpdl, @args);
             return [
-                ["REGRESSION SLOPE($period)", $outpdl],
+                ["REGRESSION SLOPE($period)", $outpdl, { axes => 'x1y2' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     stddev => {
         name => 'Standard Deviation',
@@ -2016,7 +2008,7 @@ has statistic => {
                 ["$num x STD.DEV.($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     tsf => {
         name => 'Timeseries Forecast',
@@ -2052,7 +2044,7 @@ has statistic => {
                 ["$num x VARIANCE($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
 };
 
