@@ -13,6 +13,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Finance::Talib;
 use Data::Dumper;
+use POSIX ();
 
 $PDL::doubleformat = "%0.6lf";
 has debug => 0;
@@ -374,19 +375,18 @@ has overlaps => {
                 return;
             }
             # the period-pdl has to be the same size as the input-pdl
-            my @a = $period_pdl->list;
             my $sz = $inpdl->dim(0); #1-D pdl
-            until (scalar(@a) >= $sz) {
-                my @b = $period_pdl->list;
-                push @a, @b;
-            }
-            splice @a, $sz;
-            $period_pdl = PDL->new(@a);
+            my $np = $period_pdl;
             if ($period_pdl->dim(0) != $sz) {
-                carp "Sizes of the PDLs are not the same" if $period_pdl->dim(0) != $sz;
+                my $rep = POSIX::ceil($inpdl->dim(0) / $period_pdl->dim(0));
+                $np = $period_pdl(,*$rep)->clump(0, 1);
+                $np = $np->dice([0 .. $sz - 1]);
+            }
+            if ($np->dim(0) != $sz) {
+                carp "Sizes of the PDLs are not the same: ", $np->dim(0), " vs $sz";
                 return;
             }
-            my $outpdl = PDL::ta_mavp($inpdl, $period_pdl, @args);
+            my $outpdl = PDL::ta_mavp($inpdl, $np, @args);
             return [
                 ["MAVP($type)", $outpdl],
             ];

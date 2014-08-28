@@ -28,6 +28,7 @@ my $build = Module::Build->new(
         'DateTime' => 0,
         'Finance::QuoteHist' => 1.20,
         'PDL::Finance::Talib' => '0.006',
+        'POSIX' => 0,
         'Prima' => '1.40_1',
         'DateTime::Format::Strptime' => 0,
         'POE::Loop::Prima' => 0,
