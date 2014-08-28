@@ -57,6 +57,20 @@ Currently, the plotting engine of _App::financeta_ is
 available in your distribution's package manager. If not, you can find
 instructions on installing it on their [website](http://www.gnuplot.info).
 
+#### Installing Prima
+
+Currently we depend on installing _Prima_ version 1.40\_1 which is a development
+release. Until the formal release is ready, we have to do the following to
+install the development release,
+
+    $ sudo perl -MCPAN -e 'CPAN::Shell->install("KARASIK/Prima-1.40_1.tar.gz");'
+
+or using _App::cpanminus_
+
+    $ which cpanm || sudo cpan -i App::cpanminus
+    $ cpanm KARASIK/Prima-1.40_1.tar.gz
+
+
 #### Installing App::financeta from CPAN
 
 Check if the `perl` and `cpan` executables are installed on your system and if
@@ -99,7 +113,8 @@ When installing from Github, you may see that your dependencies are not
 installed. To install all the required dependencies, after you have installed
 `ta-lib` and `gnuplot` as above, run the below command.
 
-    $ sudo cpan -i PDL Prima PDL::Graphics::Gnuplot Finance::QuoteHist \
+    $ sudo perl -MCPAN -e 'CPAN::Shell->install("KARASIK/Prima-1.40_1.tar.gz");'
+    $ sudo cpan -i PDL PDL::Graphics::Gnuplot Finance::QuoteHist \
         PDL::Finance::Talib POE::Loop::Prima Capture::Tiny DateTime \
         Software::License Pod::Readme Module::Build
 
@@ -120,6 +135,8 @@ Macports may already come with `perl` but you could install a more recent
 version if you like.
 
     $ sudo port install ta-lib gnuplot perl5
+    $ sudo cpan -i App::cpanminus
+    $ sudo cpanm KARASIK/Prima-1.40_1.tar.gz
     $ sudo cpan -i App::financeta
 
 #### Installing using native Mac Perl
@@ -170,6 +187,8 @@ Set the environment variables as below, and install the packages
     C:\> set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include>
     C:\> echo %TALIB_LIBS%
     C:\> echo %TALIB_CFLAGS%
+    C:\> cpan -i App::cpanminus
+    C:\> cpanm KARASIK/Prima-1.40_1.tar.gz
     C:\> cpan -i PDL::Finance::Talib
     C:\> cpan -i PDL::Graphics::Gnuplot
     C:\> cpan -i App::financeta
@@ -236,6 +255,7 @@ Install _ta-lib_ as given below:
 Once this is done, let's install `App::financeta` using `cpan`.
 
     $ cpan
+    cpan> install KARASIK/Prima-1.40_1.tar.gz
     cpan> install App::financeta
 
 On success, you will find `financeta` in `/usr/bin` and can start it as
