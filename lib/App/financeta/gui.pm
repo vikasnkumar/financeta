@@ -91,8 +91,7 @@ sub _menu_items {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         if ($gui->security_wizard($win)) {
-                            my $bar = $gui->progress_bar_create($win,
-                                'Downloading...');
+                            my $bar = $gui->progress_bar_create($win, 'Downloading...');
                             # download security data
                             my ($data, $symbol) = $gui->download_data($bar);
                             if (defined $data) {
@@ -781,8 +780,35 @@ sub add_indicator($$$) {
     my ($self, $win, $data, $symbol) = @_;
     if ($self->add_indicator_wizard($win)) {
         my $iref = $self->current->{indicator};
-        say Dumper($iref) if $self->debug;
-        my $output = $self->indicator->execute_ohlcv($data, $iref);
+        say "Trying to run indicator for :", Dumper($iref) if $self->debug;
+        my $output;
+        if (exists $iref->{params} and exists $iref->{params}->{CompareWith}) {
+            # ok this is a security.
+            # we need to download the data for this and store it
+            my $bar = $self->progress_bar_create($win, 'Downloading...');
+            my $current = $self->current;
+            $iref->{params}->{CompareWith} =~ s/\s//g;
+            $current->{symbol} = $iref->{params}->{CompareWith};
+            my $tz = $self->timezone;
+            unless ($current->{start_date}) {
+                my $sd = $data->at(0, 0); # time in 0th column
+                my $dt = DateTime->from_epoch(epoch => $sd, time_zone => $tz);
+                $current->{start_date} = $dt;
+            }
+            unless ($current->{end_date}) {
+                my $ed = $data->at($data->dim(0) - 1, 0); # time in 0th column
+                my $dt = DateTime->from_epoch(epoch => $ed, time_zone => $tz);
+                $current->{end_date} = $dt;
+            }
+            my ($data2, $symbol2) = $self->download_data($bar, $current);
+            $self->progress_bar_close($bar);
+            return unless (defined $data2 and defined $symbol2);
+            say "Successfully downloaded data for $symbol2" if $self->debug;
+            $iref->{params}->{CompareWith} = $symbol2;
+            $output = $self->indicator->execute_ohlcv($data, $iref, $data2);
+        } else {
+            $output = $self->indicator->execute_ohlcv($data, $iref);
+        }
         unless (defined $output) {
             message_box('Indicator Error',
                 "Unable to run the indicator on data.",
@@ -1173,17 +1199,18 @@ sub add_indicator_wizard {
 }
 
 sub download_data {
-    my ($self, $pbar) = @_;
+    my ($self, $pbar, $current) = @_;
     $self->progress_bar_update($pbar) if $pbar;
-    my $start = $self->current->{start_date};
-    my $end = $self->current->{end_date};
-    my $symbol = $self->current->{symbol};
+    $current = $self->current unless $current;
+    my $start = $current->{start_date};
+    my $end = $current->{end_date};
+    my $symbol = $current->{symbol};
     #TODO: check symbol validity
     my $csv = sprintf "%s_%d_%d.csv", $symbol, $start->ymd(''), $end->ymd('');
     $csv = File::Spec->catfile($self->tmpdir, $csv);
     $self->progress_bar_update($pbar) if $pbar;
     my $data;
-    unlink $csv if $self->current->{force_download};
+    unlink $csv if $current->{force_download};
     unless (-e $csv) {
         my $fq = new Finance::QuoteHist(
             symbols => [ $symbol ],

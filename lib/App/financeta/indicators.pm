@@ -160,6 +160,22 @@ sub _plot_gnuplot_candlestick {
     return { candle => \@plotinfo };
 }
 
+sub _plot_gnuplot_compare {
+    my ($self, $xdata, $output) = @_;
+    if (scalar @$output >= 2) {
+        # we don't want to change the output variable itself
+        # otherwise the plots don't stay the same
+        my $o2 = [ @$output ]; # make a copy
+        my $o1 = pop @$o2;
+        my @g = $self->_plot_gnuplot_general($xdata, [$o1]);
+        my @a = $self->_plot_gnuplot_general($xdata, $o2);
+        return { general => \@g, additional => \@a };
+    } else {
+        my @a = $self->_plot_gnuplot_general($xdata, $output);
+        return { additional => \@a };
+    }
+}
+
 has ma_name => {
     0 => 'SMA',
     1 => 'EMA',
@@ -1918,38 +1934,50 @@ has statistic => {
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 5],
+            # this is a special key and if you change this will break
+            # functionality in the gui.pm file.
+            [ 'CompareWith', 'Compare With Security', PDL::byte, '' ],
         ],
-        #TODO: support this type of indicator
-        input => [qw/close1 close2/],
+        input => [qw/close/],
         code => sub {
-            my ($obj, $inpdl1, $inpdl2, @args) = @_;
-            say "Executing ta_beta with parameters", Dumper(\@args) if $obj->debug;
-            my $period = $args[0];
-            my $outpdl = PDL::ta_beta($inpdl1, $inpdl2, @args);
+            my ($obj, $inpdl1, $inpdl2, $period, $name) = @_;
+            say "Executing ta_beta with parameters: $period and $name" if $obj->debug;
+            if ($inpdl1->dim(0) != $inpdl2->dim(0)) {
+                carp "Cannot compare unless the sizes of the PDLs are same";
+                return;
+            }
+            my $outpdl = PDL::ta_beta($inpdl1, $inpdl2, $period);
             return [
                 ["BETA($period)", $outpdl],
+                [$name, $inpdl2, { axes => 'x1y2' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_compare,
     },
     correl => {
         name => q/Pearson's Correlation Coefficient/,
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 5],
+            # this is a special key and if you change this will break
+            # functionality in the gui.pm file.
+            [ 'CompareWith', 'Compare With Security', PDL::byte, '' ],
         ],
-        #TODO: support this type of indicator
-        input => [qw/close1 close2/],
+        input => [qw/close/],
         code => sub {
-            my ($obj, $inpdl1, $inpdl2, @args) = @_;
-            say "Executing ta_correl with parameters", Dumper(\@args) if $obj->debug;
-            my $period = $args[0];
-            my $outpdl = PDL::ta_correl($inpdl1, $inpdl2, @args);
+            my ($obj, $inpdl1, $inpdl2, $period, $name) = @_;
+            say "Executing ta_beta with parameters: $period and $name" if $obj->debug;
+            if ($inpdl1->dim(0) != $inpdl2->dim(0)) {
+                carp "Cannot compare unless the sizes of the PDLs are same";
+                return;
+            }
+            my $outpdl = PDL::ta_correl($inpdl1, $inpdl2, $period);
             return [
                 ["CORRELATION($period)", $outpdl],
+                [$name, $inpdl2, { axes => 'x1y2' }],
             ];
         },
-        gnuplot => \&_plot_gnuplot_additional,
+        gnuplot => \&_plot_gnuplot_compare,
     },
     linearreg => {
         name => 'Linear Regression',
@@ -2232,7 +2260,7 @@ sub _find_func_key($$) {
 }
 
 sub execute_ohlcv($$) {
-    my ($self, $data, $iref) = @_;
+    my ($self, $data, $iref, $data2) = @_;
     return unless ref $data eq 'PDL';
     my $fn_key = $self->_find_func_key($iref);
     return unless defined $fn_key;
@@ -2256,6 +2284,9 @@ sub execute_ohlcv($$) {
             my @a = split /,/, $csv if length $csv;
             push @args, PDL->new(@a) if @a;
             push @args, PDL::null unless @a;
+        } elsif ($k =~ /CompareWith/i) {
+            # dont eval it
+            push @args, $params->{$k};
         } else {
             push @args, eval $params->{$k};
         }
@@ -2270,6 +2301,10 @@ sub execute_ohlcv($$) {
         push @input_pdls, $data(,(3)) if $_ eq 'low';
         push @input_pdls, $data(,(4)) if $_ eq 'close';
         push @input_pdls, $data(,(5)) if $_ eq 'volume';
+    }
+    if (defined $data2 and ref $data2 eq 'PDL') {
+        push @input_pdls, $data2(,(4)); # always use close
+        say "Adding close2 price" if $self->debug;
     }
     unless (scalar @input_pdls) {
         carp "These input columns are not supported yet: ", Dumper($input_cols);
