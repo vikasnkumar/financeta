@@ -97,6 +97,21 @@ $ sudo make install
 available in your distribution&#8217;s package manager. If not, you can find
 instructions on installing it on their <a href="http://www.gnuplot.info">website</a>.</p>
 
+<h4 id="installingprima">Installing Prima</h4>
+
+<p>Currently we depend on installing <em>Prima</em> version 1.40_1 which is a development
+release. Until the formal release is ready, we have to do the following to
+install the development release,</p>
+
+<pre><code>$ sudo perl -MCPAN -e 'CPAN::Shell-&gt;install(&quot;KARASIK/Prima-1.40_1.tar.gz&quot;);'
+</code></pre>
+
+<p>or using <em>App::cpanminus</em></p>
+
+<pre><code>$ which cpanm || sudo cpan -i App::cpanminus
+$ cpanm KARASIK/Prima-1.40_1.tar.gz
+</code></pre>
+
 <h4 id="installingapp::financetafromcpan">Installing App::financeta from CPAN</h4>
 
 <p>Check if the <code>perl</code> and <code>cpan</code> executables are installed on your system and if
@@ -141,7 +156,8 @@ $ perl -Mblib ./bin/financeta
 installed. To install all the required dependencies, after you have installed
 <code>ta-lib</code> and <code>gnuplot</code> as above, run the below command.</p>
 
-<pre><code>$ sudo cpan -i PDL Prima PDL::Graphics::Gnuplot Finance::QuoteHist \
+<pre><code>$ sudo perl -MCPAN -e 'CPAN::Shell-&gt;install(&quot;KARASIK/Prima-1.40_1.tar.gz&quot;);'
+$ sudo cpan -i PDL PDL::Graphics::Gnuplot Finance::QuoteHist \
     PDL::Finance::Talib POE::Loop::Prima Capture::Tiny DateTime \
     Software::License Pod::Readme Module::Build
 </code></pre>
@@ -163,6 +179,8 @@ X 10.7.</p>
 version if you like.</p>
 
 <pre><code>$ sudo port install ta-lib gnuplot perl5
+$ sudo cpan -i App::cpanminus
+$ sudo cpanm KARASIK/Prima-1.40_1.tar.gz
 $ sudo cpan -i App::financeta
 </code></pre>
 
@@ -217,6 +235,8 @@ environment variables for installing <code>PDL::Finance::Talib</code> as shown b
 C:\&gt; set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include&gt;
 C:\&gt; echo %TALIB_LIBS%
 C:\&gt; echo %TALIB_CFLAGS%
+C:\&gt; cpan -i App::cpanminus
+C:\&gt; cpanm KARASIK/Prima-1.40_1.tar.gz
 C:\&gt; cpan -i PDL::Finance::Talib
 C:\&gt; cpan -i PDL::Graphics::Gnuplot
 C:\&gt; cpan -i App::financeta
@@ -289,6 +309,7 @@ $ make install
 <p>Once this is done, let&#8217;s install <code>App::financeta</code> using <code>cpan</code>.</p>
 
 <pre><code>$ cpan
+cpan&gt; install KARASIK/Prima-1.40_1.tar.gz
 cpan&gt; install App::financeta
 </code></pre>
 
@@ -313,7 +334,7 @@ below:</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-08-22 16:55:49 -0400.
+        This page was last updated on 2014-08-28 13:24:26 -0400.
     </p>
     </div></footer>
     
