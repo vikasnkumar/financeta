@@ -601,7 +601,7 @@ sub remove_indicator($) {
             $self->plot_data($win, $adata, $asymbol, $type, $aindicators);
             # disable remove indicator if there are no indicators left
             unless (scalar @$aindicators) {
-                $self->main->menu->remove_indicator->enabled(0);
+                #$self->main->menu->remove_indicator->enabled(0);
             }
         }
     }

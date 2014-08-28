@@ -610,7 +610,7 @@ has momentum => {
                 ["ADX($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     adxr => {
         name => 'Average Directional Movement Index Rating',
@@ -628,7 +628,7 @@ has momentum => {
                 ["ADX RATING($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     apo => {
         name => 'Absolute Price Oscillator',
@@ -659,7 +659,7 @@ has momentum => {
             my $type = $obj->ma_name->{$args[2]} || 'UNKNOWN';
             my $outpdl = PDL::ta_apo($inpdl, @args);
             return [
-                ["APO($fast,$slow)($type)", $outpdl],
+                ["APO($fast,$slow)($type)", $outpdl, { axes => 'x1y2' }],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -681,7 +681,7 @@ has momentum => {
                 ["AROON($period) UP", $aup],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     aroonosc => {
         name => 'Aroon Oscillator',
@@ -699,7 +699,7 @@ has momentum => {
                 ["AROON OSC($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     bop => {
         name => 'Balance Of Power',
@@ -715,7 +715,7 @@ has momentum => {
                 ["Balance of Power", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     cci => {
         name => 'Commodity Channel Index',
@@ -730,10 +730,10 @@ has momentum => {
             my $period = $args[0];
             my $outpdl = PDL::ta_cci($high, $low, $close, @args);
             return [
-                ["CCI($period)", $outpdl],
+                ["CCI($period)", $outpdl,],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     cmo => {
         name => 'Chande Momentum Oscillator',
@@ -750,7 +750,7 @@ has momentum => {
                 ["CMO($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     dx => {
         name => 'Directional Movement Index',
@@ -768,7 +768,7 @@ has momentum => {
                 ["DX($period)", $outpdl],
             ];
         },
-        gnuplot => \&_plot_gnuplot_general,
+        gnuplot => \&_plot_gnuplot_additional,
     },
     macd => {
         name => 'Moving Average Convergence/Divergence',
