@@ -52,16 +52,21 @@ my $gui = Prima::MainWindow->new(
                     if ($note->pageCount == 1) {
                         $note->close;
                     } else {
-                        my @widgets = $note->widgets_from_page($idx);
-                        map { $_->close } @widgets if @widgets;
-                        $note->Notebook->delete_page($idx);
-            
-                        my @ntabs = @{$note->TabSet->tabs};
-                        print "Existing tabs: ", join(',', @ntabs), "\n";
-                        splice(@ntabs, $idx, 1);
-                        print "Updated tabs: ", join(',', @ntabs), "\n";
-                
-                        $note->TabSet->tabs(\@ntabs);
+                        my $v = eval $Prima::VERSION;
+                        if ($v > 1.40) {
+                            $note->delete_page($idx);
+                            $note->pageIndex($idx >= $note->pageCount ?
+                                $note->pageCount - 1 : $idx);
+                        } else {
+                            my @widgets = $note->widgets_from_page($idx);
+                            map { $_->close } @widgets if @widgets;
+                            $note->Notebook->delete_page($idx);
+                            my @ntabs = @{$note->TabSet->tabs};
+                            print "Existing tabs: ", join(',', @ntabs), "\n";
+                            splice(@ntabs, $idx, 1);
+                            print "Updated tabs: ", join(',', @ntabs), "\n";
+                            $note->TabSet->tabs(\@ntabs);
+                        }
                     }
                 },
             ],

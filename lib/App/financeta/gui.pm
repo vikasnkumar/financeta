@@ -1414,15 +1414,23 @@ sub close_current_tab {
         }
         $self->disable_menu_options;
     } else {
-        my @wids = $nt->widgets_from_page($idx);
-        # close child widgets explicitly
-        map { $_->close } @wids if @wids;
-        $nt->Notebook->delete_page($idx);
-        my @ntabs = @{$nt->TabSet->tabs};
-        say "Existing tabs: ", Dumper(\@ntabs) if $self->debug;
-        splice(@ntabs, $idx, 1);
-        say "New tabs: ", Dumper(\@ntabs) if $self->debug;
-        $nt->TabSet->tabs(\@ntabs);
+        my $v = eval $Prima::VERSION;
+        if ($v > 1.40) {
+            $nt->delete_page($idx);
+            $nt->pageIndex($idx >= $nt->pageCount ?
+                $nt->pageCount - 1 : $idx);
+        } else {
+            carp "Your Prima version is lower than expected: 1.401, closing tabs is buggy";
+            my @wids = $nt->widgets_from_page($idx);
+            # close child widgets explicitly
+            map { $_->close } @wids if @wids;
+            $nt->Notebook->delete_page($idx);
+            my @ntabs = @{$nt->TabSet->tabs};
+            say "Existing tabs: ", Dumper(\@ntabs) if $self->debug;
+            splice(@ntabs, $idx, 1);
+            say "New tabs: ", Dumper(\@ntabs) if $self->debug;
+            $nt->TabSet->tabs(\@ntabs);
+        }
     }
 }
 
