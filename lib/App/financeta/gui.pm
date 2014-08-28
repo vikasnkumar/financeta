@@ -43,6 +43,7 @@ has tmpdir => ( default => sub {
 has plot_engine => 'gnuplot';
 has current => {};
 has indicator => (builder => '_build_indicator');
+has tab_was_closed => 0;
 
 sub _build_indicator {
     my $self = shift;
@@ -1277,7 +1278,8 @@ sub display_data {
                 my ($w, $oldidx, $newidx) = @_;
                 my $owner = $w->owner;
                 say "Tab changed from $oldidx to $newidx" if $self->debug;
-                return if $oldidx == $newidx;
+                return if ($oldidx == $newidx and !$self->tab_was_closed);
+                $self->tab_was_closed(0);
                 # ok find the detailed-list object and use it
                 my ($data, $symbol, $indicators) = $self->_get_tab_data($w, $newidx);
                 my $type = $self->current->{plot_type} || 'OHLC';
@@ -1416,6 +1418,7 @@ sub close_current_tab {
     } else {
         my $v = eval $Prima::VERSION;
         if ($v > 1.40) {
+            $self->tab_was_closed(1);
             $nt->delete_page($idx);
             $nt->pageIndex($idx >= $nt->pageCount ?
                 $nt->pageCount - 1 : $idx);
