@@ -1,3 +1,122 @@
+Thu Aug 28 12:39:03 2014 -0400
+e66b720909f38fab34ee635e34df0e81cea1bf54
+Releasing 0.09
+
+Thu Aug 28 12:34:32 2014 -0400
+37535066b8b079fa94cb3d4cc02d66d6319a4a68
+fixing the close tab bug for now.
+
+Thu Aug 28 12:19:16 2014 -0400
+cd1dd414df4a6c816da377012b31e436f825fbac
+Beta and correlation indicators finally complete. All ta-lib indicators supported now
+
+Thu Aug 28 11:15:53 2014 -0400
+93b288be91f54420c6b90072727429edb7ba4895
+MAVP work complete now
+
+Wed Aug 27 23:40:04 2014 -0400
+1dd202ac6c341366fb8737c6d7a73c020a988eb1
+Candlestick plots are now done as well
+
+Wed Aug 27 22:23:56 2014 -0400
+7de2039a015abc069de4d244df0db4ec0a75ec2c
+all momentum stuff has to be in an additional plot
+
+Wed Aug 27 22:12:32 2014 -0400
+d03751d5e9d723d3ab870a9d443a1ab464e0f607
+updating some of the momentum indicators to plot nice
+
+Wed Aug 27 21:25:41 2014 -0400
+52fb7c30bdcf3e54ebcf7c472d1f1ebdae3a57c9
+Statistical plots and cycle plots can be on x1y2 axes or in an additional plot or both.
+
+Wed Aug 27 18:52:28 2014 -0400
+0c2fb64c68bd7d0131ffa13a32fe4c36b689077a
+MACD plotting complete. renaming the volatility plotting to additional since it is more general
+
+Wed Aug 27 18:48:44 2014 -0400
+b5fa25228548ac52fe0585866e36f178709b640e
+- cycle plotting done somewhat. - allow detailedlist to scroll horizontally
+
+Wed Aug 27 18:27:47 2014 -0400
+bff8feeb19410cfbf80ac735bfeffa1b439c95d4
+bugfix to avoid crash when form selection is incomplete
+
+Wed Aug 27 18:09:43 2014 -0400
+2165daba92dca0bf8d85f54c3b0af2bf73257497
+enable menu only if the downloaded data succeeds
+
+Wed Aug 27 17:36:29 2014 -0400
+3d44c8dc1da612f813a861c6866763f59f12c23d
+removing unnecessary modules from requirements since they're not needed for distribution
+
+Wed Aug 27 17:35:24 2014 -0400
+911f48d0504df9adbab6e429b91d05d4c57a5717
+Removing the Pod viewer since there is no pod documentation for the UI anymore except for the dummy stuff for CPAN. using browser::open instead
+
+Wed Aug 27 17:14:38 2014 -0400
+a24426847192bccfaa45a75d205da8fbf2dab7ce
+Adding an add-on sub-plot for volatility indicators to work
+
+Wed Aug 27 16:46:46 2014 -0400
+29ca3f0960e54d99a98be7bcbaddb998209b1793
+Volume indicators are now handled correctly
+
+Wed Aug 27 16:21:36 2014 -0400
+a45295fd1d19d5227d5d7cd9788b727133dbfc9c
+multiplot and reset are common now and moved outside the if-elsif-else block
+
+Wed Aug 27 16:18:21 2014 -0400
+4afc972b0e7256949a0e77a56d510ff4193ec044
+given-when gives experimental warnings so removing it
+
+Wed Aug 27 15:48:20 2014 -0400
+bcc8bcd78a411c517e043e554ffc7f760168bca0
+Making OK the default button despite being disabled. Also moving the help button before the OK button since it is more likely to be clicked instead of OK
+
+Wed Aug 27 15:46:34 2014 -0400
+c499ec2389e664f70e48d1580ef18b17bcc970c6
+Menu option cosmetics for disabling and enabling the appropriate options as the user uses the GUI
+
+Wed Aug 27 15:20:41 2014 -0400
+f366bbec71b332c94037be88373c3189b585196a
+Adding a testcase to debug the tab closing in Prima. removing it from distribution though.
+
+Wed Aug 27 14:07:10 2014 -0400
+cb8f18449bb19d6ea8463fc1115e9b94a386818b
+minor correction to logging statement
+
+Wed Aug 27 10:46:21 2014 -0400
+8c5beb7c50ef7cc99a705ab392b2fd6977656b1d
+renaming the symbol help to symbol search
+
+Wed Aug 27 10:43:48 2014 -0400
+1494ace97debc5ca0293d574faaf209abd887e83
+Adding help buttons for symbol search and indicator help
+
+Wed Aug 27 10:19:03 2014 -0400
+1adf311ed0486d1149fb75362d0af053613b5841
+trying the tab closing as per Dmitry but still not working.
+
+Tue Aug 26 17:49:04 2014 -0400
+91c2ca0339eca3ed5b98bf1f691c53664b21c30f
+Adding close tab function as expected to be coded per docs. But it is buggy unless we only have 1 tab open.
+
+Tue Aug 26 17:16:21 2014 -0400
+74df58122529f2c642943ea0de0b173bafc09133
+Adding remove indicator wizard and related options to remove an added indicator from the plot
+
+Tue Aug 26 13:40:19 2014 -0400
+6dcfba944a491288c82449ffa3d9bd2a7605ebba
+Handling SAR-ext correctly now
+
+Tue Aug 26 12:12:12 2014 -0400
+5c8a32928b078d83c491ea3d08d15702fdc51766
+no image file type needed anymore
+
+Tue Aug 26 11:35:39 2014 -0400
+d267f9397fc2eac5ec1229ebd3dbc471e53c7460
+updating changes
 Thu Aug 28 12:34:32 2014 -0400
 37535066b8b079fa94cb3d4cc02d66d6319a4a68
 fixing the close tab bug for now.
