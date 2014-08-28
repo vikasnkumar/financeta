@@ -121,7 +121,7 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        $gui->save_current_tab($win);
+                        $gui->save_current_tab($win, 0);
                     },
                     $self,
                 ],
@@ -798,52 +798,66 @@ sub remove_indicator_wizard {
     return ($res == mb::Ok) ? $result : undef;
 }
 
+sub run_and_display_indicator {
+    my ($self, $win, $data, $symbol, $indicators) = @_;
+    return unless $win;
+    if (defined $data and defined $symbol and defined $indicators and
+        ref $indicators eq 'ARRAY') {
+        foreach my $iref (@$indicators) {
+            say "Trying to run indicator for :", Dumper($iref) if $self->debug;
+            my $output;
+            if (exists $iref->{params} and exists $iref->{params}->{CompareWith}) {
+                # ok this is a security.
+                # we need to download the data for this and store it
+                my $bar = $self->progress_bar_create($win, 'Downloading...');
+                my $current = $self->current;
+                $iref->{params}->{CompareWith} =~ s/\s//g;
+                $current->{symbol} = $iref->{params}->{CompareWith};
+                my $tz = $self->timezone;
+                unless ($current->{start_date}) {
+                    my $sd = $data->at(0, 0); # time in 0th column
+                    my $dt = DateTime->from_epoch(epoch => $sd, time_zone => $tz);
+                    $current->{start_date} = $dt;
+                }
+                unless ($current->{end_date}) {
+                    my $ed = $data->at($data->dim(0) - 1, 0); # time in 0th column
+                    my $dt = DateTime->from_epoch(epoch => $ed, time_zone => $tz);
+                    $current->{end_date} = $dt;
+                }
+                my ($data2, $symbol2) = $self->download_data($bar, $current);
+                $self->progress_bar_close($bar);
+                return unless (defined $data2 and defined $symbol2);
+                say "Successfully downloaded data for $symbol2" if $self->debug;
+                $iref->{params}->{CompareWith} = $symbol2;
+                $output = $self->indicator->execute_ohlcv($data, $iref, $data2);
+            } else {
+                $output = $self->indicator->execute_ohlcv($data, $iref);
+            }
+            unless (defined $output) {
+                message_box('Indicator Error',
+                    "Unable to run the indicator on data.",
+                    mb::Ok | mb::Error);
+                return;
+            }
+            $self->display_data($win, $data, $symbol, $iref, $output);
+        }
+        return 1;
+    }
+    return 0;
+}
+
 sub add_indicator($$$) {
     my ($self, $win, $data, $symbol) = @_;
     if ($self->add_indicator_wizard($win)) {
         my $iref = $self->current->{indicator};
-        say "Trying to run indicator for :", Dumper($iref) if $self->debug;
-        my $output;
-        if (exists $iref->{params} and exists $iref->{params}->{CompareWith}) {
-            # ok this is a security.
-            # we need to download the data for this and store it
-            my $bar = $self->progress_bar_create($win, 'Downloading...');
-            my $current = $self->current;
-            $iref->{params}->{CompareWith} =~ s/\s//g;
-            $current->{symbol} = $iref->{params}->{CompareWith};
-            my $tz = $self->timezone;
-            unless ($current->{start_date}) {
-                my $sd = $data->at(0, 0); # time in 0th column
-                my $dt = DateTime->from_epoch(epoch => $sd, time_zone => $tz);
-                $current->{start_date} = $dt;
-            }
-            unless ($current->{end_date}) {
-                my $ed = $data->at($data->dim(0) - 1, 0); # time in 0th column
-                my $dt = DateTime->from_epoch(epoch => $ed, time_zone => $tz);
-                $current->{end_date} = $dt;
-            }
-            my ($data2, $symbol2) = $self->download_data($bar, $current);
-            $self->progress_bar_close($bar);
-            return unless (defined $data2 and defined $symbol2);
-            say "Successfully downloaded data for $symbol2" if $self->debug;
-            $iref->{params}->{CompareWith} = $symbol2;
-            $output = $self->indicator->execute_ohlcv($data, $iref, $data2);
-        } else {
-            $output = $self->indicator->execute_ohlcv($data, $iref);
+        if ($self->run_and_display_indicator($win, $data, $symbol, [$iref])) {
+            my ($ndata, $nsymbol, $indicators) = $self->get_tab_data($win);
+            my $type = $self->current->{plot_type} || 'OHLC';
+            $self->plot_data($win, $ndata, $nsymbol, $type, $indicators);
+            return 1;
         }
-        unless (defined $output) {
-            message_box('Indicator Error',
-                "Unable to run the indicator on data.",
-                mb::Ok | mb::Error);
-            return;
-        }
-        $self->display_data($win, $data, $symbol, $iref, $output);
-        my ($ndata, $nsymbol, $indicators) = $self->get_tab_data($win);
-        my $type = $self->current->{plot_type} || 'OHLC';
-        $self->plot_data($win, $ndata, $nsymbol, $type, $indicators);
-        return 1;
     }
-    0;
+    return 0;
 }
 
 sub indicator_parameter_wizard {
@@ -1328,6 +1342,7 @@ sub display_data {
     # default headers
     my $headers = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'];
     my $existing_indicators = [];
+    my $info;
     for my $idx (0 .. $pc) {
         my @wids = $nt->widgets_from_page($idx);
         next unless @wids;
@@ -1337,6 +1352,7 @@ sub display_data {
                 say "Found existing ", $_->name, " at $idx" if $self->debug;
                 $headers = $_->headers if defined $_->headers;
                 push @$existing_indicators, @{$_->{-indicators}} if exists $_->{-indicators};
+                $info = $_->{-info} if exists $_->{-info};
                 $nt->delete_widget($_);
             }
             $pageno = $idx;
@@ -1405,6 +1421,7 @@ sub display_data {
     $dl->{-pdl} = $data;
     $dl->{-symbol} = $symbol;
     $dl->{-indicators} = $existing_indicators if defined $existing_indicators;
+    $dl->{-info} = $info if defined $info;
     1;
 }
 
@@ -1472,14 +1489,14 @@ sub save_current_tab {
     return unless $win;
     my ($data, $symbol, $indicators) = $self->get_tab_data($win);
     # in save-as mode do not get historical file name
-    my $info = $self->get_tab_info($win) unless $save_as;
+    my $info = $self->get_tab_info($win);
     my $saved = $self->get_model($data, $symbol, $indicators);
     return unless $saved;
     my $tz = $self->timezone;
     $saved->{saved_at} = DateTime->now(time_zone => $tz)->iso8601();
     say "Saving the model: ", Dumper($saved) if $self->debug;
     my $mfile;
-    if ($info and $info->{filename}) {
+    if ($info and $info->{filename} and not $save_as) {
         $mfile = $info->{filename};
     } else {
         my $dlg = Prima::SaveDialog->new(
@@ -1536,13 +1553,17 @@ sub load_new_tab {
     say "Loading the data into tab" if $self->debug;
     $self->display_data($win, $data, $symbol);
     $self->enable_menu_options($win);
-    say "Running the indicators and updating tab" if $self->debug;
-    #TODO
-    my ($adata, $asym, $aind) = $self->get_tab_data($win);
     $self->set_tab_info($win, $saved);
+    say "Running the indicators and updating tab" if $self->debug;
+    $self->progress_bar_close($bar);
+    if ($self->run_and_display_indicator($win, $data, $symbol,
+            $saved->{indicators})) {
+        # this is specially done
+        $win->menu->remove_indicator->enabled(1);
+    }
+    my ($adata, $asym, $aind) = $self->get_tab_data($win);
     my $type = $self->current->{plot_type} || 'OHLC';
     $self->plot_data($win, $adata, $asym, $type, $aind);
-    $self->progress_bar_close($bar);
 }
 
 sub close_current_tab {
@@ -1633,7 +1654,7 @@ sub get_tab_info {
     return unless @nt;
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
-        say "Found ", $dl->name if $self->debug;
+        say "Getting info for ", $dl->name if $self->debug;
         return $dl->{-info};
     }
 }
@@ -1648,7 +1669,7 @@ sub set_tab_info($$) {
     return unless @nt;
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
-        say "Found ", $dl->name if $self->debug;
+        say "Setting info for ", $dl->name if $self->debug;
         $dl->{-info} = $info;
         return 1;
     }
