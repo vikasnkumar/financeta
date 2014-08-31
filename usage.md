@@ -180,6 +180,10 @@ browser.
 Similarly one can add various indicators to the selected security tab.
 
 
+## Removing an Indicator
+
+## Adding Rules
+
 Let us move on to understanding the indicators in the [next chapter](./indicators.html).
 
 [Table of Contents](./index.html) [Next](./indicators.html)

@@ -28,4 +28,7 @@ on stocks.
     1. [Selecting a Security](./usage.html#selectingasecurity)
     1. [Selecting a Plot](./usage.html#selectingaplot)
     1. [Selecting an Indicator](./usage.html#selectinganindicator)
+    1. [Removing an Indicator](./usage.html#removinganindicator)
+    1. [Adding Rules](./usage.html#addingrules)
 1. [Indicators](./indicators.html)
+1. [Rules](./rules.html)
