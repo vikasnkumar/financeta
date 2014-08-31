@@ -200,8 +200,6 @@ hit the _OK_ button.
 - Once this is done, the tab data display and the plots will automatically
   update.
 
-## Adding Rules
-
 ## Saving the _Strategy_
 
 The concept of a __strategy__ in _App::financeta_ consists of a security that the
@@ -219,6 +217,34 @@ store any data itself, it is easy to reuse it and share it with other users.
 ![Open Menu options](./images/financeta_sec_open.png "Open an existing Strategy")
 
 ![Save Menu options](./images/financeta_sec_save.png "Save an existing Strategy")
+
+## Adding Rules
+
+The user can add custom rules to buy and sell stocks to the _strategy_. To do
+this the user clicks the _Add/Edit Rules_ menu option in the _Analysis_ menu on
+the toolbar of the main GUI window.
+
+![Select Add/Edit Rules](./images/financeta_add_rules.png "Select 'Add/Edit Rules'")
+
+This will open a custom editor window for the current tab and will display
+existing rules that the user may have already written and saved or will be blank
+if the user is writing rules for the first time.
+
+![Rules Editor](./images/financeta_rules_ed.png "Rules Editor")
+
+Once the user has typed in the rules they like to test out, the _Save_ menu
+option in the **editor window** has to be clicked to save the rules to the
+_strategy_ file for reloading later and for execution purposes. Each tab will
+have its own editor window allowing the user to copy-and-paste rules from one
+_strategy_ to another.
+
+![Rules Editor _Save_ option](./images/financeta_rules_save.png "_Save_ Option in the Rules Editor")
+
+If the user does not click _Save_ the rules will not be saved to the _strategy_
+file and the internal tab manager will not execute these rules until they are
+saved.
+
+To understand how to write rules refer to the chapter on [Rules](./rules.html).
 
 Let us move on to understanding the indicators in the [next chapter](./indicators.html).
 
