@@ -26,6 +26,7 @@ use PDL::IO::Misc;
 use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use App::financeta::indicators;
+use App::financeta::editor;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
@@ -45,11 +46,21 @@ has plot_engine => 'gnuplot';
 has current => {};
 has indicator => (builder => '_build_indicator');
 has tab_was_closed => 0;
+has editors => {};
 
 sub _build_indicator {
     my $self = shift;
     return App::financeta::indicators->new(debug => $self->debug,
                                             plot_engine => $self->plot_engine);
+}
+
+sub _build_editor {
+    my $self = shift;
+    my $name = shift || '';
+    $name =~ s/tab_//g if length $name;
+    return App::financeta::editor->new(debug => $self->debug,
+        parent => $self, icon => $self->icon,
+        brand => $self->brand . " Rules Editor for $name");
 }
 
 sub _build_icon {
@@ -277,6 +288,16 @@ sub _menu_items {
                         # ok remove the indicator and update the plots and
                         # display tables
                         $gui->remove_indicator($win);
+                    },
+                    $self,
+                ],
+                [
+                    '-edit_rules', 'Add/Edit Rules', 'Ctrl+E', '^E',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($info, $tabname) = $self->get_tab_info($win);
+                        $self->open_editor($info->{rules}, $tabname);
                     },
                     $self,
                 ],
@@ -1421,7 +1442,7 @@ sub display_data {
     $dl->{-pdl} = $data;
     $dl->{-symbol} = $symbol;
     $dl->{-indicators} = $existing_indicators if defined $existing_indicators;
-    $dl->{-info} = $info if defined $info;
+    $dl->{-info} = $info || {};
     1;
 }
 
@@ -1439,6 +1460,7 @@ sub enable_menu_options {
     $win->menu->plot_cdl->enabled(1);
     $win->menu->plot_cdlv->enabled(1);
     $win->menu->add_indicator->enabled(1);
+    $win->menu->edit_rules->enabled(1);
 }
 
 sub disable_menu_options {
@@ -1456,6 +1478,7 @@ sub disable_menu_options {
     $win->menu->plot_cdlv->enabled(0);
     $win->menu->add_indicator->enabled(0);
     $win->menu->remove_indicator->enabled(0);
+    $win->menu->edit_rules->enabled(0);
 }
 
 #rudimentary
@@ -1485,11 +1508,15 @@ sub get_model {
 
 #rudimentary
 sub save_current_tab {
-    my ($self, $win, $save_as) = @_;
+    my ($self, $win, $save_as, $name) = @_;
     return unless $win;
-    my ($data, $symbol, $indicators) = $self->get_tab_data($win);
+    my ($data, $symbol, $indicators) = (defined $name) ?
+            $self->get_tab_data_by_name($win, $name) :
+            $self->get_tab_data($win);
     # in save-as mode do not get historical file name
-    my $info = $self->get_tab_info($win);
+    my $info = (defined $name) ?
+        $self->get_tab_info_by_name($win, $name) :
+        $self->get_tab_info($win);
     my $saved = $self->get_model($data, $symbol, $indicators);
     return unless $saved;
     my $tz = $self->timezone;
@@ -1513,10 +1540,15 @@ sub save_current_tab {
         );
         $mfile = $dlg->fileName if $dlg->execute;
     }
+    if ($info and defined $info->{rules}) {
+        $saved->{rules} = $info->{rules};
+    }
     if ($mfile) {
         $saved->{filename} = $mfile;
         say "You have selected $mfile to save the tab info into." if $self->debug;
         YAML::Any::DumpFile($mfile, $saved) or message("Unable to save to $mfile");
+        $self->set_tab_info($win, $saved);
+        1;
     } else {
         carp "Saving the tab was canceled.";
     }
@@ -1574,15 +1606,29 @@ sub close_current_tab {
     my $nt = $win->data_tabs;
     my $idx = $nt->pageIndex;
     if ($nt->pageCount == 1) {
-        $nt->close;
+        foreach my $e (keys %{$self->editors}) {
+            my $ed = $self->editors->{$e};
+            $ed->close;
+        }
         if ($win->{plot}) {
             $win->{plot}->close();
         }
+        $nt->close;
         $self->disable_menu_options;
     } else {
         my $v = eval $Prima::VERSION;
         if ($v > 1.40) {
             $self->tab_was_closed(1);
+            # find corresponding editors and close them
+            my @wids = $win->data_tabs->widgets_from_page($idx);
+            if (@wids) {
+                my ($dl) = grep { $_->name =~ /^tab_/i } @wids;
+                if ($dl and exists $self->editors->{$dl->name}) {
+                    say "Closing the rules editor for ", $dl->name if $self->debug;
+                    $self->editors->{$dl->name}->close;
+                    delete $self->editors->{$dl->name};
+                }
+            }
             $nt->delete_page($idx);
             $nt->pageIndex($idx >= $nt->pageCount ?
                 $nt->pageCount - 1 : $idx);
@@ -1633,7 +1679,7 @@ sub get_tab_data_by_name($$) {
         my @nt = $win->data_tabs->widgets_from_page($idx);
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
-        if ($dl and $dl->{-symbol} eq $name) {
+        if ($dl and ($dl->{-symbol} eq $name) or ($dl->name eq $name)) {
             say "Found $name on page $idx" if $self->debug;
             return ($dl->{-pdl},
                     $dl->{-symbol},
@@ -1655,7 +1701,7 @@ sub get_tab_info {
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
         say "Getting info for ", $dl->name if $self->debug;
-        return $dl->{-info};
+        return wantarray ? ($dl->{-info}, $dl->name) : $dl->{-info};
     }
 }
 
@@ -1698,6 +1744,46 @@ sub set_tab_data_by_name($$) {
     }
 }
 
+sub get_tab_info_by_name {
+    my ($self, $win, $name) = @_;
+    return unless $win;
+    return unless $name;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        if ($dl and $dl->name eq $name) {
+            say "Getting info for ", $dl->name if $self->debug;
+            return $dl->{-info};
+        }
+    }
+}
+
+sub set_tab_info_by_name {
+    my ($self, $win, $name, $info) = @_;
+    return unless $win;
+    return unless $name;
+    return unless $info;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        if ($dl and $dl->name eq $name) {
+            say "Setting info for ", $dl->name if $self->debug;
+            $dl->{-info} = $info;
+            return 1;
+        }
+    }
+}
+
 sub get_tab_names($) {
     my ($self, $win) = @_;
     return unless $win;
@@ -1719,6 +1805,38 @@ sub get_tab_indicators {
     my ($self, $win, $txt) = @_;
     my ($data, $sym, $indicators, $headers) = $self->get_tab_data_by_name($win, $txt);
     return $indicators;
+}
+
+sub open_editor {
+    my ($self, $rules, $tabname) = @_;
+    # update the editor window with rules
+    # once the editor window saves something update the parent tab's rules
+    # object
+    my $editor = $self->_build_editor($tabname);
+    if ($editor->update_editor($rules || '', $tabname)) {
+    }
+    $self->editors->{$tabname} = $editor;
+}
+
+sub update_editor {
+    my ($self, $txt, $tabname, $is_closing) = @_;
+    unless (defined $tabname) {
+        carp "Tab-name not retrieved. not sure which tab to save it for.";
+        return;
+    }
+    # ok we have a tab for which we need to save info
+    my $info = $self->get_tab_info_by_name($self->main, $tabname);
+    $info->{rules} = $txt if $info;
+    say "Retrieved info - ", Dumper($info), " for tab($tabname)" if $self->debug and $info;
+    carp "Unable to retrieve info for $tabname" unless $info;
+    if ($self->set_tab_info_by_name($self->main, $tabname, $info)) {
+        say "Saving tab($tabname) info to file" if $self->debug;
+        my $rc = $self->save_current_tab($self->main, 0, $tabname);
+        carp "Unable to save information for $tabname" unless $rc;
+    } else {
+        carp "Unable to save editor rules for tab $tabname";
+    }
+    delete $self->editors->{$tabname} if $is_closing;
 }
 
 sub plot_data {
