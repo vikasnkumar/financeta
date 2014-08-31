@@ -182,7 +182,43 @@ Similarly one can add various indicators to the selected security tab.
 
 ## Removing an Indicator
 
+Once you have added one or more indicators, you may want to remove some that you
+do not like or do not want to use or think that you may want to change
+parameters for them. The simplest way to do this is by using the _'Remove
+Indicator'_ menu option that we provide as shown in the image below.
+
+![Remove Indicator Option](./images/financeta_remove_indic.png "Select 'Remove Indicator'")
+
+- This starts a _remove indicator wizard_ which lists all the tabs that the user
+has open along with each indicator per tab.
+- The user has to select a security
+from the list of tabs and then pick the indicator that they want to remove and
+hit the _OK_ button.
+
+![Remove Indicator Wizard](./images/financeta_wiz_remove.png "Remove Indicator Wizard")
+
+- Once this is done, the tab data display and the plots will automatically
+  update.
+
 ## Adding Rules
+
+## Saving the _Strategy_
+
+The concept of a __strategy__ in _App::financeta_ consists of a security that the
+user selects, a date range, a collection of indicators and rules for buying and
+selling. Using the _Save_ menu option the user can save the required contents of
+a tab such as the security name, date ranges, indicator details and rules into a
+YAML file. Since YAML is easily readable and editable manually, the user can
+manually edit an existing _strategy_ file and create multiples of them using any
+scripting language as well.
+
+Using the _Open_ menu option the user can quickly open an existing _strategy_
+file and load its contents into the GUI. Since the _strategy_ file does not
+store any data itself, it is easy to reuse it and share it with other users.
+
+![Open Menu options](./images/financeta_sec_open.png "Open an existing Strategy")
+
+![Save Menu options](./images/financeta_sec_save.png "Save an existing Strategy")
 
 Let us move on to understanding the indicators in the [next chapter](./indicators.html).
 

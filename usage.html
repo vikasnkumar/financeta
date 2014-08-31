@@ -270,7 +270,55 @@ browser.
 
 <h2 id="removinganindicator">Removing an Indicator</h2>
 
+<p>Once you have added one or more indicators, you may want to remove some that you
+do not like or do not want to use or think that you may want to change
+parameters for them. The simplest way to do this is by using the <em>&#8216;Remove
+Indicator&#8217;</em> menu option that we provide as shown in the image below.</p>
+
+<figure>
+<img src="./images/financeta_remove_indic.png" alt="Remove Indicator Option" title="Select 'Remove Indicator'" />
+<figcaption>Remove Indicator Option</figcaption></figure>
+
+<ul>
+<li>This starts a <em>remove indicator wizard</em> which lists all the tabs that the user
+has open along with each indicator per tab.</li>
+<li>The user has to select a security
+from the list of tabs and then pick the indicator that they want to remove and
+hit the <em>OK</em> button.</li>
+</ul>
+
+<figure>
+<img src="./images/financeta_wiz_remove.png" alt="Remove Indicator Wizard" title="Remove Indicator Wizard" />
+<figcaption>Remove Indicator Wizard</figcaption></figure>
+
+<ul>
+<li>Once this is done, the tab data display and the plots will automatically
+ update.</li>
+</ul>
+
 <h2 id="addingrules">Adding Rules</h2>
+
+<h2 id="savingthestrategy">Saving the <em>Strategy</em></h2>
+
+<p>The concept of a <strong>strategy</strong> in <em>App::financeta</em> consists of a security that the
+user selects, a date range, a collection of indicators and rules for buying and
+selling. Using the <em>Save</em> menu option the user can save the required contents of
+a tab such as the security name, date ranges, indicator details and rules into a
+YAML file. Since YAML is easily readable and editable manually, the user can
+manually edit an existing <em>strategy</em> file and create multiples of them using any
+scripting language as well.</p>
+
+<p>Using the <em>Open</em> menu option the user can quickly open an existing <em>strategy</em>
+file and load its contents into the GUI. Since the <em>strategy</em> file does not
+store any data itself, it is easy to reuse it and share it with other users.</p>
+
+<figure>
+<img src="./images/financeta_sec_open.png" alt="Open Menu options" title="Open an existing Strategy" />
+<figcaption>Open Menu options</figcaption></figure>
+
+<figure>
+<img src="./images/financeta_sec_save.png" alt="Save Menu options" title="Save an existing Strategy" />
+<figcaption>Save Menu options</figcaption></figure>
 
 <p>Let us move on to understanding the indicators in the <a href="./indicators.html">next chapter</a>.</p>
 
@@ -289,7 +337,7 @@ browser.
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-08-27 10:50:59 -0400.
+        This page was last updated on 2014-08-31 12:46:03 -0400.
     </p>
     </div></footer>
     

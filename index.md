@@ -30,5 +30,6 @@ on stocks.
     1. [Selecting an Indicator](./usage.html#selectinganindicator)
     1. [Removing an Indicator](./usage.html#removinganindicator)
     1. [Adding Rules](./usage.html#addingrules)
+    1. [Saving the _Strategy_](./usage.html#savingthestrategy)
 1. [Indicators](./indicators.html)
 1. [Rules](./rules.html)
