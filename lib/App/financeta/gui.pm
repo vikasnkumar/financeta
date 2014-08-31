@@ -1514,7 +1514,7 @@ sub save_current_tab {
             $self->get_tab_data_by_name($win, $name) :
             $self->get_tab_data($win);
     # in save-as mode do not get historical file name
-    my $info = (defined $name) ?
+    my ($info, $tname) = (defined $name) ?
         $self->get_tab_info_by_name($win, $name) :
         $self->get_tab_info($win);
     my $saved = $self->get_model($data, $symbol, $indicators);
@@ -1542,6 +1542,10 @@ sub save_current_tab {
     }
     if ($info and defined $info->{rules}) {
         $saved->{rules} = $info->{rules};
+    } else {
+        if (exists $self->editors->{$tname}) {
+            $saved->{rules} = $self->editors->{$tname}->get_text;
+        }
     }
     if ($mfile) {
         $saved->{filename} = $mfile;
@@ -1758,7 +1762,7 @@ sub get_tab_info_by_name {
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->name eq $name) {
             say "Getting info for ", $dl->name if $self->debug;
-            return $dl->{-info};
+            return wantarray ? ($dl->{-info}, $dl->name) : $dl->{-info};
         }
     }
 }
@@ -1813,7 +1817,7 @@ sub open_editor {
     # once the editor window saves something update the parent tab's rules
     # object
     my $editor = $self->editors->{$tabname} || $self->_build_editor($tabname);
-    if ($editor->update_editor($rules || '', $tabname)) {
+    if ($editor->update_editor($rules || '#AUTOGENERATE', $tabname)) {
     }
     $self->editors->{$tabname} = $editor;
 }

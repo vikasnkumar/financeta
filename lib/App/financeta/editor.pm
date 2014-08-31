@@ -118,6 +118,11 @@ sub close {
     $self->main->close;
 }
 
+sub get_text {
+    my $self = shift;
+    return $self->main->editor_edit->text;
+}
+
 1;
 __END__
 ### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
