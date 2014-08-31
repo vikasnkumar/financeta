@@ -66,12 +66,18 @@ sub _build_main {
                         my $ed = $win->menu->data($item);
                         my $txt = $win->editor_edit->text;
                         $ed->parent->update_editor($txt, $ed->tab_name, 1);
+                        $ed->parent->close_editor($ed->tab_name); # force it
                         $win->close;
                     },
                     $self,
                 ],
-            ],   
+            ],
         ]],
+        onDestroy => sub {
+            if ($self->parent and $self->tab_name) {
+                $self->parent->close_editor($self->tab_name);
+            }
+        },
     );
     my @sz = $mw->size;
     $sz[0] *= 0.98;
@@ -97,6 +103,7 @@ sub update_editor {
     $self->tab_name($tabname) if defined $tabname;
     $self->main->editor_edit->text($rules);
     $self->main->show;
+    $self->main->bring_to_front;
     1;
 }
 
@@ -105,6 +112,9 @@ sub close {
     #my $win = $self->main;
     #my $txt = $win->editor_edit->text;
     #$self->parent->update_editor($txt, $self->tab_name, 1);
+    if ($self->parent) {
+        $self->parent->close_editor($self->tab_name);
+    }
     $self->main->close;
 }
 

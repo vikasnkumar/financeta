@@ -1812,7 +1812,7 @@ sub open_editor {
     # update the editor window with rules
     # once the editor window saves something update the parent tab's rules
     # object
-    my $editor = $self->_build_editor($tabname);
+    my $editor = $self->editors->{$tabname} || $self->_build_editor($tabname);
     if ($editor->update_editor($rules || '', $tabname)) {
     }
     $self->editors->{$tabname} = $editor;
@@ -1837,6 +1837,11 @@ sub update_editor {
         carp "Unable to save editor rules for tab $tabname";
     }
     delete $self->editors->{$tabname} if $is_closing;
+}
+
+sub close_editor {
+    my ($self, $tabname) = @_;
+    delete $self->editors->{$tabname} if defined $tabname;
 }
 
 sub plot_data {
