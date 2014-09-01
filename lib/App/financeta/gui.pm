@@ -106,9 +106,14 @@ sub _menu_items {
                         if ($gui->security_wizard($win)) {
                             my $bar = $gui->progress_bar_create($win, 'Downloading...');
                             # download security data
-                            my ($data, $symbol) = $gui->download_data($bar);
+                            my ($data, $symbol, $csv) = $gui->download_data($bar);
                             if (defined $data) {
                                 $gui->display_data($win, $data);
+                                my ($info, $tname) = $gui->get_tab_info($win);
+                                if ($info and $csv) {
+                                    $info->{csv} = $csv;
+                                    $gui->set_tab_info($win, $info);
+                                }
                                 my $type = $gui->current->{plot_type} || 'OHLC';
                                 $gui->plot_data($win, $data, $symbol, $type);
                                 $gui->enable_menu_options($win);
@@ -548,6 +553,48 @@ sub security_wizard {
         },
     );
     $w->insert(
+        Button => name => 'btn_csv',
+        text => 'Load from CSV',
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 20, 120 ],
+        default => 0,
+        enabled => 1,
+        font => { height => 16, style => fs::Bold },
+        onClick => sub {
+            my $btn = shift;
+            my $owner = $btn->owner;
+            $owner->hide;
+            my $dlg = Prima::OpenDialog->new(
+                defaultExt => 'csv',
+                filter => [
+                    ['CSV files' => '*.csv'],
+                    ['All files' => '*'],
+                ],
+                filterIndex => 0,
+                fileMustExist => 1,
+                multiSelect => 0,
+                directory => $self->tmpdir,
+            );
+            my $csv = $dlg->fileName if $dlg->execute;
+            if (defined $csv and -e $csv) {
+                say "You have selected $csv to load" if $self->debug;
+                $owner->label_csv->text($csv);
+                $self->current->{csv} = $csv;
+            }
+            $owner->show;
+        },
+    );
+    $w->insert(
+        Label => text => '',
+        name => 'label_csv',
+        alignment => ta::Left,
+        autoHeight => 1,
+        autoWidth => 1,
+        origin => [ 20, 90 ],
+        font => { height => 13, style => fs::Bold },
+    );
+    $w->insert(
         Button => name => 'btn_cancel',
         text => 'Cancel',
         autoHeight => 1,
@@ -562,6 +609,7 @@ sub security_wizard {
             delete $self->current->{start_date};
             delete $self->current->{end_date};
             delete $self->current->{force_download};
+            delete $self->current->{csv};
         },
     );
     $w->insert(
@@ -845,7 +893,7 @@ sub run_and_display_indicator {
                     my $dt = DateTime->from_epoch(epoch => $ed, time_zone => $tz);
                     $current->{end_date} = $dt;
                 }
-                my ($data2, $symbol2) = $self->download_data($bar, $current);
+                my ($data2, $symbol2, $csv2) = $self->download_data($bar, $current);
                 $self->progress_bar_close($bar);
                 return unless (defined $data2 and defined $symbol2);
                 say "Successfully downloaded data for $symbol2" if $self->debug;
@@ -1265,6 +1313,10 @@ sub download_data {
     #TODO: check symbol validity
     my $csv = sprintf "%s_%d_%d.csv", $symbol, $start->ymd(''), $end->ymd('');
     $csv = File::Spec->catfile($self->tmpdir, $csv);
+    if (defined $current->{csv}) {
+        $csv = $current->{csv};
+        say "Using $csv as it was chosen" if $self->debug;
+    }
     $self->progress_bar_update($pbar) if $pbar;
     my $data;
     unlink $csv if $current->{force_download};
@@ -1312,7 +1364,7 @@ sub download_data {
         $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
         $self->progress_bar_update($pbar) if $pbar;
     }
-    return ($data, $symbol);
+    return ($data, $symbol, $csv);
 }
 
 sub display_data {
@@ -1547,6 +1599,7 @@ sub save_current_tab {
             $saved->{rules} = $self->editors->{$tname}->get_text;
         }
     }
+    $saved->{csv} = $info->{csv} if defined $info and defined $info->{csv};
     if ($mfile) {
         $saved->{filename} = $mfile;
         say "You have selected $mfile to save the tab info into." if $self->debug;
@@ -1584,9 +1637,11 @@ sub load_new_tab {
         symbol => $saved->{symbol},
         force_download => 0,
     };
+    $current->{csv} = $saved->{csv} if defined $saved->{csv};
     my $bar = $self->progress_bar_create($win, 'Loading...');
-    my ($data, $symbol) = $self->download_data($bar, $current);
+    my ($data, $symbol, $csv) = $self->download_data($bar, $current);
     say "Loading the data into tab" if $self->debug;
+    $saved->{csv} = $csv if defined $csv;
     $self->display_data($win, $data, $symbol);
     $self->enable_menu_options($win);
     $self->set_tab_info($win, $saved);
