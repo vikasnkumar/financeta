@@ -75,6 +75,12 @@ The steps are outlined as follows:
 
 ![Select a Stock Symbol in the Security Wizard](./images/financeta_sec_wizard.png "Enter a valid stock symbol in the 'Security Wizard'")
 
+- Alternatively, hit the _'Load from CSV'_ button and load an existing CSV file
+  that is in the Date-Open-High-Low-Close-Volume format. If this file is given,
+the data will be used from this file and will not be downloaded. This is useful
+if the users want to use their own data for securities that may not be available
+for download from Yahoo! Finance.
+
 - View the retrieved data in a tab titled _'MSFT'_ or the symbol you have
   chosen
 
