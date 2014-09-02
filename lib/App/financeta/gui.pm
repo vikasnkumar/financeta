@@ -1907,6 +1907,8 @@ sub plot_data {
     my $self = shift;
     if (lc($self->plot_engine) eq 'gnuplot') {
         say "Using Gnuplot to do plotting" if $self->debug;
+        say "PDL::Graphics::Gnuplot $PDL::Graphics::Gnuplot::VERSION is being used"
+        if $self->debug;
         return $self->plot_data_gnuplot(@_);
     }
     carp $self->plot_engine . " is not supported yet.";
@@ -1969,6 +1971,7 @@ sub plot_data_gnuplot {
     $pwin->reset();
     # use multiplot
     $pwin->multiplot();
+    my %win32 = (binary => $^O =~ /Win32/i ? 1 : 0);
     if ($type eq 'OHLC') {
         my %addon_gen = ();
         if (@addon_plot) {
@@ -1979,7 +1982,7 @@ sub plot_data_gnuplot {
             $addon_gen{rmargin} = 2;
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2002,7 +2005,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    binary => 1,
+                    %win32,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2038,7 +2041,7 @@ sub plot_data_gnuplot {
             $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 xlabel => ['Date', textcolor => 'rgb "yellow"'],
                 ylabel => ['Price', textcolor => 'rgb "yellow"'],
@@ -2064,7 +2067,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    binary => 1,
+                    %win32,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2085,7 +2088,7 @@ sub plot_data_gnuplot {
             );
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 title => '',
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
                 border => 'linecolor rgbcolor "white"',
@@ -2119,7 +2122,7 @@ sub plot_data_gnuplot {
         }
         # use candlesticks feature of Gnuplot
         $pwin->plot({
-                binary => 1,
+                %win32,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2143,7 +2146,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    binary => 1,
+                    %win32,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2179,7 +2182,7 @@ sub plot_data_gnuplot {
             $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2207,7 +2210,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    binary => 1,
+                    %win32,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2228,7 +2231,7 @@ sub plot_data_gnuplot {
             );
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 title => '',
                 ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2267,7 +2270,7 @@ sub plot_data_gnuplot {
             $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2293,7 +2296,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    binary => 1,
+                    %win32,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2314,7 +2317,7 @@ sub plot_data_gnuplot {
             );
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 title => '',
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
                 border => 'linecolor rgbcolor "white"',
@@ -2348,7 +2351,7 @@ sub plot_data_gnuplot {
             $addon_gen{rmargin} = 2;
         }
         $pwin->plot({
-                binary => 1,
+                %win32,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Close Price", textcolor => 'rgb "white"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2371,7 +2374,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    binary => 1,
+                    %win32,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
