@@ -183,7 +183,7 @@ environment variables for installing `PDL::Finance::Talib` as shown below:
 
 Set the environment variables as below, and install the packages
     
-    C:\> set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr _lta_libc_cmr
+    C:\> set TALIB_LIBS=-L%USERPROFILE%\Documents\ta-lib\c\lib -lta_abstract_cmr -lta_common_cmr -lta_func_cmr -lta_libc_cmr
     C:\> set TALIB_CFLAGS=-I%USERPROFILE%\ta-lib\c\include>
     C:\> echo %TALIB_LIBS%
     C:\> echo %TALIB_CFLAGS%
