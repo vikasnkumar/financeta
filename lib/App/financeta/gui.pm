@@ -1971,7 +1971,11 @@ sub plot_data_gnuplot {
     $pwin->reset();
     # use multiplot
     $pwin->multiplot();
-    my %win32 = (binary => $^O =~ /Win32/i ? 1 : 0);
+    my %binmode = (binary => 1);
+    if ($^O !~ /Win32/ and $Alien::Gnuplot::version < 4.6) {
+        say "Binary mode is set to 0 due to gnuplot $Alien::Gnuplot::version" if $self->debug;
+        $binmode{binary} = 0;
+    }
     if ($type eq 'OHLC') {
         my %addon_gen = ();
         if (@addon_plot) {
@@ -1982,7 +1986,7 @@ sub plot_data_gnuplot {
             $addon_gen{rmargin} = 2;
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2005,7 +2009,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    %win32,
+                    %binmode,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2041,7 +2045,7 @@ sub plot_data_gnuplot {
             $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 xlabel => ['Date', textcolor => 'rgb "yellow"'],
                 ylabel => ['Price', textcolor => 'rgb "yellow"'],
@@ -2067,7 +2071,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    %win32,
+                    %binmode,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2088,7 +2092,7 @@ sub plot_data_gnuplot {
             );
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 title => '',
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
                 border => 'linecolor rgbcolor "white"',
@@ -2122,7 +2126,7 @@ sub plot_data_gnuplot {
         }
         # use candlesticks feature of Gnuplot
         $pwin->plot({
-                %win32,
+                %binmode,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Open-High-Low-Close", textcolor => 'rgb "white"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2146,7 +2150,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    %win32,
+                    %binmode,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2182,7 +2186,7 @@ sub plot_data_gnuplot {
             $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2210,7 +2214,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    %win32,
+                    %binmode,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2231,7 +2235,7 @@ sub plot_data_gnuplot {
             );
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 title => '',
                 ylabel => ['Volume (in 1M)', textcolor => 'rgb "yellow"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2270,7 +2274,7 @@ sub plot_data_gnuplot {
             $addon_vol{object} = '1'; # needed as otherwise the addon plot does it
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Price & Volume", textcolor => "rgb 'white'"],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2296,7 +2300,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    %win32,
+                    %binmode,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2317,7 +2321,7 @@ sub plot_data_gnuplot {
             );
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 title => '',
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
                 border => 'linecolor rgbcolor "white"',
@@ -2351,7 +2355,7 @@ sub plot_data_gnuplot {
             $addon_gen{rmargin} = 2;
         }
         $pwin->plot({
-                %win32,
+                %binmode,
                 object => '1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "black" behind',
                 title => ["$symbol Close Price", textcolor => 'rgb "white"'],
                 key => ['on', 'outside', textcolor => 'rgb "yellow"'],
@@ -2374,7 +2378,7 @@ sub plot_data_gnuplot {
         );
         if (@addon_plot) {
             $pwin->plot({
-                    %win32,
+                    %binmode,
                     object => '1',
                     title => '',
                     key => ['on', 'outside', textcolor => 'rgb "yellow"'],
