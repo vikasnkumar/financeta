@@ -81,6 +81,8 @@ the data will be used from this file and will not be downloaded. This is useful
 if the users want to use their own data for securities that may not be available
 for download from Yahoo! Finance.
 
+**NOTE**: The date in the CSV file has to be in the [Unix time](https://en.wikipedia.org/wiki/Unix_time) format.
+
 - View the retrieved data in a tab titled _'MSFT'_ or the symbol you have
   chosen
 
