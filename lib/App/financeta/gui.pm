@@ -35,7 +35,7 @@ $PDL::doubleformat = "%0.6lf";
 $| = 1;
 has debug => 0;
 has timezone => 'America/New_York';
-has brand => (default => sub { __PACKAGE__ });
+has brand => __PACKAGE__;
 has main => (builder => '_build_main');
 has icon => (builder => '_build_icon');
 has tmpdir => ( default => sub {
