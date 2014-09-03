@@ -2,7 +2,7 @@ use Test::More;
 
 use_ok('App::financeta::language');
 
-my $lang = new_ok('App::financeta::language');
+my $lang = new_ok('App::financeta::language' => [ debug => 0]);
 can_ok($lang, 'grammar');
 can_ok($lang, 'receiver');
 can_ok($lang, 'parser');
@@ -27,8 +27,9 @@ my $test2 = << 'TEST2';
 # MACD variables: macd, macd_signal, macd_hist
 # --END OF DO NOT EDIT--
 # Add your own comments here
-buy at open when macd_hist becomes positive and macd crosses over macd_signal
+buy at $open when $macd_hist becomes positive and $macd crosses over $macd_signal;
 TEST2
+isnt($lang->compile($test2), undef, 'compiler can parse an instruction');
 
 done_testing();
 

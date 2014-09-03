@@ -24,7 +24,51 @@ _: / BLANK* EOL?/
 __: / BLANK+ EOL?/
 line-ending: /- SEMI - EOL?/
 
-instruction: 'dummy'
+instruction: order - /'when'|'if'/ - conditions line-ending
+conditions: single-condition | nested-condition
+
+nested-condition: start-nested single-condition end-nested
+single-condition: any-condition-expr+ % logic-op
+any-condition-expr: single-condition-expr | nested-condition-expr
+nested-condition-expr: start-nested single-condition-expr end-nested
+single-condition-expr: comparison | complement
+comparison: comparison-state | comparison-basic
+comparison-state: - variable - state-op - state -
+comparison-basic: - value - compare-op - value -
+
+complement: - not-op - value-expression
+value: complement | value-expression
+state: /('positive' | 'negative' | 'zero')/ | value-expression
+value-expression: variable | number
+state-op: (/'becomes'/ | /'crosses' - (:'over' | 'into')?/)
+compare-op: /('is' | 'equals')/ |
+    /([ BANG EQUAL LANGLE RANGLE] EQUAL | (: LANGLE | RANGLE ))/
+not-op: /('not' | BANG)/
+logic-op: /('and' | 'or')/ | /([ AMP PIPE ]{2})/
+
+# instruction-task
+order: buy-sell quantity? - 'at' - price -
+buy-sell: - /('buy'|'BUY'|'sell'|'SELL')/ -
+quantity: number
+price: variable | number
+variable: DOLLAR identifier
+
+# basic tokens
+start-nested: /- LPAREN -/
+end-nested: /- RPAREN -/
+identifier: /(! keyword)( ALPHA [ WORDS ]*)/
+keyword: /
+        'buy' | 'BUY' | 'sell' | 'SELL' | 'at' | 'equals' |
+        'true' | 'false' | 'TRUE' | 'FALSE' | 'if' |
+        'when' | 'and' | 'or' | 'not' | 'above' | 'is' |
+        'becomes' | 'crosses' | 'below' | 'from' | 'to' |
+        'positive' | 'negative' | 'zero' | 'over' | 'into'
+        /
+number: real-number | integer | boolean
+real-number: /('-'? DIGIT* '.' DIGIT+)/
+integer: /('-'? DIGIT+)/
+boolean: /('TRUE'|'FALSE'|'true'|'false')/
+
 GRAMMAR
 
 1;
