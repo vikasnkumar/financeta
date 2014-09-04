@@ -10,6 +10,8 @@ $VERSION = eval $VERSION;
 use App::financeta::mo;
 use Carp;
 use File::Spec;
+use File::HomeDir;
+use File::Path ();
 use File::ShareDir 'dist_file';
 use DateTime;
 use POE 'Loop::Prima';
@@ -41,6 +43,11 @@ has icon => (builder => '_build_icon');
 has tmpdir => ( default => sub {
     return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
     return $ENV{TMPDIR} || '/tmp';
+});
+has datadir => ( default => sub {
+    my $dir = $ENV{DATADIR} || File::Spec->catfile(File::HomeDir->my_home, '.financeta');
+    File::Path::make_path($dir) unless -d $dir;
+    return $dir;
 });
 has plot_engine => 'gnuplot';
 has current => {};
@@ -1589,8 +1596,10 @@ sub save_current_tab {
             multiSelect => 0,
             overwritePrompt => 1,
             pathMustExist => 1,
+            directory => $self->datadir,
         );
         $mfile = $dlg->fileName if $dlg->execute;
+        $mfile = File::Spec->catfile($self->datadir, $mfile) unless ($mfile =~ /^\//);
     }
     if ($info and defined $info->{rules}) {
         $saved->{rules} = $info->{rules};
@@ -1599,6 +1608,7 @@ sub save_current_tab {
             $saved->{rules} = $self->editors->{$tname}->get_text;
         }
     }
+    $saved->{old_filename} = $info->{old_filename} if defined $info and defined $info->{old_filename};
     $saved->{csv} = $info->{csv} if defined $info and defined $info->{csv};
     if ($mfile) {
         $saved->{filename} = $mfile;
@@ -1624,6 +1634,7 @@ sub load_new_tab {
         filterIndex => 0,
         fileMustExist => 1,
         multiSelect => 0,
+        directory => $self->datadir,
     );
     my $mfile = $dlg->fileName if $dlg->execute;
     return unless $mfile;
@@ -1642,6 +1653,11 @@ sub load_new_tab {
     my ($data, $symbol, $csv) = $self->download_data($bar, $current);
     say "Loading the data into tab" if $self->debug;
     $saved->{csv} = $csv if defined $csv;
+    # overwrite the filename for saving
+    if (defined $saved->{filename} and $mfile ne $saved->{filename}) {
+        $saved->{old_filename} = $saved->{filename};
+    }
+    $saved->{filename} = $mfile;
     $self->display_data($win, $data, $symbol);
     $self->enable_menu_options($win);
     $self->set_tab_info($win, $saved);
