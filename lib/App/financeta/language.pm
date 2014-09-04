@@ -24,7 +24,7 @@ _: / BLANK* EOL?/
 __: / BLANK+ EOL?/
 line-ending: /- SEMI - EOL?/
 
-instruction: order - /'when'|'if'/ - conditions line-ending
+instruction: order - /(i:'when'|'if')/ - conditions line-ending
 conditions: single-condition | nested-condition
 
 nested-condition: start-nested single-condition end-nested
@@ -38,17 +38,17 @@ comparison-basic: - value - compare-op - value -
 
 complement: - not-op - value-expression
 value: complement | value-expression
-state: /('positive' | 'negative' | 'zero')/ | value-expression
+state: /((i:'positive' | 'negative' | 'zero'))/ | value-expression
 value-expression: variable | number
-state-op: (/'becomes'/ | /'crosses' - (:'over' | 'into')?/)
-compare-op: /('is' | 'equals')/ |
+state-op: (/(i:'becomes')/ | /(i:'crosses' - (i:'over' | 'into')?)/)
+compare-op: /((i:'is' | 'equals'))/ |
     /([ BANG EQUAL LANGLE RANGLE] EQUAL | (: LANGLE | RANGLE ))/
-not-op: /('not' | BANG)/
-logic-op: /('and' | 'or')/ | /([ AMP PIPE ]{2})/
+not-op: /((i:'not') | BANG)/
+logic-op: /((i:'and' | 'or'))/ | /([ AMP PIPE ]{2})/
 
 # instruction-task
-order: buy-sell quantity? - 'at' - price -
-buy-sell: - /('buy'|'BUY'|'sell'|'SELL')/ -
+order: buy-sell quantity? - /(i:'at')/ - price -
+buy-sell: - /((i:'buy' | 'sell'))/ -
 quantity: number
 price: variable | number
 variable: DOLLAR identifier
@@ -57,17 +57,17 @@ variable: DOLLAR identifier
 start-nested: /- LPAREN -/
 end-nested: /- RPAREN -/
 identifier: /(! keyword)( ALPHA [ WORDS ]*)/
-keyword: /
+keyword: /(i:
         'buy' | 'BUY' | 'sell' | 'SELL' | 'at' | 'equals' |
         'true' | 'false' | 'TRUE' | 'FALSE' | 'if' |
         'when' | 'and' | 'or' | 'not' | 'above' | 'is' |
         'becomes' | 'crosses' | 'below' | 'from' | 'to' |
         'positive' | 'negative' | 'zero' | 'over' | 'into'
-        /
+        )/
 number: real-number | integer | boolean
 real-number: /('-'? DIGIT* '.' DIGIT+)/
 integer: /('-'? DIGIT+)/
-boolean: /('TRUE'|'FALSE'|'true'|'false')/
+boolean: /((i:'true'|'false'))/
 
 GRAMMAR
 
