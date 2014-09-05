@@ -219,9 +219,9 @@ has overlaps => {
             my $period = $args[0];
             my ($upper, $middle, $lower) = PDL::ta_bbands($inpdl, @args);
             return [
-                ["Upper Band($period)", $upper],
-                ["Middle Band($period)", $middle],
-                ["Lower Band($period)", $lower],
+                ["Upper Band($period)", $upper, undef, "bbands_upper_$period"],
+                ["Middle Band($period)", $middle, undef, "bbands_middle_$period"],
+                ["Lower Band($period)", $lower, undef, "bbands_lower_$period"],
             ];
         },
         # use Gnuplot related stuff
@@ -239,7 +239,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_dema($inpdl, @args);
             return [
-                ["DEMA($period)", $outpdl],
+                ["DEMA($period)", $outpdl, undef, "dema_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -256,7 +256,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_ema($inpdl, @args);
             return [
-                ["EMA($period)", $outpdl],
+                ["EMA($period)", $outpdl, undef, "ema_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -271,7 +271,7 @@ has overlaps => {
             say "Executing ta_ht_trendline" if $obj->debug;
             my $outpdl = PDL::ta_ht_trendline($inpdl);
             return [
-                ['HT-trendline', $outpdl],
+                ['HT-trendline', $outpdl, undef, "ht_trend"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -288,7 +288,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_kama($inpdl, @args);
             return [
-                ["KAMA($period)", $outpdl],
+                ["KAMA($period)", $outpdl, undef, "kama_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -320,7 +320,7 @@ has overlaps => {
             my $type = $obj->ma_name->{$args[1]} || 'UNKNOWN';
             my $outpdl = PDL::ta_ma($inpdl, @args);
             return [
-                ["MA($period)($type)", $outpdl],
+                ["MA($period)($type)", $outpdl, undef, "ma_$type\_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -337,8 +337,8 @@ has overlaps => {
             say "Executing ta_mama with parameters: ", Dumper(\@args) if $obj->debug;
             my ($omama, $ofama) = PDL::ta_mama($inpdl, @args);
             return [
-                ["MAMA", $omama],
-                ["FAMA", $ofama],
+                ["MAMA", $omama, undef, "mama"],
+                ["FAMA", $ofama, undef, "fama"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -388,7 +388,7 @@ has overlaps => {
             }
             my $outpdl = PDL::ta_mavp($inpdl, $np, @args);
             return [
-                ["MAVP($type)", $outpdl],
+                ["MAVP($type)", $outpdl, undef, "mavp_$type"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -405,7 +405,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_midpoint($inpdl, @args);
             return [
-                ["MIDPOINT($period)", $outpdl],
+                ["MIDPOINT($period)", $outpdl, undef, "midpoint_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -423,7 +423,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_midprice($highpdl, $lowpdl, @args);
             return [
-                ["MIDPRICE($period)", $outpdl],
+                ["MIDPRICE($period)", $outpdl, undef, "midprice_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -441,7 +441,7 @@ has overlaps => {
             say "Executing ta_sar parameters: ", Dumper(\@args) if $obj->debug;
             my $outpdl = PDL::ta_sar($highpdl, $lowpdl, @args);
             return [
-                ["SAR", $outpdl, {with => 'points pointtype 7'}], #bug in P:G:G
+                ["SAR", $outpdl, {with => 'points pointtype 7'}, "sar"], #bug in P:G:G
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -468,8 +468,8 @@ has overlaps => {
             $shortpdl = $shortpdl->setbadif($shortpdl > 0)->abs;
             $outpdl = $outpdl->setbadif($outpdl < 0);
             return [
-                ["SAR(long)", $outpdl, {with => 'points pointtype 7', linecolor => 'red'}], # bug in P:G:G
-                ["SAR(short)", $shortpdl, {with => 'points pointtype 7', linecolor => 'green'}], # bug in P:G:G
+                ["SAR(long)", $outpdl, {with => 'points pointtype 7', linecolor => 'red'}, "sar_long"], # bug in P:G:G
+                ["SAR(short)", $shortpdl, {with => 'points pointtype 7', linecolor => 'green'}, "sar_short"], # bug in P:G:G
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -486,7 +486,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_sma($inpdl, @args);
             return [
-                ["SMA($period)", $outpdl],
+                ["SMA($period)", $outpdl, undef, "sma_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -504,7 +504,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_t3($inpdl, @args);
             return [
-                ["T3-EMA($period)", $outpdl],
+                ["T3-EMA($period)", $outpdl, undef, "t3ema_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -521,7 +521,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_tema($inpdl, @args);
             return [
-                ["TEMA($period)", $outpdl],
+                ["TEMA($period)", $outpdl, undef, "tema_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -538,7 +538,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_trima($inpdl, @args);
             return [
-                ["TRIMA($period)", $outpdl],
+                ["TRIMA($period)", $outpdl, undef, "trima_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -555,7 +555,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_wma($inpdl, @args);
             return [
-                ["WMA($period)", $outpdl],
+                ["WMA($period)", $outpdl, undef, "wma_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -572,7 +572,7 @@ has overlaps => {
     #       my ($indicator_obj, $input_pdl, @params) = @_;
     #       #...add code here...
     #       # output array-ref
-    #       return [ ['Pretty Name', $output_pdl_1],...];
+    #       return [ ['Pretty Name', $output_pdl_1, {plot => 'params'}, "varname"],...];
     #   },
     #   gnuplot => sub {
     #       my ($indicator_obj, $x_axis_pdl, $output_array_ref) = @_;
