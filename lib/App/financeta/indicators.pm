@@ -596,7 +596,7 @@ has volatility => {
             my $period = $args[0];
             my $outpdl = PDL::ta_atr($high, $low, $close, @args);
             return [
-                ["ATR($period)", $outpdl],
+                ["ATR($period)", $outpdl, undef, "atr_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -614,7 +614,7 @@ has volatility => {
             my $period = $args[0];
             my $outpdl = PDL::ta_natr($high, $low, $close, @args);
             return [
-                ["NATR($period)", $outpdl],
+                ["NATR($period)", $outpdl, undef, "natr_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -630,7 +630,7 @@ has volatility => {
             say "Executing ta_trange" if $obj->debug;
             my $outpdl = PDL::ta_trange($high, $low, $close);
             return [
-                ["True Range", $outpdl],
+                ["True Range", $outpdl, undef, "tr_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
