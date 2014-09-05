@@ -630,7 +630,7 @@ has volatility => {
             say "Executing ta_trange" if $obj->debug;
             my $outpdl = PDL::ta_trange($high, $low, $close);
             return [
-                ["True Range", $outpdl, undef, "tr_$period"],
+                ["True Range", $outpdl, undef, "truerange"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
