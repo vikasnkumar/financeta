@@ -1472,8 +1472,10 @@ sub _execute_candlestick {
         say "Executing $fname" if $obj->debug;
     }
     my $outpdl = &$fn($o, $h, $l, $c, @args);
+    my $varname = $fname;
+    $varname =~ s/^ta_//g;
     return [
-        [$tag, $outpdl],
+        [$tag, $outpdl, undef, $varname],
     ];
 }
 
