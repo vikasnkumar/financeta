@@ -405,7 +405,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_midpoint($inpdl, @args);
             return [
-                ["MIDPOINT($period)", $outpdl, undef, "midpoint_$period"],
+                ["MIDPOINT($period)", $outpdl, undef, "midpt_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -423,7 +423,7 @@ has overlaps => {
             my $period = $args[0];
             my $outpdl = PDL::ta_midprice($highpdl, $lowpdl, @args);
             return [
-                ["MIDPRICE($period)", $outpdl, undef, "midprice_$period"],
+                ["MIDPRICE($period)", $outpdl, undef, "midpx_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -1339,7 +1339,7 @@ has cycle => {
             say "Executing ta_ht_dcperiod" if $obj->debug;
             my $outpdl = PDL::ta_ht_dcperiod($inpdl);
             return [
-                ['HT-DCperiod', $outpdl, { axes => 'x1y2' }],
+                ['HT-DCperiod', $outpdl, { axes => 'x1y2' }, "ht_dcperiod"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -1354,7 +1354,7 @@ has cycle => {
             say "Executing ta_ht_dcphase" if $obj->debug;
             my $outpdl = PDL::ta_ht_dcphase($inpdl);
             return [
-                ['HT-DCphase', $outpdl],
+                ['HT-DCphase', $outpdl, undef, "ht_dcphase"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -1369,8 +1369,8 @@ has cycle => {
             say "Executing ta_ht_phasor" if $obj->debug;
             my ($oinphase, $oquad) = PDL::ta_ht_phasor($inpdl);
             return [
-                ['HT-InPhase', $oinphase],
-                ['HT-Quadrature', $oquad],
+                ['HT-InPhase', $oinphase, undef, "ht_inphase"],
+                ['HT-Quadrature', $oquad, undef, "ht_quad"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -1385,8 +1385,8 @@ has cycle => {
             say "Executing ta_ht_sine" if $obj->debug;
             my ($osine, $oleadsine) = PDL::ta_ht_sine($inpdl);
             return [
-                ['HT-Sine', $osine, { axes => 'x1y2' }],
-                ['HT-LeadSine', $oleadsine, { axes => 'x1y2' }],
+                ['HT-Sine', $osine, { axes => 'x1y2' }, "ht_sine"],
+                ['HT-LeadSine', $oleadsine, { axes => 'x1y2' }, "ht_leadsine"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -1401,7 +1401,7 @@ has cycle => {
             say "Executing ta_ht_trendmode" if $obj->debug;
             my $outpdl = PDL::ta_ht_trendmode($inpdl);
             return [
-                ['HT-Trend vs Cycle', $outpdl, { with => 'impulses', axes => 'x1y2' },],
+                ['HT-Trend vs Cycle', $outpdl, { with => 'impulses', axes => 'x1y2' }, "ht_trendcycle"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -1420,7 +1420,7 @@ has volume => {
             say "Executing ta_ad" if $obj->debug;
             my $outpdl = PDL::ta_ad($high, $low, $close, $volume);
             return [
-                ["Chaikin A/D", $outpdl],
+                ["Chaikin A/D", $outpdl, undef, "chaikin"],
             ];
         },
         gnuplot => \&_plot_gnuplot_volume,
@@ -1440,7 +1440,7 @@ has volume => {
             my $slow = $args[1];
             my $outpdl = PDL::ta_adosc($high, $low, $close, $volume, @args);
             return [
-                ["Chaikin A/D($fast,$slow)", $outpdl],
+                ["Chaikin A/D($fast,$slow)", $outpdl, undef, "chaikin_$fast\_$slow"],
             ];
         },
         gnuplot => \&_plot_gnuplot_volume,
@@ -1456,7 +1456,7 @@ has volume => {
             say "Executing ta_obv" if $obj->debug;
             my $outpdl = PDL::ta_obv($close, $volume);
             return [
-                ["OBV", $outpdl],
+                ["OBV", $outpdl, undef, "obv"],
             ];
         },
         gnuplot => \&_plot_gnuplot_volume,
@@ -1948,8 +1948,8 @@ has statistic => {
             }
             my $outpdl = PDL::ta_beta($inpdl1, $inpdl2, $period);
             return [
-                ["BETA($period)", $outpdl],
-                [$name, $inpdl2, { axes => 'x1y2' }],
+                ["BETA($period)", $outpdl, undef, "beta_$period"],
+                [$name, $inpdl2, { axes => 'x1y2' }, "$name\_close"],
             ];
         },
         gnuplot => \&_plot_gnuplot_compare,
@@ -1973,8 +1973,8 @@ has statistic => {
             }
             my $outpdl = PDL::ta_correl($inpdl1, $inpdl2, $period);
             return [
-                ["CORRELATION($period)", $outpdl],
-                [$name, $inpdl2, { axes => 'x1y2' }],
+                ["CORRELATION($period)", $outpdl, undef, "correl_$period"],
+                [$name, $inpdl2, { axes => 'x1y2' }, "$name\_close"],
             ];
         },
         gnuplot => \&_plot_gnuplot_compare,
@@ -1991,7 +1991,7 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg($inpdl, @args);
             return [
-                ["REGRESSION($period)", $outpdl],
+                ["REGRESSION($period)", $outpdl, undef, "linreg_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2008,7 +2008,7 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_angle($inpdl, @args);
             return [
-                ["REGRESSION ANGLE($period)", $outpdl, { axes => 'x1y2' }],
+                ["REGRESSION ANGLE($period)", $outpdl, { axes => 'x1y2' }, "linregangle_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2025,7 +2025,7 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_intercept($inpdl, @args);
             return [
-                ["REGRESSION INTERCEPT($period)", $outpdl],
+                ["REGRESSION INTERCEPT($period)", $outpdl, undef, "linregint_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2042,7 +2042,7 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_linearreg_slope($inpdl, @args);
             return [
-                ["REGRESSION SLOPE($period)", $outpdl, { axes => 'x1y2' }],
+                ["REGRESSION SLOPE($period)", $outpdl, { axes => 'x1y2' }, "linregslope_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -2061,7 +2061,7 @@ has statistic => {
             my $num = $args[1];
             my $outpdl = PDL::ta_stddev($inpdl, @args);
             return [
-                ["$num x STD.DEV.($period)", $outpdl],
+                ["$num x STD.DEV.($period)", $outpdl, undef, "stddev_$num\_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -2078,7 +2078,7 @@ has statistic => {
             my $period = $args[0];
             my $outpdl = PDL::ta_tsf($inpdl, @args);
             return [
-                ["FORECAST($period)", $outpdl],
+                ["FORECAST($period)", $outpdl, undef, "forecast_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2097,7 +2097,7 @@ has statistic => {
             my $num = $args[1];
             my $outpdl = PDL::ta_var($inpdl, @args);
             return [
-                ["$num x VARIANCE($period)", $outpdl],
+                ["$num x VARIANCE($period)", $outpdl, undef, "var_$num\_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -2116,7 +2116,7 @@ has price => {
             say "Executing ta_avgprice" if $obj->debug;
             my $outpdl = PDL::ta_avgprice($open, $high, $low, $close);
             return [
-                ["Avg. Price", $outpdl],
+                ["Avg. Price", $outpdl, undef, "avgpx"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2132,7 +2132,7 @@ has price => {
             say "Executing ta_medprice" if $obj->debug;
             my $outpdl = PDL::ta_medprice($high, $low);
             return [
-                ["Median Price", $outpdl],
+                ["Median Price", $outpdl, undef, "medianpx"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2148,7 +2148,7 @@ has price => {
             say "Executing ta_typprice" if $obj->debug;
             my $outpdl = PDL::ta_typprice($high, $low, $close);
             return [
-                ["Typical Price", $outpdl],
+                ["Typical Price", $outpdl, undef, "typpx"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -2164,7 +2164,7 @@ has price => {
             say "Executing ta_wclprice" if $obj->debug;
             my $outpdl = PDL::ta_wclprice($high, $low, $close);
             return [
-                ["Wt. Close Price", $outpdl],
+                ["Wt. Close Price", $outpdl, undef, "wclpx"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
