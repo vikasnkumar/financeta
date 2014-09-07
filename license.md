@@ -21,7 +21,7 @@ The software is open source and free to use for anyone. If you choose to
 distribute it, you will need to provide the source with all modifications, if
 any, to the recipient.
 
-The ta-lib library BSD licensed and more details can be found [here](http://www.talib.org/hdr_dev.html).
+The ta-lib library is BSD licensed and more details can be found [here](http://www.talib.org/hdr_dev.html).
 
 PDL license and copyright information can be found on their website
 [here](http://pdl.perl.org/).

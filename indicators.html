@@ -101,7 +101,8 @@ valid integer between 2 and 100,000.</p>
 
 <p>The exponential moving average is one of the most useful moving average
 indicators being used today. It has a faster reaction time compared to the
-SMA.</p>
+SMA. The ratio or &alpha; is automatically calculated based on the period
+window.</p>
 
 <p>There is only one parameter for this indicator: the period window which is a
 valid integer between 2 and 100,000.</p>
@@ -197,11 +198,54 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/TRIMA.htm">tadoc.org</a></li>
 </ul>
 
+<h3 id="movingaveragewithvariableperiodmavp">Moving Average with Variable Period (MAVP)</h3>
+
+<p>This is a type of <em>Adaptive</em> moving average where the user provides a list of
+periods to use to calculate the moving average of the series. In other words,
+the period window cycles through the list and all the different moving average
+series are merged into one.</p>
+
+<p>This indicator takes four arguments: a list of integers (comma-separated)
+denoting the different periods to use, a minimum period value, a maximum period
+value and the type of moving average to use.</p>
+
+<p>For example, the list of integers for the variable periods can be a <a href="https://en.wikipedia.org/wiki/Fibonacci#Fibonacci_sequence">Fibonacci
+sequence</a> of numbers
+such as <code>2, 3, 5, 8, 13, 21, 34</code> and so on.</p>
+
 <h3 id="kaufmanadaptivemovingaveragekama">Kaufman Adaptive Moving Average (KAMA)</h3>
+
+<p>This is a type of <em>Adaptive</em> moving average that adjusts its speed (or period
+window) based on market volatility to make the moving average more
+trend-efficient.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/KAMA.htm">tadoc.org</a></li>
+<li><a href="http://etfhq.com/blog/2011/11/07/adaptive-moving-average-ama-aka-kaufman-adaptive-moving-average-kama/">etfhq.com</a></li>
+</ul>
 
 <h3 id="mesaadaptivemovingaveragemama">MESA Adaptive Moving Average (MAMA)</h3>
 
-<h3 id="movingaveragewithvariableperiodmavp">Moving Average with Variable Period (MAVP)</h3>
+<p>This indicator relates the phase rate of change to the EMA &alpha; creating an
+adaptive EMA indicator. For more details you will need to read the original
+paper linked below.</p>
+
+<p>This indicator uses two parameters: the upper limit and the lower limit, which
+are both real numbers between 0.01 and 0.99. The recommended value for the upper
+limit is 0.5 and the lower limit is 0.05.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://web.archive.org/web/20101010223736/http://www.mesasoftware.com/Papers/MAMA.pdf">Original paper at archive.org</a></li>
+<li><a href="http://tadoc.org/indicator/MAMA.htm">tadoc.org</a></li>
+<li><a href="http://www2.wealth-lab.com/wl5wiki/MAMA.ashx">Wealth Lab</a></li>
+</ul>
 
 <h3 id="bollingerbandsbbands">Bollinger Bands (BBANDS)</h3>
 
@@ -234,15 +278,27 @@ the lower band, and the type of moving average to use.</p>
 
 <h2 id="momentumindicators">Momentum Indicators</h2>
 
+<p><strong>COMING SOON</strong></p>
+
 <h2 id="statisticfunctions">Statistic Functions</h2>
+
+<p><strong>COMING SOON</strong></p>
 
 <h2 id="volatilityindicators">Volatility Indicators</h2>
 
+<p><strong>COMING SOON</strong></p>
+
 <h2 id="volumeindicators">Volume Indicators</h2>
+
+<p><strong>COMING SOON</strong></p>
 
 <h2 id="pricetransform">Price Transform</h2>
 
+<p><strong>COMING SOON</strong></p>
+
 <h2 id="cycleindicators">Cycle Indicators</h2>
+
+<p><strong>COMING SOON</strong></p>
 
 <h2 id="candlestickpatterns">Candlestick Patterns</h2>
 
@@ -261,7 +317,7 @@ the lower band, and the type of moving average to use.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-07 14:30:43 -0400.
+        This page was last updated on 2014-09-07 14:42:59 -0400.
     </p>
     </div></footer>
     

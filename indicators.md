@@ -59,7 +59,8 @@ For more details refer the resources at:
 
 The exponential moving average is one of the most useful moving average
 indicators being used today. It has a faster reaction time compared to the
-SMA.
+SMA. The ratio or &alpha; is automatically calculated based on the period
+window.
 
 There is only one parameter for this indicator: the period window which is a
 valid integer between 2 and 100,000.
@@ -143,11 +144,50 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TriangularMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/TRIMA.htm)
 
+### Moving Average with Variable Period (MAVP)
+
+This is a type of _Adaptive_ moving average where the user provides a list of
+periods to use to calculate the moving average of the series. In other words,
+the period window cycles through the list and all the different moving average
+series are merged into one.
+
+This indicator takes four arguments: a list of integers (comma-separated)
+denoting the different periods to use, a minimum period value, a maximum period
+value and the type of moving average to use.
+
+For example, the list of integers for the variable periods can be a [Fibonacci
+sequence](https://en.wikipedia.org/wiki/Fibonacci#Fibonacci_sequence) of numbers
+such as `2, 3, 5, 8, 13, 21, 34` and so on.
+
 ### Kaufman Adaptive Moving Average (KAMA)
+
+This is a type of _Adaptive_ moving average that adjusts its speed (or period
+window) based on market volatility to make the moving average more
+trend-efficient.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/KAMA.htm)
+- [etfhq.com](http://etfhq.com/blog/2011/11/07/adaptive-moving-average-ama-aka-kaufman-adaptive-moving-average-kama/)
 
 ### MESA Adaptive Moving Average (MAMA)
 
-### Moving Average with Variable Period (MAVP)
+This indicator relates the phase rate of change to the EMA &alpha; creating an
+adaptive EMA indicator. For more details you will need to read the original
+paper linked below.
+
+This indicator uses two parameters: the upper limit and the lower limit, which
+are both real numbers between 0.01 and 0.99. The recommended value for the upper
+limit is 0.5 and the lower limit is 0.05.
+
+For more details refer the resources at:
+
+- [Original paper at archive.org](https://web.archive.org/web/20101010223736/http://www.mesasoftware.com/Papers/MAMA.pdf)
+- [tadoc.org](http://tadoc.org/indicator/MAMA.htm)
+- [Wealth Lab](http://www2.wealth-lab.com/wl5wiki/MAMA.ashx)
 
 ### Bollinger Bands (BBANDS)
 
@@ -178,15 +218,27 @@ For more details refer the resources at:
 
 ## Momentum Indicators
 
+**COMING SOON**
+
 ## Statistic Functions
+
+**COMING SOON**
 
 ## Volatility Indicators
 
+**COMING SOON**
+
 ## Volume Indicators
+
+**COMING SOON**
 
 ## Price Transform
 
+**COMING SOON**
+
 ## Cycle Indicators
+
+**COMING SOON**
 
 ## Candlestick Patterns
 
