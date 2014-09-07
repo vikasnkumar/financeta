@@ -27,6 +27,7 @@ options to smooth the volatility over fixed periods and get an idea of how to
 see trends in a price.
 
 For more details refer the resources at:
+
 - Wikipedia: <https://en.wikipedia.org/wiki/Moving_average>
 - Metastock: <http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=74>
 
@@ -49,6 +50,7 @@ There is only one parameter for this indicator: the period window which is a
 valid integer between 2 and 100,000.
 
 For more details refer the resources at:
+
 - Wikipedia: <https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average>
 - FM Labs: <http://www.fmlabs.com/reference/SimpleMA.htm>
 
@@ -62,6 +64,7 @@ There is only one parameter for this indicator: the period window which is a
 valid integer between 2 and 100,000.
 
 For more details refer the resources at:
+
 - Wikipedia: <https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average>
 - FM Labs: <http://www.fmlabs.com/reference/ExpMA.htm>
 
