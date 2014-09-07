@@ -149,7 +149,22 @@ For more details refer the resources at:
 
 ### Moving Average with Variable Period (MAVP)
 
-### Bollinger Bands
+### Bollinger Bands (BBANDS)
+
+Bollinger Bands is a popular volatility indicator used to indicate the rise and fall of
+a price relative to previous trade prices. It consists of a type of periodic
+moving average, an upper band a few standard deviations above the moving average
+and a lower band a few standard deviations below the moving average.
+
+There are four parameters for this indicator: the period window, the number of
+standard deviations for the upper band, the number of standard deviations for
+the lower band, and the type of moving average to use.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=Bollinger.htm)
+- [tadoc.org](http://tadoc.org/indicator/BBANDS.htm)
 
 ### Parabolic Stop And Reverse (SAR)
 
