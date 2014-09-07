@@ -38,13 +38,70 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
 
 <h1 id="indicators">Indicators</h1>
 
+<p><em>App::financeta</em> supports a variety of indicators, about 132 of them. Here we
+try to explain each one of them and for those that have better references
+elsewhere we link to detailed explanations to those sites. We felt that there
+was no reason to copy some other site&#8217;s text when we could just link to their
+efforts.</p>
+
+<p>Each indicator&#8217;s parameters are listed if necessary and explanations are given
+as required for understanding how to use the indicator.</p>
+
 <h2 id="overlapstudies">Overlap Studies</h2>
+
+<p>These group of indicators work with the Close price of the security being used
+as the input. They overlap the actual security price chart and hence the name.</p>
 
 <h3 id="movingaveragema">Moving Average (MA)</h3>
 
+<p>Moving average is the easiest and simplest smoothing indicator used by technical
+analysts and algorithmic traders. Fundamentally, they are implemented as running
+an averaging formula over a rolling window of prices.</p>
+
+<p>Analysts use a combination of various moving average lines to create simple
+trading rules for securities. The moving average along with a few other
+indicators can be applied to any kind of security such as stocks, futures or
+options to smooth the volatility over fixed periods and get an idea of how to
+see trends in a price.</p>
+
+<p>For more details refer the resources at:
+- Wikipedia: <a href="https://en.wikipedia.org/wiki/Moving_average">https://en.wikipedia.org/wiki/Moving_average</a>
+- Metastock: <a href="http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=74">http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=74</a></p>
+
+<p>There are many popular methods of calculating the moving average which are
+explained in the following sections.</p>
+
+<p>This indicator is actually a collective indicator in the sense that selecting
+this indicator allows the user to choose which type of moving average they would
+like to pick. The indicator takes two parameters: the period window which is a
+valid integer between 2 and 100,000 and the type of moving average. Each of
+these types of moving averages are explained below.</p>
+
 <h3 id="simplemovingaveragesma">Simple Moving Average (SMA)</h3>
 
+<p>The simple moving average uses the simplest averaging formula over the period
+window of prices. It simply adds all the prices in the period window divided by
+the value of the period window.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:
+- Wikipedia: <a href="https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average">https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average</a>
+- FM Labs: <a href="http://www.fmlabs.com/reference/SimpleMA.htm">http://www.fmlabs.com/reference/SimpleMA.htm</a></p>
+
 <h3 id="exponentialmovingaverageema">Exponential Moving Average (EMA)</h3>
+
+<p>The exponential moving average is one of the most useful moving average
+indicators being used today. It has a faster reaction time compared to the
+SMA.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:
+- Wikipedia: <a href="https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average</a>
+- FM Labs: <a href="http://www.fmlabs.com/reference/ExpMA.htm">http://www.fmlabs.com/reference/ExpMA.htm</a></p>
 
 <h3 id="doubleexponentialmovingaveragedema">Double Exponential Moving Average (DEMA)</h3>
 
@@ -103,7 +160,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-01 21:40:35 -0400.
+        This page was last updated on 2014-09-01 22:25:29 -0400.
     </p>
     </div></footer>
     
