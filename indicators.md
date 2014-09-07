@@ -28,8 +28,8 @@ see trends in a price.
 
 For more details refer the resources at:
 
-- Wikipedia: <https://en.wikipedia.org/wiki/Moving_average>
-- Metastock: <http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=74>
+- [Wikipedia](https://en.wikipedia.org/wiki/Moving_average)
+- [Metastock](http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=74)
 
 There are many popular methods of calculating the moving average which are
 explained in the following sections.
@@ -51,8 +51,8 @@ valid integer between 2 and 100,000.
 
 For more details refer the resources at:
 
-- Wikipedia: <https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average>
-- FM Labs: <http://www.fmlabs.com/reference/SimpleMA.htm>
+- [Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
+- [FM Labs](http://www.fmlabs.com/reference/SimpleMA.htm)
 
 ### Exponential Moving Average (EMA)
 
@@ -65,8 +65,8 @@ valid integer between 2 and 100,000.
 
 For more details refer the resources at:
 
-- Wikipedia: <https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average>
-- FM Labs: <http://www.fmlabs.com/reference/ExpMA.htm>
+- [Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
+- [FM Labs](http://www.fmlabs.com/reference/ExpMA.htm)
 
 ### Double Exponential Moving Average (DEMA)
 
