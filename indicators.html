@@ -268,13 +268,91 @@ the lower band, and the type of moving average to use.</p>
 
 <h3 id="parabolicstopandreversesar">Parabolic Stop And Reverse (SAR)</h3>
 
-<h3 id="parabolicstopandreversesar-extended">Parabolic Stop And Reverse (SAR) - Extended</h3>
+<p>This is a popular indicator designed to find potential reversals in the market
+price direction. This is a lagging indicator and may be used as a stop-loss
+trigger. A parabola below the price is considered <em>bearish</em> and above the price
+is considered <em>bullish</em>. This indicator works on the high and low prices of the
+security rather than the close price like the moving average indicators.</p>
+
+<p>There are two parameters for this indicator: an acceleration factor which is a
+positive real number and the maximum acceleration factor to use. The default
+value of acceleration factor is 0.02 and the maximum acceleration factor is 0.2.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Parabolic_SAR">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=SAR.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/SAR.htm">tadoc.org</a></li>
+</ul>
+
+<h3 id="parabolicstopandreverse-extendedsarext">Parabolic Stop And Reverse - Extended (SAREXT)</h3>
+
+<p>This is an extension to the above SAR indicator which gives the user the freedom
+to use different acceleration factors for the long and short side trades.</p>
+
+<p>There are many parameters that are configurable here:</p>
+
+<ul>
+<li>the start value which is a real number that denotes the start value and the
+ sign of the number decides whether it is the long direction if positive, or the short
+direction if negative, or auto-detect if 0. The default is 0.</li>
+<li>the percentage offset added or removed to the initial stop on the short or
+ long reversal. The default is 0.</li>
+<li>the initial acceleration factor for the long direction. The default value is
+ 0.02.</li>
+<li>the acceleration factor for the long direction, with a default value of 0.02.</li>
+<li>the maximum acceleration factor for the long direction, with a default value
+ of 0.2.</li>
+<li>the initial acceleration factor for the short direction. The default value is
+ 0.02.</li>
+<li>the acceleration factor for the short direction, with a default value of 0.02.</li>
+<li>the maximum acceleration factor for the short direction, with a default value
+ of 0.02.</li>
+</ul>
+
+<p>If all the default values are used, SAREXT is the same as SAR.</p>
 
 <h3 id="mid-pointoverperiod">Mid-point over period</h3>
 
+<p>This indicator calculates the average of the highest and lowest values of the
+close prices in the period window selected.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resource at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/MIDPOINT.htm">tadoc.org</a></li>
+</ul>
+
 <h3 id="mid-pointpriceoverperiod">Mid-point Price over period</h3>
 
+<p>This indicator calculates the average of the highest high price and lowest low
+price of the period window selected.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resource at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/MIDPRICE.htm">tadoc.org</a></li>
+</ul>
+
 <h3 id="hilberttransform-instantaneoustrendline">Hilbert Transform - Instantaneous Trendline</h3>
+
+<p>This indicator has no parameters and works on the close price. It creates a
+trend line that works on the current price bar thus not have the same lag as the
+various moving average indicators.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/HT_TRENDLINE.htm">tadoc.org</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTTrendLine.ashx">Wealth Lab</a></li>
+</ul>
 
 <h2 id="momentumindicators">Momentum Indicators</h2>
 
@@ -317,7 +395,7 @@ the lower band, and the type of moving average to use.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-07 14:42:59 -0400.
+        This page was last updated on 2014-09-07 15:30:08 -0400.
     </p>
     </div></footer>
     

@@ -208,13 +208,81 @@ For more details refer the resources at:
 
 ### Parabolic Stop And Reverse (SAR)
 
-### Parabolic Stop And Reverse (SAR) - Extended
+This is a popular indicator designed to find potential reversals in the market
+price direction. This is a lagging indicator and may be used as a stop-loss
+trigger. A parabola below the price is considered _bearish_ and above the price
+is considered _bullish_. This indicator works on the high and low prices of the
+security rather than the close price like the moving average indicators.
+
+There are two parameters for this indicator: an acceleration factor which is a
+positive real number and the maximum acceleration factor to use. The default
+value of acceleration factor is 0.02 and the maximum acceleration factor is 0.2.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Parabolic_SAR)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=SAR.htm)
+- [tadoc.org](http://tadoc.org/indicator/SAR.htm)
+
+### Parabolic Stop And Reverse - Extended (SAREXT)
+
+This is an extension to the above SAR indicator which gives the user the freedom
+to use different acceleration factors for the long and short side trades.
+
+There are many parameters that are configurable here:
+
+- the start value which is a real number that denotes the start value and the
+  sign of the number decides whether it is the long direction if positive, or the short
+direction if negative, or auto-detect if 0. The default is 0.
+- the percentage offset added or removed to the initial stop on the short or
+  long reversal. The default is 0.
+- the initial acceleration factor for the long direction. The default value is
+  0.02.
+- the acceleration factor for the long direction, with a default value of 0.02.
+- the maximum acceleration factor for the long direction, with a default value
+  of 0.2.
+- the initial acceleration factor for the short direction. The default value is
+  0.02.
+- the acceleration factor for the short direction, with a default value of 0.02.
+- the maximum acceleration factor for the short direction, with a default value
+  of 0.02.
+
+If all the default values are used, SAREXT is the same as SAR.
 
 ### Mid-point over period
 
+This indicator calculates the average of the highest and lowest values of the
+close prices in the period window selected.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resource at:
+
+- [tadoc.org](http://tadoc.org/indicator/MIDPOINT.htm)
+
 ### Mid-point Price over period
 
+This indicator calculates the average of the highest high price and lowest low
+price of the period window selected.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resource at:
+
+- [tadoc.org](http://tadoc.org/indicator/MIDPRICE.htm)
+
 ### Hilbert Transform - Instantaneous Trendline
+
+This indicator has no parameters and works on the close price. It creates a
+trend line that works on the current price bar thus not have the same lag as the
+various moving average indicators.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/HT_TRENDLINE.htm)
+- [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTTrendLine.ashx)
 
 ## Momentum Indicators
 
