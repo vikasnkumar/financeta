@@ -49,7 +49,7 @@ as required for understanding how to use the indicator.</p>
 
 <h2 id="overlapstudies">Overlap Studies</h2>
 
-<p>These group of indicators work with the Close price of the security being used
+<p>These group of <u>trend following</u> indicators work with the Close price of the security being used
 as the input. They overlap the actual security price chart and hence the name.</p>
 
 <h3 id="movingaveragema">Moving Average (MA)</h3>
@@ -94,6 +94,7 @@ valid integer between 2 and 100,000.</p>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average">Wikipedia</a></li>
 <li><a href="http://www.fmlabs.com/reference/SimpleMA.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/SMA.htm">tadoc.org</a></li>
 </ul>
 
 <h3 id="exponentialmovingaverageema">Exponential Moving Average (EMA)</h3>
@@ -108,19 +109,93 @@ valid integer between 2 and 100,000.</p>
 <p>For more details refer the resources at:</p>
 
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">Wikipedia</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">Wikipedia: EMA</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Exponential_smoothing">Wikipedia: Exponential Smoothing</a></li>
 <li><a href="http://www.fmlabs.com/reference/ExpMA.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/EMA.htm">tadoc.org</a></li>
 </ul>
 
 <h3 id="doubleexponentialmovingaveragedema">Double Exponential Moving Average (DEMA)</h3>
 
+<p>The DEMA has a lesser lag than the exponential moving average. It is a
+combination of the EMA output and the EMA of the EMA output.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Exponential_smoothing#Double_exponential_smoothing">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=DEMA.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/DEMA.htm">tadoc.org</a></li>
+</ul>
+
 <h3 id="tripleexponentialmovingaveragetema">Triple Exponential Moving Average (TEMA)</h3>
+
+<p>The TEMA has a much lesser lag than the EMA, but has a more complex formula than
+DEMA.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Exponential_smoothing#Triple_exponential_smoothing">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=TEMA.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/TEMA.htm">tadoc.org</a></li>
+</ul>
 
 <h3 id="tripleexponentialmovingaveraget3">Triple Exponential Moving Average (T3)</h3>
 
-<h3 id="triangularmovingaveragetma">Triangular Moving Average (TMA)</h3>
+<p>The T3 is similar to the DEMA but adds a volume factor (<code>vfactor</code>) based
+scaling to the DEMA calculation. The <code>vfactor</code> is a real number between 0.0 and
+1.0. A typical value for <code>vfactor</code> is 0.7. If the <code>vfactor</code> is 0.0 then T3 is
+the same as EMA and if it is 1.0 then T3 is the same as DEMA.</p>
+
+<p>There are two parameters for this indicator: the volume factor which is a real number
+between 0.0 and 1.0, and the period window which is a valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Exponential_smoothing#Triple_exponential_smoothing">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=T3.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/T3.htm">tadoc.org</a></li>
+</ul>
 
 <h3 id="weightedmovingaveragewma">Weighted Moving Average (WMA)</h3>
+
+<p>The weighted moving average applies weights to data points at different
+positions of the period window. The weights decrease in an arithmetic
+progression.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Moving_average#Weighted_moving_average">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=WeightedMA.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/WMA.htm">tadoc.org</a></li>
+</ul>
+
+<h3 id="triangularmovingaveragetma">Triangular Moving Average (TMA)</h3>
+
+<p>The TMA is similar to the WMA where the weights are assigned in a triangular
+pattern.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=TriangularMA.htm">FM Labs</a></li>
+<li><a href="http://tadoc.org/indicator/TRIMA.htm">tadoc.org</a></li>
+</ul>
 
 <h3 id="kaufmanadaptivemovingaveragekama">Kaufman Adaptive Moving Average (KAMA)</h3>
 
@@ -169,7 +244,7 @@ valid integer between 2 and 100,000.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-07 12:25:21 -0400.
+        This page was last updated on 2014-09-07 12:32:38 -0400.
     </p>
     </div></footer>
     

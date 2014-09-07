@@ -11,5 +11,6 @@ all: $(HTMLFILES)
 
 $(HTMLFILES): %.html: %.md
 	/bin/sh $(HTMLIZE) $<
+	rm -f $@-e
 
 .PHONY: all default

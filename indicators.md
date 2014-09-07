@@ -11,7 +11,7 @@ as required for understanding how to use the indicator.
 
 ## Overlap Studies
 
-These group of indicators work with the Close price of the security being used
+These group of <u>trend following</u> indicators work with the Close price of the security being used
 as the input. They overlap the actual security price chart and hence the name.
 
 ### Moving Average (MA)
@@ -53,6 +53,7 @@ For more details refer the resources at:
 
 - [Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
 - [FM Labs](http://www.fmlabs.com/reference/SimpleMA.htm)
+- [tadoc.org](http://tadoc.org/indicator/SMA.htm)
 
 ### Exponential Moving Average (EMA)
 
@@ -65,18 +66,82 @@ valid integer between 2 and 100,000.
 
 For more details refer the resources at:
 
-- [Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
+- [Wikipedia: EMA](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
+- [Wikipedia: Exponential Smoothing](https://en.wikipedia.org/wiki/Exponential_smoothing)
 - [FM Labs](http://www.fmlabs.com/reference/ExpMA.htm)
+- [tadoc.org](http://tadoc.org/indicator/EMA.htm)
 
 ### Double Exponential Moving Average (DEMA)
 
+The DEMA has a lesser lag than the exponential moving average. It is a
+combination of the EMA output and the EMA of the EMA output.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Exponential_smoothing#Double_exponential_smoothing)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=DEMA.htm)
+- [tadoc.org](http://tadoc.org/indicator/DEMA.htm)
+
 ### Triple Exponential Moving Average (TEMA)
+
+The TEMA has a much lesser lag than the EMA, but has a more complex formula than
+DEMA.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Exponential_smoothing#Triple_exponential_smoothing)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TEMA.htm)
+- [tadoc.org](http://tadoc.org/indicator/TEMA.htm)
 
 ### Triple Exponential Moving Average (T3)
 
-### Triangular Moving Average (TMA)
+The T3 is similar to the DEMA but adds a volume factor (`vfactor`) based
+scaling to the DEMA calculation. The `vfactor` is a real number between 0.0 and
+1.0. A typical value for `vfactor` is 0.7. If the `vfactor` is 0.0 then T3 is
+the same as EMA and if it is 1.0 then T3 is the same as DEMA.
+
+There are two parameters for this indicator: the volume factor which is a real number
+between 0.0 and 1.0, and the period window which is a valid integer between 2 and 100,000.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Exponential_smoothing#Triple_exponential_smoothing)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=T3.htm)
+- [tadoc.org](http://tadoc.org/indicator/T3.htm)
 
 ### Weighted Moving Average (WMA)
+
+The weighted moving average applies weights to data points at different
+positions of the period window. The weights decrease in an arithmetic
+progression.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Weighted_moving_average)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WeightedMA.htm)
+- [tadoc.org](http://tadoc.org/indicator/WMA.htm)
+
+### Triangular Moving Average (TMA)
+
+The TMA is similar to the WMA where the weights are assigned in a triangular
+pattern.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resources at:
+
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TriangularMA.htm)
+- [tadoc.org](http://tadoc.org/indicator/TRIMA.htm)
 
 ### Kaufman Adaptive Moving Average (KAMA)
 
