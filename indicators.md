@@ -311,3 +311,10 @@ For more details refer the resources at:
 ## Candlestick Patterns
 
 **COMING SOON**
+
+Now that you are aware of the indicators that you may want to use, let's
+learn how to write some rules to generate buy and sell signals in the [next
+chapter](./rules.html).
+
+
+[Table of Contents](./index.html) [Next](./rules.html)
