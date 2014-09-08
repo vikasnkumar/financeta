@@ -80,7 +80,7 @@ like to pick. The indicator takes two parameters: the period window which is a
 valid integer between 2 and 100,000 and the type of moving average. Each of
 these types of moving averages are explained below.</p>
 
-<h3 id="simplemovingaveragesma">Simple Moving Average (SMA)</h3>
+<h4 id="simplemovingaveragesma">Simple Moving Average (SMA)</h4>
 
 <p>The simple moving average uses the simplest averaging formula over the period
 window of prices. It simply adds all the prices in the period window divided by
@@ -97,7 +97,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/SMA.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="exponentialmovingaverageema">Exponential Moving Average (EMA)</h3>
+<h4 id="exponentialmovingaverageema">Exponential Moving Average (EMA)</h4>
 
 <p>The exponential moving average is one of the most useful moving average
 indicators being used today. It has a faster reaction time compared to the
@@ -116,7 +116,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/EMA.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="doubleexponentialmovingaveragedema">Double Exponential Moving Average (DEMA)</h3>
+<h4 id="doubleexponentialmovingaveragedema">Double Exponential Moving Average (DEMA)</h4>
 
 <p>The DEMA has a lesser lag than the exponential moving average. It is a
 combination of the EMA output and the EMA of the EMA output.</p>
@@ -132,7 +132,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/DEMA.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="tripleexponentialmovingaveragetema">Triple Exponential Moving Average (TEMA)</h3>
+<h4 id="tripleexponentialmovingaveragetema">Triple Exponential Moving Average (TEMA)</h4>
 
 <p>The TEMA has a much lesser lag than the EMA, but has a more complex formula than
 DEMA.</p>
@@ -148,7 +148,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/TEMA.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="tripleexponentialmovingaveraget3">Triple Exponential Moving Average (T3)</h3>
+<h4 id="tripleexponentialmovingaveraget3">Triple Exponential Moving Average (T3)</h4>
 
 <p>The T3 is similar to the DEMA but adds a volume factor (<code>vfactor</code>) based
 scaling to the DEMA calculation. The <code>vfactor</code> is a real number between 0.0 and
@@ -166,7 +166,7 @@ between 0.0 and 1.0, and the period window which is a valid integer between 2 an
 <li><a href="http://tadoc.org/indicator/T3.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="weightedmovingaveragewma">Weighted Moving Average (WMA)</h3>
+<h4 id="weightedmovingaveragewma">Weighted Moving Average (WMA)</h4>
 
 <p>The weighted moving average applies weights to data points at different
 positions of the period window. The weights decrease in an arithmetic
@@ -183,7 +183,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/WMA.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="triangularmovingaveragetma">Triangular Moving Average (TMA)</h3>
+<h4 id="triangularmovingaveragetma">Triangular Moving Average (TMA)</h4>
 
 <p>The TMA is similar to the WMA where the weights are assigned in a triangular
 pattern.</p>
@@ -198,7 +198,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/TRIMA.htm">tadoc.org</a></li>
 </ul>
 
-<h3 id="movingaveragewithvariableperiodmavp">Moving Average with Variable Period (MAVP)</h3>
+<h4 id="movingaveragewithvariableperiodmavp">Moving Average with Variable Period (MAVP)</h4>
 
 <p>This is a type of <em>Adaptive</em> moving average where the user provides a list of
 periods to use to calculate the moving average of the series. In other words,
@@ -213,7 +213,7 @@ value and the type of moving average to use.</p>
 sequence</a> of numbers
 such as <code>2, 3, 5, 8, 13, 21, 34</code> and so on.</p>
 
-<h3 id="kaufmanadaptivemovingaveragekama">Kaufman Adaptive Moving Average (KAMA)</h3>
+<h4 id="kaufmanadaptivemovingaveragekama">Kaufman Adaptive Moving Average (KAMA)</h4>
 
 <p>This is a type of <em>Adaptive</em> moving average that adjusts its speed (or period
 window) based on market volatility to make the moving average more
@@ -229,7 +229,7 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://etfhq.com/blog/2011/11/07/adaptive-moving-average-ama-aka-kaufman-adaptive-moving-average-kama/">etfhq.com</a></li>
 </ul>
 
-<h3 id="mesaadaptivemovingaveragemama">MESA Adaptive Moving Average (MAMA)</h3>
+<h4 id="mesaadaptivemovingaveragemama">MESA Adaptive Moving Average (MAMA)</h4>
 
 <p>This indicator relates the phase rate of change to the EMA &alpha; creating an
 adaptive EMA indicator. For more details you will need to read the original
@@ -344,7 +344,7 @@ valid integer between 2 and 100,000.</p>
 <h3 id="hilberttransform-instantaneoustrendline">Hilbert Transform - Instantaneous Trendline</h3>
 
 <p>This indicator has no parameters and works on the close price. It creates a
-trend line that works on the current price bar thus not have the same lag as the
+trend line that works on the current close price bar thus not have the same lag as the
 various moving average indicators.</p>
 
 <p>For more details refer the resources at:</p>
@@ -354,29 +354,145 @@ various moving average indicators.</p>
 <li><a href="http://www2.wealth-lab.com/WL5Wiki/HTTrendLine.ashx">Wealth Lab</a></li>
 </ul>
 
+<h2 id="volatilityindicators">Volatility Indicators</h2>
+
+<h3 id="truerange">True Range</h3>
+
+<h3 id="averagetruerangeatr">Average True Range (ATR)</h3>
+
+<h3 id="normalizedaveragetruerangenatr">Normalized Average True Range (NATR)</h3>
+
+<p><strong>COMING SOON</strong></p>
+
 <h2 id="momentumindicators">Momentum Indicators</h2>
+
+<h3 id="momentum">Momentum</h3>
+
+<h3 id="movingaverageconvergence-divergencemacd">Moving Average Convergence-Divergence (MACD)</h3>
+
+<h4 id="macd-default">MACD - Default</h4>
+
+<h4 id="macd-extended">MACD - Extended</h4>
+
+<h4 id="macdfixed1226withema">MACD Fixed 12/26 with EMA</h4>
+
+<h3 id="moneyflowindexmfi">Money Flow Index (MFI)</h3>
+
+<h3 id="relativestrengthindexrsi">Relative Strength Index (RSI)</h3>
+
+<h3 id="averagedirectionalmovementindex">Average Directional Movement Index</h3>
+
+<h3 id="averagedirectionalmovementindexrating">Average Directional Movement Index Rating</h3>
+
+<h3 id="absolutepriceoscillator">Absolute Price Oscillator</h3>
+
+<h3 id="aroon">Aroon</h3>
+
+<h3 id="aroonoscillator">Aroon Oscillator</h3>
+
+<h3 id="balanceofpowerbop">Balance of Power (BOP)</h3>
+
+<h3 id="commoditychannelindex">Commodity Channel Index</h3>
+
+<h3 id="chandemomentumoscillator">Chande Momentum Oscillator</h3>
+
+<h3 id="directionalmovementindex">Directional Movement Index</h3>
+
+<h3 id="minusdirectionalindicator">Minus Directional Indicator</h3>
+
+<h3 id="minusdirectionalmovement">Minus Directional Movement</h3>
+
+<h3 id="plusdirectionalindicator">Plus Directional Indicator</h3>
+
+<h3 id="plusdirectionalmovement">Plus Directional Movement</h3>
+
+<h3 id="percentagepriceoscillator">Percentage Price Oscillator</h3>
+
+<h3 id="rateofchange">Rate of Change</h3>
+
+<h4 id="rateofchange-default">Rate of Change - Default</h4>
+
+<h4 id="rateofchange-percentage">Rate of Change - Percentage</h4>
+
+<h4 id="rateofchange-ratio">Rate of Change - Ratio</h4>
+
+<h4 id="rateofchange-ratioscaledto100">Rate of Change - Ratio scaled to 100</h4>
+
+<h3 id="stochastic">Stochastic</h3>
+
+<h4 id="stochastic-default">Stochastic - Default</h4>
+
+<h4 id="stochastic-fast">Stochastic - Fast</h4>
+
+<h4 id="stochastic-relativestrengthindex">Stochastic - Relative Strength Index</h4>
+
+<h3 id="trix-1-dayrateofchangeoftriplesmoothema">TRIX - 1-day Rate of Change of Triple Smooth EMA</h3>
+
+<h3 id="ultimateoscillator">Ultimate Oscillator</h3>
+
+<h3 id="williamsr">Williams&#8217; %R</h3>
 
 <p><strong>COMING SOON</strong></p>
 
 <h2 id="statisticfunctions">Statistic Functions</h2>
 
-<p><strong>COMING SOON</strong></p>
+<h3 id="beta">Beta</h3>
 
-<h2 id="volatilityindicators">Volatility Indicators</h2>
+<h3 id="correlationpearsonscorrelationcoefficient">Correlation (Pearson&#8217;s Correlation Coefficient)</h3>
+
+<h3 id="linearregression">Linear Regression</h3>
+
+<h4 id="linearregression-default">Linear Regression - Default</h4>
+
+<h4 id="linearregressionangle">Linear Regression Angle</h4>
+
+<h4 id="linearregressionintercept">Linear Regression Intercept</h4>
+
+<h4 id="linearregressionslope">Linear Regression Slope</h4>
+
+<h3 id="standarddeviation">Standard Deviation</h3>
+
+<h3 id="timeseriesforecast">Timeseries Forecast</h3>
+
+<h3 id="variance">Variance</h3>
 
 <p><strong>COMING SOON</strong></p>
 
 <h2 id="volumeindicators">Volume Indicators</h2>
 
+<h3 id="accumulationdistributionad">Accumulation/Distribution (A/D)</h3>
+
+<h4 id="chaikinadline">Chaikin A/D Line</h4>
+
+<h4 id="chaikinadoscillator">Chaikin A/D Oscillator</h4>
+
+<h3 id="onbalancevolumeobv">On Balance Volume (OBV)</h3>
+
 <p><strong>COMING SOON</strong></p>
 
 <h2 id="pricetransform">Price Transform</h2>
 
+<h3 id="averageprice">Average Price</h3>
+
+<h3 id="medianprice">Median Price</h3>
+
+<h3 id="typicalprice">Typical Price</h3>
+
+<h3 id="weightedcloseprice">Weighted Close Price</h3>
+
 <p><strong>COMING SOON</strong></p>
 
-<h2 id="cycleindicators">Cycle Indicators</h2>
+<h2 id="cycleindicatorshilberttransform">Cycle Indicators (Hilbert Transform)</h2>
 
-<p><strong>COMING SOON</strong></p>
+<h3 id="dominantcycleperiod">Dominant Cycle Period</h3>
+
+<h3 id="dominantcyclephase">Dominant Cycle Phase</h3>
+
+<h3 id="phasorcomponents">Phasor Components</h3>
+
+<h3 id="sinewave">Sine Wave</h3>
+
+<h3 id="trendvscyclemode">Trend vs Cycle Mode</h3>
 
 <h2 id="candlestickpatterns">Candlestick Patterns</h2>
 
@@ -401,7 +517,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-07 15:58:27 -0400.
+        This page was last updated on 2014-09-08 15:59:13 -0400.
     </p>
     </div></footer>
     
