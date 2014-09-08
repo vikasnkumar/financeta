@@ -63,9 +63,9 @@ as an application. It handles command line processing of C<financeta>.
 
 DESCRIPTION
 
-    The documentation is detailed at http://vikasnkumar.github.io/financeta/
+The documentation is detailed at http://vikasnkumar.github.io/financeta/
 
-    The github repository is at https://github.com/vikasnkumar/financeta.git
+The github repository is at https://github.com/vikasnkumar/financeta.git
 
 =head1 METHODS
 
