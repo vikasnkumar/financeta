@@ -338,17 +338,94 @@ For more details refer the resources at:
 
 ### Momentum
 
+The momentum indicator measures the acceleration or deceleration of prices over
+a rolling period window. The indicator is applied to the close price, although
+it can be applied to any data series.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 1 and 100,000.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Momentum_%28technical_analysis%29)
+- [tadoc.org](http://tadoc.org/indicator/MOM.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=Momentum.htm)
+
 ### Moving Average Convergence-Divergence (MACD)
 
-#### MACD - Default
+MACD is a very popular indicator that reveals changes in strength, direction,
+momentum and duration of a trend in a stock's price. It generates three outputs:
+the MACD output, the MACD signal and the MACD histogram (or the divergence
+series) which is the difference between the MACD output and the MACD signal.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+The histogram shows up as a bar chart and the MACD output and signal are
+overlaid on the histogram.
+
+A combination of the crossing over of the MACD output and the signal over the
+zero-line can be used to create buy/sell signals for trading.
+
+The calculation for the MACD is the difference of two moving average series created
+using two different period windows - fast and slow - where the fast period
+window is shorter than the slow period window. The MACD signal is the moving
+average of the MACD output itself over a period window generally referred to as
+the smoothing period window.
+
+There are three parameters for this indicator:
+
+- fast period window which is a valid integer from 2 to 100,000 
+- slow period window which is a valid integer from 2 to 100,000
+- signal smoothing period window which is a valid integer from 1 to 100,000
+
+The most common values of the period windows are 12 (fast), 26 (slow) and 9
+(signal).
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/MACD)
+- [tadoc.org](http://tadoc.org/indicator/MACD.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=MACD.htm)
+
+#### MACD - with EMA
+
+This is the default MACD indicator which uses the EMA to do the moving average.
 
 #### MACD - Extended
 
+This is the extended MACD indicator which allows the user to select a different
+moving average type for each of the fast, slow and signal smoothing period
+windows. If the user selects EMA for all, then this is the same as the default
+MACD.
+
 #### MACD Fixed 12/26 with EMA
+
+This is a quicker implementation of the indicator where the user only selects
+the signal smoothing period window. The slow and fast period windows are fixed
+to 26 and 12, respectively. The moving average type is fixed to EMA.
 
 ### Money Flow Index (MFI)
 
 ### Relative Strength Index (RSI)
+
+### Rate of Change
+
+#### Rate of Change - Default
+
+#### Rate of Change - Percentage
+
+#### Rate of Change - Ratio
+
+#### Rate of Change - Ratio scaled to 100
+
+### Stochastic
+
+#### Stochastic - Default
+
+#### Stochastic - Fast
+
+#### Stochastic - Relative Strength Index
 
 ### Average Directional Movement Index
 
@@ -377,24 +454,6 @@ For more details refer the resources at:
 ### Plus Directional Movement
 
 ### Percentage Price Oscillator
-
-### Rate of Change
-
-#### Rate of Change - Default
-
-#### Rate of Change - Percentage
-
-#### Rate of Change - Ratio
-
-#### Rate of Change - Ratio scaled to 100
-
-### Stochastic
-
-#### Stochastic - Default
-
-#### Stochastic - Fast
-
-#### Stochastic - Relative Strength Index
 
 ### TRIX - 1-day Rate of Change of Triple Smooth EMA
 

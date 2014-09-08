@@ -414,17 +414,100 @@ valid integer between 2 and 100,000.</p>
 
 <h3 id="momentum">Momentum</h3>
 
+<p>The momentum indicator measures the acceleration or deceleration of prices over
+a rolling period window. The indicator is applied to the close price, although
+it can be applied to any data series.</p>
+
+<p>There is only one parameter for this indicator: the period window which is a
+valid integer between 1 and 100,000.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Momentum_%28technical_analysis%29">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/MOM.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=Momentum.htm">FM Labs</a></li>
+</ul>
+
 <h3 id="movingaverageconvergence-divergencemacd">Moving Average Convergence-Divergence (MACD)</h3>
 
-<h4 id="macd-default">MACD - Default</h4>
+<p>MACD is a very popular indicator that reveals changes in strength, direction,
+momentum and duration of a trend in a stock&#8217;s price. It generates three outputs:
+the MACD output, the MACD signal and the MACD histogram (or the divergence
+series) which is the difference between the MACD output and the MACD signal.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.
+The histogram shows up as a bar chart and the MACD output and signal are
+overlaid on the histogram.</p>
+
+<p>A combination of the crossing over of the MACD output and the signal over the
+zero-line can be used to create buy/sell signals for trading.</p>
+
+<p>The calculation for the MACD is the difference of two moving average series created
+using two different period windows - fast and slow - where the fast period
+window is shorter than the slow period window. The MACD signal is the moving
+average of the MACD output itself over a period window generally referred to as
+the smoothing period window.</p>
+
+<p>There are three parameters for this indicator:</p>
+
+<ul>
+<li>fast period window which is a valid integer from 2 to 100,000</li>
+<li>slow period window which is a valid integer from 2 to 100,000</li>
+<li>signal smoothing period window which is a valid integer from 1 to 100,000</li>
+</ul>
+
+<p>The most common values of the period windows are 12 (fast), 26 (slow) and 9
+(signal).</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/MACD">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/MACD.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=MACD.htm">FM Labs</a></li>
+</ul>
+
+<h4 id="macd-withema">MACD - with EMA</h4>
+
+<p>This is the default MACD indicator which uses the EMA to do the moving average.</p>
 
 <h4 id="macd-extended">MACD - Extended</h4>
 
+<p>This is the extended MACD indicator which allows the user to select a different
+moving average type for each of the fast, slow and signal smoothing period
+windows. If the user selects EMA for all, then this is the same as the default
+MACD.</p>
+
 <h4 id="macdfixed1226withema">MACD Fixed 12/26 with EMA</h4>
+
+<p>This is a quicker implementation of the indicator where the user only selects
+the signal smoothing period window. The slow and fast period windows are fixed
+to 26 and 12, respectively. The moving average type is fixed to EMA.</p>
 
 <h3 id="moneyflowindexmfi">Money Flow Index (MFI)</h3>
 
 <h3 id="relativestrengthindexrsi">Relative Strength Index (RSI)</h3>
+
+<h3 id="rateofchange">Rate of Change</h3>
+
+<h4 id="rateofchange-default">Rate of Change - Default</h4>
+
+<h4 id="rateofchange-percentage">Rate of Change - Percentage</h4>
+
+<h4 id="rateofchange-ratio">Rate of Change - Ratio</h4>
+
+<h4 id="rateofchange-ratioscaledto100">Rate of Change - Ratio scaled to 100</h4>
+
+<h3 id="stochastic">Stochastic</h3>
+
+<h4 id="stochastic-default">Stochastic - Default</h4>
+
+<h4 id="stochastic-fast">Stochastic - Fast</h4>
+
+<h4 id="stochastic-relativestrengthindex">Stochastic - Relative Strength Index</h4>
 
 <h3 id="averagedirectionalmovementindex">Average Directional Movement Index</h3>
 
@@ -453,24 +536,6 @@ valid integer between 2 and 100,000.</p>
 <h3 id="plusdirectionalmovement">Plus Directional Movement</h3>
 
 <h3 id="percentagepriceoscillator">Percentage Price Oscillator</h3>
-
-<h3 id="rateofchange">Rate of Change</h3>
-
-<h4 id="rateofchange-default">Rate of Change - Default</h4>
-
-<h4 id="rateofchange-percentage">Rate of Change - Percentage</h4>
-
-<h4 id="rateofchange-ratio">Rate of Change - Ratio</h4>
-
-<h4 id="rateofchange-ratioscaledto100">Rate of Change - Ratio scaled to 100</h4>
-
-<h3 id="stochastic">Stochastic</h3>
-
-<h4 id="stochastic-default">Stochastic - Default</h4>
-
-<h4 id="stochastic-fast">Stochastic - Fast</h4>
-
-<h4 id="stochastic-relativestrengthindex">Stochastic - Relative Strength Index</h4>
 
 <h3 id="trix-1-dayrateofchangeoftriplesmoothema">TRIX - 1-day Rate of Change of Triple Smooth EMA</h3>
 
@@ -563,7 +628,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 15:59:13 -0400.
+        This page was last updated on 2014-09-08 16:41:59 -0400.
     </p>
     </div></footer>
     
