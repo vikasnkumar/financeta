@@ -434,7 +434,7 @@ valid integer between 1 and 100,000.</p>
 <h3 id="movingaverageconvergence-divergencemacd">Moving Average Convergence-Divergence (MACD)</h3>
 
 <p>MACD is a very popular indicator that reveals changes in strength, direction,
-momentum and duration of a trend in a stock&#8217;s price. It generates three outputs:
+momentum and duration of a trend in a security&#8217;s price. It generates three outputs:
 the MACD output, the MACD signal and the MACD histogram (or the divergence
 series) which is the difference between the MACD output and the MACD signal.</p>
 
@@ -489,17 +489,87 @@ to 26 and 12, respectively. The moving average type is fixed to EMA.</p>
 
 <h3 id="moneyflowindexmfi">Money Flow Index (MFI)</h3>
 
+<p>MFI is an index with values between 0 and 100 used to show the value of a day&#8217;s
+trading over a rolling period window. It calculates a positive and negative
+money flow based on the <a href="#typicalpriceakapivotpoint">typical price</a> and volume
+directions and gives a scaled ratio between 0 to 100.</p>
+
+<p>It is used to determine the <em>enthusiasm</em> of the market based on how much a
+security has been traded.</p>
+
+<p>This indicator has one parameter: the period window which is an integer between
+2 and 100,000.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Money_flow_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/MFI.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=MoneyFlowIndex.htm">FM Labs</a></li>
+</ul>
+
 <h3 id="relativestrengthindexrsi">Relative Strength Index (RSI)</h3>
 
-<h3 id="rateofchange">Rate of Change</h3>
+<p>The RSI is a popular momentum indicator measuring the velocity and magnitude of
+directional price movements over a rolling period window. It is generally used
+in tandem with <a href="#movingaverageconvergence-divergencemacd">MACD</a> and
+<a href="#stochastic">Stochastic</a> to create buy and sell signals.</p>
+
+<p>This indicator has one parameter: the period window which is an integer between
+2 and 100,000.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Relative_strength_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/RSI.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=RSI.htm">FM Labs</a></li>
+</ul>
+
+<h3 id="rateofchangeroc">Rate of Change (ROC)</h3>
+
+<p>The ROC is the ratio of the change in the close price today with respect to the
+close price a fixed number of days ago. This indicator is generally a fraction
+depicting the trend in the prices over time. It is used in tandem with the
+<a href="#momentum">Momentum</a> indicator.</p>
+
+<p>This indicator takes one parameter: a period window which is an integer value
+between 1 and 100,000. The default period window is 10.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Momentum_%28technical_analysis%29">Wikipedia</a></li>
+<li><a href="http://www.investopedia.com/articles/technical/092401.asp">Investopedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=RateOfChange.htm">FM Labs (ROCP)</a></li>
+<li><a href="http://tadoc.org/indicator/ROC.htm">tadoc.org (ROC)</a></li>
+<li><a href="http://tadoc.org/indicator/ROCP.htm">tadoc.org (ROCP)</a></li>
+<li><a href="http://tadoc.org/indicator/ROCR.htm">tadoc.org (ROCR)</a></li>
+<li><a href="http://tadoc.org/indicator/ROCR100.htm">tadoc.org (ROCR100)</a></li>
+</ul>
 
 <h4 id="rateofchange-default">Rate of Change - Default</h4>
 
-<h4 id="rateofchange-percentage">Rate of Change - Percentage</h4>
+<p>The ratio between today&#8217;s close price and the previous close price is subtracted by 1 and multiplied by 100.</p>
+
+<h4 id="rateofchange-percentagerocp">Rate of Change - Percentage (ROCP)</h4>
+
+<p>The ratio between today&#8217;s close price and the previous close price is subtracted by 1.</p>
 
 <h4 id="rateofchange-ratio">Rate of Change - Ratio</h4>
 
+<p>This is the ratio between today&#8217;s close price and the previous close price.</p>
+
 <h4 id="rateofchange-ratioscaledto100">Rate of Change - Ratio scaled to 100</h4>
+
+<p>This is the ratio between today&#8217;s close price and the previous close price
+multiplied by 100.</p>
 
 <h3 id="stochastic">Stochastic</h3>
 
@@ -720,7 +790,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 17:48:16 -0400.
+        This page was last updated on 2014-09-08 17:51:27 -0400.
     </p>
     </div></footer>
     

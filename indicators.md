@@ -356,7 +356,7 @@ For more details refer the resources at:
 ### Moving Average Convergence-Divergence (MACD)
 
 MACD is a very popular indicator that reveals changes in strength, direction,
-momentum and duration of a trend in a stock's price. It generates three outputs:
+momentum and duration of a trend in a security's price. It generates three outputs:
 the MACD output, the MACD signal and the MACD histogram (or the divergence
 series) which is the difference between the MACD output and the MACD signal.
 
@@ -407,17 +407,81 @@ to 26 and 12, respectively. The moving average type is fixed to EMA.
 
 ### Money Flow Index (MFI)
 
+MFI is an index with values between 0 and 100 used to show the value of a day's
+trading over a rolling period window. It calculates a positive and negative
+money flow based on the [typical price](#typicalpriceakapivotpoint) and volume
+directions and gives a scaled ratio between 0 to 100.
+
+It is used to determine the _enthusiasm_ of the market based on how much a
+security has been traded.
+
+This indicator has one parameter: the period window which is an integer between
+2 and 100,000.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Money_flow_index)
+- [tadoc.org](http://tadoc.org/indicator/MFI.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=MoneyFlowIndex.htm)
+
 ### Relative Strength Index (RSI)
 
-### Rate of Change
+The RSI is a popular momentum indicator measuring the velocity and magnitude of
+directional price movements over a rolling period window. It is generally used
+in tandem with [MACD](#movingaverageconvergence-divergencemacd) and
+[Stochastic](#stochastic) to create buy and sell signals.
+
+This indicator has one parameter: the period window which is an integer between
+2 and 100,000.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Relative_strength_index)
+- [tadoc.org](http://tadoc.org/indicator/RSI.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=RSI.htm)
+
+### Rate of Change (ROC)
+
+The ROC is the ratio of the change in the close price today with respect to the
+close price a fixed number of days ago. This indicator is generally a fraction
+depicting the trend in the prices over time. It is used in tandem with the
+[Momentum](#momentum) indicator.
+
+This indicator takes one parameter: a period window which is an integer value
+between 1 and 100,000. The default period window is 10.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Momentum_%28technical_analysis%29)
+- [Investopedia](http://www.investopedia.com/articles/technical/092401.asp)
+- [FM Labs (ROCP)](http://www.fmlabs.com/reference/default.htm?url=RateOfChange.htm)
+- [tadoc.org (ROC)](http://tadoc.org/indicator/ROC.htm)
+- [tadoc.org (ROCP)](http://tadoc.org/indicator/ROCP.htm)
+- [tadoc.org (ROCR)](http://tadoc.org/indicator/ROCR.htm)
+- [tadoc.org (ROCR100)](http://tadoc.org/indicator/ROCR100.htm)
 
 #### Rate of Change - Default
 
-#### Rate of Change - Percentage
+The ratio between today's close price and the previous close price is subtracted by 1 and multiplied by 100.
+
+#### Rate of Change - Percentage (ROCP)
+
+The ratio between today's close price and the previous close price is subtracted by 1.
 
 #### Rate of Change - Ratio
 
+This is the ratio between today's close price and the previous close price.
+
 #### Rate of Change - Ratio scaled to 100
+
+This is the ratio between today's close price and the previous close price
+multiplied by 100.
 
 ### Stochastic
 
