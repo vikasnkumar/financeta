@@ -501,6 +501,19 @@ to 26 and 12, respectively. The moving average type is fixed to EMA.
 
 ## Price Transform
 
+### Typical Price (aka Pivot Point)
+
+The typical price is an average of the high, low and close price of the day.
+This indicator may also be referred to as **pivot point**.
+
+This indicator has no parameters.
+
+For more details refer to the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Typical_price)
+- [tadoc.org](http://tadoc.org/indicator/TYPPRICE.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TypicalPrices.htm)
+
 ### Average Price
 
 This indicator is an average of the open, high, low and close prices of the day.
@@ -522,19 +535,6 @@ For more details refer to the resources at:
 
 - [tadoc.org](http://tadoc.org/indicator/MEDPRICE.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=MedianPrices.htm)
-
-### Typical Price
-
-The typical price is an average of the high, low and close price of the day.
-This indicator may also be referred to as **pivot point**.
-
-This indicator has no parameters.
-
-For more details refer to the resources at:
-
-- [Wikipedia](https://en.wikipedia.org/wiki/Typical_price)
-- [tadoc.org](http://tadoc.org/indicator/TYPPRICE.htm)
-- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TypicalPrices.htm)
 
 ### Weighted Close Price
 
