@@ -67,7 +67,7 @@ The CSV files that are downloaded and temporary data is stored here.
 
 =over
 
-=item L<PDL::Finance::Talib>
+=item L<PDL::Finance::TA>
 
 This module will be used to add technical analysis to the charts.
 

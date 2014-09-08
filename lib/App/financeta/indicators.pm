@@ -11,7 +11,7 @@ use App::financeta::mo;
 use Carp;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Finance::Talib;
+use PDL::Finance::TA;
 use Data::Dumper;
 use POSIX ();
 
