@@ -38,6 +38,6 @@ and backtesting on stocks.
     1. [Volatility Indicators](./indicators.html#volatilityindicators)
     1. [Volume Indicators](./indicators.html#volumeindicators)
     1. [Price Transform](./indicators.html#pricetransform)
-    1. [Cycle Indicators](./indicators.html#cycleindicators)
+    1. [Cycle Indicators](./indicators.html#cycleindicatorshilberttransform)
     1. [Candlestick Patterns](./indicators.html#candlestickpatterns)
 1. [Rules](./rules.html)
