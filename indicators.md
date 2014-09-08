@@ -503,13 +503,50 @@ to 26 and 12, respectively. The moving average type is fixed to EMA.
 
 ### Average Price
 
+This indicator is an average of the open, high, low and close prices of the day.
+
+This indicator has no parameters.
+
+For more details refer to the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/AVGPRICE.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=AvgPrices.htm)
+
 ### Median Price
+
+The median price is an average of the high and low price of the day.
+
+This indicator has no parameters.
+
+For more details refer to the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/MEDPRICE.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=MedianPrices.htm)
 
 ### Typical Price
 
+The typical price is an average of the high, low and close price of the day.
+This indicator may also be referred to as **pivot point**.
+
+This indicator has no parameters.
+
+For more details refer to the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Typical_price)
+- [tadoc.org](http://tadoc.org/indicator/TYPPRICE.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TypicalPrices.htm)
+
 ### Weighted Close Price
 
-**COMING SOON**
+This indicator is the average of the high, low and close price of the bar with
+the close price multiplied by 2.
+
+This indicator has no parameters.
+
+For more details refer to the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/WCLPRICE.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WeightedCloses.htm)
 
 ## Cycle Indicators (Hilbert Transform)
 
