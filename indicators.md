@@ -40,7 +40,7 @@ like to pick. The indicator takes two parameters: the period window which is a
 valid integer between 2 and 100,000 and the type of moving average. Each of
 these types of moving averages are explained below.
 
-### Simple Moving Average (SMA)
+#### Simple Moving Average (SMA)
 
 The simple moving average uses the simplest averaging formula over the period
 window of prices. It simply adds all the prices in the period window divided by
@@ -55,7 +55,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/SimpleMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/SMA.htm)
 
-### Exponential Moving Average (EMA)
+#### Exponential Moving Average (EMA)
 
 The exponential moving average is one of the most useful moving average
 indicators being used today. It has a faster reaction time compared to the
@@ -72,7 +72,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/ExpMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/EMA.htm)
 
-### Double Exponential Moving Average (DEMA)
+#### Double Exponential Moving Average (DEMA)
 
 The DEMA has a lesser lag than the exponential moving average. It is a
 combination of the EMA output and the EMA of the EMA output.
@@ -86,7 +86,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=DEMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/DEMA.htm)
 
-### Triple Exponential Moving Average (TEMA)
+#### Triple Exponential Moving Average (TEMA)
 
 The TEMA has a much lesser lag than the EMA, but has a more complex formula than
 DEMA.
@@ -100,7 +100,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TEMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/TEMA.htm)
 
-### Triple Exponential Moving Average (T3)
+#### Triple Exponential Moving Average (T3)
 
 The T3 is similar to the DEMA but adds a volume factor (`vfactor`) based
 scaling to the DEMA calculation. The `vfactor` is a real number between 0.0 and
@@ -116,7 +116,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=T3.htm)
 - [tadoc.org](http://tadoc.org/indicator/T3.htm)
 
-### Weighted Moving Average (WMA)
+#### Weighted Moving Average (WMA)
 
 The weighted moving average applies weights to data points at different
 positions of the period window. The weights decrease in an arithmetic
@@ -131,7 +131,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WeightedMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/WMA.htm)
 
-### Triangular Moving Average (TMA)
+#### Triangular Moving Average (TMA)
 
 The TMA is similar to the WMA where the weights are assigned in a triangular
 pattern.
@@ -144,7 +144,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TriangularMA.htm)
 - [tadoc.org](http://tadoc.org/indicator/TRIMA.htm)
 
-### Moving Average with Variable Period (MAVP)
+#### Moving Average with Variable Period (MAVP)
 
 This is a type of _Adaptive_ moving average where the user provides a list of
 periods to use to calculate the moving average of the series. In other words,
@@ -159,7 +159,7 @@ For example, the list of integers for the variable periods can be a [Fibonacci
 sequence](https://en.wikipedia.org/wiki/Fibonacci#Fibonacci_sequence) of numbers
 such as `2, 3, 5, 8, 13, 21, 34` and so on.
 
-### Kaufman Adaptive Moving Average (KAMA)
+#### Kaufman Adaptive Moving Average (KAMA)
 
 This is a type of _Adaptive_ moving average that adjusts its speed (or period
 window) based on market volatility to make the moving average more
@@ -173,7 +173,7 @@ For more details refer the resources at:
 - [tadoc.org](http://tadoc.org/indicator/KAMA.htm)
 - [etfhq.com](http://etfhq.com/blog/2011/11/07/adaptive-moving-average-ama-aka-kaufman-adaptive-moving-average-kama/)
 
-### MESA Adaptive Moving Average (MAMA)
+#### MESA Adaptive Moving Average (MAMA)
 
 This indicator relates the phase rate of change to the EMA &alpha; creating an
 adaptive EMA indicator. For more details you will need to read the original
@@ -276,7 +276,7 @@ For more details refer the resource at:
 ### Hilbert Transform - Instantaneous Trendline
 
 This indicator has no parameters and works on the close price. It creates a
-trend line that works on the current price bar thus not have the same lag as the
+trend line that works on the current close price bar thus not have the same lag as the
 various moving average indicators.
 
 For more details refer the resources at:
@@ -284,29 +284,145 @@ For more details refer the resources at:
 - [tadoc.org](http://tadoc.org/indicator/HT_TRENDLINE.htm)
 - [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTTrendLine.ashx)
 
+## Volatility Indicators
+
+### True Range
+
+### Average True Range (ATR)
+
+### Normalized Average True Range (NATR)
+
+**COMING SOON**
+
 ## Momentum Indicators
+
+### Momentum
+
+### Moving Average Convergence-Divergence (MACD)
+
+#### MACD - Default
+
+#### MACD - Extended
+
+#### MACD Fixed 12/26 with EMA
+
+### Money Flow Index (MFI)
+
+### Relative Strength Index (RSI)
+
+### Average Directional Movement Index
+
+### Average Directional Movement Index Rating
+
+### Absolute Price Oscillator
+
+### Aroon
+
+### Aroon Oscillator
+
+### Balance of Power (BOP)
+
+### Commodity Channel Index
+
+### Chande Momentum Oscillator
+
+### Directional Movement Index
+
+### Minus Directional Indicator
+
+### Minus Directional Movement
+
+### Plus Directional Indicator
+
+### Plus Directional Movement
+
+### Percentage Price Oscillator
+
+### Rate of Change
+
+#### Rate of Change - Default
+
+#### Rate of Change - Percentage
+
+#### Rate of Change - Ratio
+
+#### Rate of Change - Ratio scaled to 100
+
+### Stochastic
+
+#### Stochastic - Default
+
+#### Stochastic - Fast
+
+#### Stochastic - Relative Strength Index
+
+### TRIX - 1-day Rate of Change of Triple Smooth EMA
+
+### Ultimate Oscillator
+
+### Williams' %R
 
 **COMING SOON**
 
 ## Statistic Functions
 
-**COMING SOON**
+### Beta
 
-## Volatility Indicators
+### Correlation (Pearson's Correlation Coefficient)
+
+### Linear Regression
+
+#### Linear Regression - Default
+
+#### Linear Regression Angle
+
+#### Linear Regression Intercept
+
+#### Linear Regression Slope
+
+### Standard Deviation
+
+### Timeseries Forecast
+
+### Variance
 
 **COMING SOON**
 
 ## Volume Indicators
 
+### Accumulation/Distribution (A/D)
+
+#### Chaikin A/D Line
+
+#### Chaikin A/D Oscillator
+
+### On Balance Volume (OBV)
+
 **COMING SOON**
 
 ## Price Transform
 
+### Average Price
+
+### Median Price
+
+### Typical Price
+
+### Weighted Close Price
+
 **COMING SOON**
 
-## Cycle Indicators
+## Cycle Indicators (Hilbert Transform)
 
-**COMING SOON**
+### Dominant Cycle Period
+
+### Dominant Cycle Phase
+
+### Phasor Components
+
+### Sine Wave
+
+### Trend vs Cycle Mode
 
 ## Candlestick Patterns
 
