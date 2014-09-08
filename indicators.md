@@ -489,7 +489,7 @@ to 26 and 12, respectively. The moving average type is fixed to EMA.
 
 ## Volume Indicators
 
-### Accumulation/Distribution (A/D)
+### Accumulation/Distribution (A/D) Index
 
 The A/D index is an indicator which takes the ratio of the changes in the high
 and low prices of the day relative to the close price to the difference of the
@@ -499,7 +499,7 @@ the A/D value which is then plotted.
 The plot of this indicator overlays on the volume plot. The user must select the
 _OHLC & Volume_ or _Close & Volume_ plot options to turn on the volume plot.
 
-#### Chaikin A/D Line
+#### A/D Line
 
 This is the base indicator as described above. It has no parameters.
 
