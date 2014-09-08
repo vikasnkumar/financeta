@@ -288,11 +288,51 @@ For more details refer the resources at:
 
 ### True Range
 
+This indicator depicts the degree of price volatility. It uses the high, low and
+close prices to create the indicator value.
+
+There are no parameters for this indicator.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/True_Range)
+- [tadoc.org](http://tadoc.org/indicator/TRANGE.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TR.htm)
+
 ### Average True Range (ATR)
+
+This indicator depicts the degree of price volatility averaged over a rolling
+period window. It uses the high, low and close prices to create the indicator value.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_true_range)
+- [tadoc.org](http://tadoc.org/indicator/ATR.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=ATR.htm)
 
 ### Normalized Average True Range (NATR)
 
-**COMING SOON**
+This is the normalized value of the ATR. Normalization makes the ATR function
+more relevant in the scenarios where the price changes drastically over the long
+term and the user is performing cross-market or cross-security ATR comparisons.
+The ATR value is normalized using the close price and multiplied by 100.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/NATR.htm)
+- [Article by creator John Forman](http://www.traders.com/Documentation/FEEDbk_docs/2006/05/Abstracts_new/Forman/formn.html)
 
 ## Momentum Indicators
 
