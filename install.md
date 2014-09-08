@@ -115,7 +115,7 @@ installed. To install all the required dependencies, after you have installed
 
     $ sudo perl -MCPAN -e 'CPAN::Shell->install("KARASIK/Prima-1.40_1.tar.gz");'
     $ sudo cpan -i PDL PDL::Graphics::Gnuplot Finance::QuoteHist \
-        PDL::Finance::Talib POE::Loop::Prima Capture::Tiny DateTime \
+        PDL::Finance::TA POE::Loop::Prima Capture::Tiny DateTime \
         Software::License Pod::Readme Module::Build
 
 Some of these modules may already be available through your distribution's
@@ -179,7 +179,7 @@ unzip it.
     - You should see the `ta-lib` folder created after unzipping the file.
     - Note down the directory path. For example, if you unzip the folder in your `Documents` directory, then your path on Windows 7 will be `%USERPROFILE%\Documents\ta-lib`. The `%USERPROFILE%` environment variable automatically picks your home directory on Windows.
     - If you have installed the MSI version, start the Strawberry Perl shell from your _Start Menu_ > _Strawberry Perl_ > _Perl (commandline)_. This shell will look like the Windows command shell but with all the paths necessary for Perl to run. You will need to set the
-environment variables for installing `PDL::Finance::Talib` as shown below:
+environment variables for installing `PDL::Finance::TA` as shown below:
 
 Set the environment variables as below, and install the packages
     
@@ -189,7 +189,8 @@ Set the environment variables as below, and install the packages
     C:\> echo %TALIB_CFLAGS%
     C:\> cpan -i App::cpanminus
     C:\> cpanm KARASIK/Prima-1.40_1.tar.gz
-    C:\> cpan -i PDL::Finance::Talib
+    C:\> cpan -i Alien::TALib
+    C:\> cpan -i PDL::Finance::TA
     C:\> cpan -i PDL::Graphics::Gnuplot
     C:\> cpan -i App::financeta
 
