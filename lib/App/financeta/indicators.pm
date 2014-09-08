@@ -1410,7 +1410,7 @@ has cycle => {
 
 has volume => {
     ad => {
-        name => 'Chaikin Accumulation/Distribution line',
+        name => 'Accumulation/Distribution line',
         params => [
             # no params
         ],
@@ -1420,7 +1420,7 @@ has volume => {
             say "Executing ta_ad" if $obj->debug;
             my $outpdl = PDL::ta_ad($high, $low, $close, $volume);
             return [
-                ["Chaikin A/D", $outpdl, undef, "chaikin"],
+                ["A/D", $outpdl, undef, "chaikin"],
             ];
         },
         gnuplot => \&_plot_gnuplot_volume,
