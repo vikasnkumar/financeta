@@ -491,13 +491,54 @@ to 26 and 12, respectively. The moving average type is fixed to EMA.
 
 ### Accumulation/Distribution (A/D)
 
+The A/D index is an indicator which takes the ratio of the changes in the high
+and low prices of the day relative to the close price to the difference of the
+high and low price of the day. This ratio is then scaled by the volume to create
+the A/D value which is then plotted.
+
+The plot of this indicator overlays on the volume plot. The user must select the
+_OHLC & Volume_ or _Close & Volume_ plot options to turn on the volume plot.
+
 #### Chaikin A/D Line
+
+This is the base indicator as described above. It has no parameters.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Accumulation/distribution_index)
+- [tadoc.org](http://tadoc.org/indicator/AD.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=AccumDist.htm)
 
 #### Chaikin A/D Oscillator
 
+This indicator creates an oscillator by using a fast and slow period window
+moving average of the A/D values.
+
+This indicator has two parameters: the fast period and slow period windows which
+are both integers between 2 and 100,000. The default values of the fast and slow
+periods are 3 and 10, respectively.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Accumulation/distribution_index#Chaikin_oscillator)
+- [tadoc.org](http://tadoc.org/indicator/ADOSC.htm)
+
 ### On Balance Volume (OBV)
 
-**COMING SOON**
+The OBV is a cumulative volume indicator that is used to confirm price moves in
+the dominant direction. It uses the close price and the volume of the day for
+its output.
+
+This indicator has no parameters.
+
+The plot of this indicator overlays on the volume plot. The user must select the
+_OHLC & Volume_ or _Close & Volume_ plot options to turn on the volume plot.
+
+For more details refer to the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/On-balance_volume)
+- [tadoc.org](http://tadoc.org/indicator/OBV.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=OBV.htm)
 
 ## Price Transform
 
