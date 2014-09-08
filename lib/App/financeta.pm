@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
 use App::financeta::gui;
@@ -59,7 +59,7 @@ as an application. It handles command line processing of C<financeta>.
 
 =head1 VERSION
 
-0.09
+0.10
 
 DESCRIPTION
 

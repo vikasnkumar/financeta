@@ -4,7 +4,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
 use Pegex::Base;
@@ -12,7 +12,7 @@ extends 'Pegex::Grammar';
 
 use constant text => <<GRAMMAR;
 %grammar financeta
-%version 0.09
+%version 0.10
 
 program: statement* EOS
 statement: comment | instruction
@@ -79,7 +79,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
 use Data::Dumper;
@@ -105,7 +105,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
 use Carp;
