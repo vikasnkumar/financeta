@@ -1,3 +1,110 @@
+Mon Sep 8 13:44:18 2014 -0400
+18dbf677fe4d178be293a3c532d3955b1fbf17e8
+getting ready for release 0.10
+
+Mon Sep 8 10:34:27 2014 -0400
+70f8a260f7949c99765342e081fd96d8b137bc46
+switching Talib to TA as per kmx's module renaming
+
+Fri Sep 5 17:28:23 2014 -0400
+31c8d371badc77ab20e7032c82b46973772b6e73
+bugfix
+
+Fri Sep 5 16:43:20 2014 -0400
+b8f86a452290540abb64b210690037b9fe47feda
+ok the candlesticks are also done pretty easily
+
+Fri Sep 5 16:40:19 2014 -0400
+339f6cc557c461a49586b9387802248e96d3b7f4
+adding variables for all other indicators except candlesticks
+
+Fri Sep 5 16:32:44 2014 -0400
+d548ed821473e556ee02edfa7fdb390a93662e5f
+momemtum indicator variables written now
+
+Fri Sep 5 16:05:28 2014 -0400
+d904a946b2c2ff6f6381886bc2575260c0ae9da8
+adding variable names for volatility indicators
+
+Fri Sep 5 15:52:56 2014 -0400
+3a4e80274fb4280a3eb0b8ff6714bbffa605def5
+adding variable names to the output arrays for use by the rules editor
+
+Thu Sep 4 16:58:19 2014 -0400
+0667c2fe038ec4becae95db9d3dc743ae3fbfe20
+Making keywords case insensitive but variables are case-sensitive
+
+Thu Sep 4 16:00:05 2014 -0400
+289bf16ce40b1bb920a45e245bbcbb18cec823d5
+saving the file in the .financeta directory by default to avoid polluting random directories. Also tracking if the old-filename saved was different from the new
+
+Wed Sep 3 18:08:38 2014 -0400
+1947196f7af6d24c44080669c7b023240af75e01
+Banging out a basic grammar schema for the language
+
+Wed Sep 3 16:13:42 2014 -0400
+64b8294fb556cfbadb14c5e2b6704103dc6f4a74
+sample language class updated. handles comments correctly
+
+Wed Sep 3 12:44:45 2014 -0400
+173e3baff84bd24c0d854471a44dc52b85a31e42
+Adding a framework package module to kickstart the language parsing
+
+Tue Sep 2 12:30:41 2014 -0400
+6825355b8a3a75610d4f81fafcdf4bc063ccc075
+binary mode for plots now adjusted based on Gnuplot version
+
+Tue Sep 2 11:32:13 2014 -0400
+2bdc083c76605d32ec3396107580989d75c84307
+updating the binary thing to only be on windows as Linux gnuplot 4.4 doesn't support it but gnuplot 4.6 does
+
+Tue Sep 2 10:55:58 2014 -0400
+6a6ea0416ab01ca5e97124d8b7f5f0fbf03f6c89
+Windows needs binary => 1 flag set to allow plotting BAD values. Linux works with or without it.
+
+Sun Aug 31 22:51:43 2014 -0400
+b6cfea70172de5783ddd107e258e4e4bad822fc7
+Allow loading of stock data from user's own CSV file in Date-OHLC-Volume format
+
+Sun Aug 31 12:42:56 2014 -0400
+b1ac1d28f890ea1e21f14c7552fcd00d84904a19
+some auto-rule saving if the rules have never been saved
+
+Sun Aug 31 10:17:10 2014 -0400
+465f76772d20ac31bba46043a13c0add1f39c85f
+Unique editor per tab is now being opened. If editor is already open it is brought to the front.
+
+Sat Aug 30 23:26:53 2014 -0400
+95a2988204ec27a4418cd139c58981f558da7a2d
+Adding an editor for rules to the gui.
+
+Thu Aug 28 16:24:06 2014 -0400
+057d5a8c578c664c026af351a35838f708a914aa
+Refactoring of code to allow saving and loading of model files
+
+Thu Aug 28 16:00:29 2014 -0400
+2210cb65feadfcb58ca55492bfc8053046c9d74e
+Save, save-as and load of models is now working except for loading indicators
+
+Thu Aug 28 15:14:03 2014 -0400
+8f0b7772509dbc55de328b7bf47f347b8a74c1c7
+Saving the model is now done
+
+Thu Aug 28 13:32:47 2014 -0400
+0f1022f53ee5e1a01633a0be7528c2d0c333ed3d
+if the tab closes, update the plot despite the index number being same
+
+Thu Aug 28 13:23:43 2014 -0400
+783c395bb4d5365b8014a85373c5eb9fd52946ed
+Updating the MAVP with some elegant cyclic pdl work
+
+Thu Aug 28 13:02:16 2014 -0400
+8f8c08f48bab979b2782845a49cfdb3d15fcb981
+Updating the build.pl to use the correct version
+
+Thu Aug 28 12:39:17 2014 -0400
+5f375c4e16564c3d7902f30986f56c8acc95ab75
+updating changes
 Mon Sep 8 10:34:27 2014 -0400
 70f8a260f7949c99765342e081fd96d8b137bc46
 switching Talib to TA as per kmx's module renaming
