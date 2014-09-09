@@ -585,6 +585,8 @@ close prices over a fast and slow period window for the <code>K</code> and the <
 
 <p>Typical fast and slow period windows for <code>K</code> and <code>D</code> are 5 and 3, respectively.</p>
 
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
 <p>For more details refer the resources at:</p>
 
 <ul>
@@ -646,6 +648,67 @@ parameters that are configurable by the user:</p>
  <a href="#simplemovingaveragesma">SMA</a></li>
 </ul>
 
+<h3 id="trix">TRIX</h3>
+
+<p>Trix or TRIX is the slope of the <a href="#tripleexponentialmovingaveragetema">TEMA</a>
+which is calculated as the ratio of the difference between today&#8217;s and
+yesterday&#8217;s TEMA values and today&#8217;s TEMA value scaled by a factor of 100.</p>
+
+<p>There is one parameter for this indicator: the period window for the moving
+average which is an integer from 1 to 100,000.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Trix_%28technical_analysis%29">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/TRIX.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=TRIX.htm">FM Labs</a></li>
+</ul>
+
+<h3 id="ultimateoscillator">Ultimate Oscillator</h3>
+
+<p>This oscillator is based on buying and selling <em>pressure</em> created when the close
+price of the day falls within the day&#8217;s <a href="#truerange">true range</a> value.</p>
+
+<p>Three different period lengths are used to average the buying or selling
+<em>pressures</em> and in the ratio of 4:2:1 of the averages in the order of the
+shortest to the longest period divided by 7 (4 + 2 + 1) and scaled by 100.</p>
+
+<p>The parameters for this indicator are 3 values of the period windows, each being
+an integer from 1 to 100,000. The default values are 7, 14 and 28.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Ultimate_oscillator">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/ULTOSC.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=UltimateOsc.htm">FM Labs</a></li>
+</ul>
+
+<h3 id="williamsr">Williams&#8217; %R</h3>
+
+<p>This is an oscillator that shows the relation of the current close price to the
+high and low prices of the previous rolling period window. Its purpose is to
+notify whether a security is trading near the high or the low or somewhere in
+between of its recent trading range.</p>
+
+<p>The parameters for this indicator is a period window which is an integer from
+2 to 100,000 with a default value of 14.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Williams_%25R">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/WILLR.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=WilliamsR.htm">FM Labs</a></li>
+</ul>
+
 <h3 id="averagedirectionalmovementindex">Average Directional Movement Index</h3>
 
 <h3 id="averagedirectionalmovementindexrating">Average Directional Movement Index Rating</h3>
@@ -673,12 +736,6 @@ parameters that are configurable by the user:</p>
 <h3 id="plusdirectionalmovement">Plus Directional Movement</h3>
 
 <h3 id="percentagepriceoscillator">Percentage Price Oscillator</h3>
-
-<h3 id="trix-1-dayrateofchangeoftriplesmoothema">TRIX - 1-day Rate of Change of Triple Smooth EMA</h3>
-
-<h3 id="ultimateoscillator">Ultimate Oscillator</h3>
-
-<h3 id="williamsr">Williams&#8217; %R</h3>
 
 <p><strong>COMING SOON</strong></p>
 
@@ -857,7 +914,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 21:12:15 -0400.
+        This page was last updated on 2014-09-08 21:22:26 -0400.
     </p>
     </div></footer>
     

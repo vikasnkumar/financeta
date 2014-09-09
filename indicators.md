@@ -497,6 +497,8 @@ close prices over a fast and slow period window for the `K` and the `D` signals.
 
 Typical fast and slow period windows for `K` and `D` are 5 and 3, respectively.
 
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
 For more details refer the resources at:
 
 - [Wikipedia](https://en.wikipedia.org/wiki/Stochastic_oscillator)
@@ -550,6 +552,61 @@ The configurable parameters are as follows:
 - the moving average type for the fast `D` signal which by default is
   [SMA](#simplemovingaveragesma)
 
+### TRIX
+
+Trix or TRIX is the slope of the [TEMA](#tripleexponentialmovingaveragetema)
+which is calculated as the ratio of the difference between today's and
+yesterday's TEMA values and today's TEMA value scaled by a factor of 100.
+
+There is one parameter for this indicator: the period window for the moving
+average which is an integer from 1 to 100,000.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Trix_%28technical_analysis%29)
+- [tadoc.org](http://tadoc.org/indicator/TRIX.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=TRIX.htm)
+
+### Ultimate Oscillator
+
+This oscillator is based on buying and selling _pressure_ created when the close
+price of the day falls within the day's [true range](#truerange) value.
+
+Three different period lengths are used to average the buying or selling
+_pressures_ and in the ratio of 4:2:1 of the averages in the order of the
+shortest to the longest period divided by 7 (4 + 2 + 1) and scaled by 100.
+
+The parameters for this indicator are 3 values of the period windows, each being
+an integer from 1 to 100,000. The default values are 7, 14 and 28.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Ultimate_oscillator)
+- [tadoc.org](http://tadoc.org/indicator/ULTOSC.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=UltimateOsc.htm)
+
+### Williams' %R
+
+This is an oscillator that shows the relation of the current close price to the
+high and low prices of the previous rolling period window. Its purpose is to
+notify whether a security is trading near the high or the low or somewhere in
+between of its recent trading range.
+
+The parameters for this indicator is a period window which is an integer from
+2 to 100,000 with a default value of 14.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Williams_%25R)
+- [tadoc.org](http://tadoc.org/indicator/WILLR.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WilliamsR.htm)
+
 ### Average Directional Movement Index
 
 ### Average Directional Movement Index Rating
@@ -577,12 +634,6 @@ The configurable parameters are as follows:
 ### Plus Directional Movement
 
 ### Percentage Price Oscillator
-
-### TRIX - 1-day Rate of Change of Triple Smooth EMA
-
-### Ultimate Oscillator
-
-### Williams' %R
 
 **COMING SOON**
 
