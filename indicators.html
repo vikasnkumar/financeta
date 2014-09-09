@@ -746,6 +746,9 @@ between 2 and 100,000 with a default value of 14.</p>
 
 <h4 id="adx">ADX</h4>
 
+<p>The ADX is 100 times the <a href="#exponentialmovingaverageema">EMA</a> of the
+absolute value of <a href="#directionalmovementindexdx">DX</a>.</p>
+
 <p>For more details refer the resources at:</p>
 
 <ul>
@@ -822,21 +825,126 @@ if not, then the value is 0.</p>
 <li><a href="http://www.fmlabs.com/reference/default.htm?url=DI.htm">FM Labs</a></li>
 </ul>
 
-<h3 id="absolutepriceoscillator">Absolute Price Oscillator</h3>
+<h3 id="directionalmovementindexdx">Directional Movement Index (DX)</h3>
+
+<p>The DX is the ratio of the differences and sum of the <a href="#plusdirectionalindicatordi">+DI</a> and
+<a href="#minusdirectionalindicator-di">-DI</a> values.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Average_directional_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/DX.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=DX.htm">FM Labs</a></li>
+</ul>
+
+<h3 id="absolutepriceoscillatorapo">Absolute Price Oscillator (APO)</h3>
+
+<p>This indicator is similar to <a href="#movingaverageconvergence-divergencemacd">MACD</a> in
+that it is the difference of a fast and slow period moving average. A value
+above 0 indicates a buy signal and a value below 0 indicates a sell signal.</p>
+
+<p>This indicator takes three parameters: a fast rolling period window between 2
+and 100,000 with a default value of 12, a slow period window between 2 and 100,000
+with a default value of 26 and the type of moving average with a default value
+of <a href="#simplemovingaveragesma">SMA</a>.</p>
+
+<p>The plot of this indicator is overlaid on top of the price plot.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/APO.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=PriceOscillator.htm">FM Labs</a></li>
+</ul>
+
+<h3 id="percentagepriceoscillatorppo">Percentage Price Oscillator (PPO)</h3>
+
+<p>The PPO is like <a href="#absolutepriceoscillatorapo">APO</a> where the generated values
+are the ratio of the APO values to the fast moving average multiplied by 100.</p>
+
+<p>This indicator takes three parameters: a fast rolling period window between 2
+and 100,000 with a default value of 12, a slow period window between 2 and 100,000
+with a default value of 26 and the type of moving average with a default value
+of <a href="#simplemovingaveragesma">SMA</a>.</p>
+
+<p>The plot of this indicator is overlaid on top of the price plot.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/PPO.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=PriceOscillatorPct.htm">FK Labs</a></li>
+</ul>
 
 <h3 id="aroon">Aroon</h3>
 
+<p>The Aroon indicator attempts to show when a new trend is beginning. The
+indicator consists of two lines - <em>Up</em> and <em>Down</em> - that measure how long it has
+been since the higest high and lowest low have occurred within a rolling period
+window. This indicator works on the high and low prices of the security.</p>
+
+<p>This indicator takes one parameter: the rolling period window which is an
+integer between 2 and 100,000 with a default value of 14.</p>
+
+<p>The plot of this indicator is a sub-plot in the plot window.</p>
+
+<p>For more details refer to the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/AROON.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=Aroon.htm">FM Labs</a></li>
+</ul>
+
 <h3 id="aroonoscillator">Aroon Oscillator</h3>
+
+<p>The Aroon Oscillator is the difference between the <a href="#aroon">Aroon</a> <em>Up</em> and <em>Down</em>
+values.</p>
+
+<p>This indicator takes one parameter: the rolling period window which is an
+integer between 2 and 100,000 with a default value of 14.</p>
+
+<p>The plot of this indicator is a sub-plot in the plot window.</p>
+
+<p>For more details refer to the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/AROONOSC.htm">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=AroonOscillator.htm">FM Labs</a></li>
+</ul>
+
+<h3 id="chandemomentumoscillatorcmo">Chande Momentum Oscillator (CMO)</h3>
+
+<p>The CMO is a modified <a href="#relativestrengthindexrsi">RSI</a> where the CMO divides the
+net movement by the total movement.</p>
+
+<p>This indicator takes one parameter: the rolling period window which is an
+integer between 2 and 100,000 with a default value of 14.</p>
+
+<p>The plot of this indicator is a sub-plot in the plot window.</p>
+
+<p>For more details refer to the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/CMO.htm">Wikipedia</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=CMO.htm">FM Labs</a></li>
+</ul>
 
 <h3 id="balanceofpowerbop">Balance of Power (BOP)</h3>
 
-<h3 id="chandemomentumoscillator">Chande Momentum Oscillator</h3>
+<p>The BOP is a simple indicator which is just a ratio of the differences of the
+close and open price and the high and low prices of the current day.</p>
 
-<h3 id="directionalmovementindex">Directional Movement Index</h3>
+<p>This indicator has no parameters.</p>
 
-<h3 id="percentagepriceoscillator">Percentage Price Oscillator</h3>
+<p>The plot of this indicator is a sub-plot in the plot window.</p>
 
-<p><strong>COMING SOON</strong></p>
+<p>For more details refer to the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/BOP.htm">tadoc.org</a></li>
+<li><a href="http://www.tradeforextrading.com/index.php/balance-power-indicator">tradeforextrading.com</a></li>
+</ul>
 
 <h2 id="statisticfunctions">Statistic Functions</h2>
 
@@ -1103,6 +1211,8 @@ the close price multiplied by 2.</p>
 
 <h3 id="trendvscyclemode">Trend vs Cycle Mode</h3>
 
+<p><strong>COMING SOON</strong></p>
+
 <h2 id="candlestickpatterns">Candlestick Patterns</h2>
 
 <p><strong>COMING SOON</strong></p>
@@ -1126,7 +1236,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 22:56:40 -0400.
+        This page was last updated on 2014-09-08 23:22:07 -0400.
     </p>
     </div></footer>
     

@@ -642,6 +642,9 @@ The plot of this indicator shows up as a sub-plot on the regular plot window.
 
 ####  ADX
 
+The ADX is 100 times the [EMA](#exponentialmovingaverageema) of the
+absolute value of [DX](#directionalmovementindexdx).
+
 For more details refer the resources at:
 
 - [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
@@ -706,21 +709,112 @@ For more details refer the resources at:
 - [tadoc.org](http://tadoc.org/indicator/PLUS_DI.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=DI.htm)
 
-### Absolute Price Oscillator
+### Directional Movement Index (DX)
+
+The DX is the ratio of the differences and sum of the [+DI](#plusdirectionalindicatordi) and
+[-DI](#minusdirectionalindicator-di) values.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
+- [tadoc.org](http://tadoc.org/indicator/DX.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=DX.htm)
+
+### Absolute Price Oscillator (APO)
+
+This indicator is similar to [MACD](#movingaverageconvergence-divergencemacd) in
+that it is the difference of a fast and slow period moving average. A value
+above 0 indicates a buy signal and a value below 0 indicates a sell signal.
+
+This indicator takes three parameters: a fast rolling period window between 2
+and 100,000 with a default value of 12, a slow period window between 2 and 100,000
+with a default value of 26 and the type of moving average with a default value
+of [SMA](#simplemovingaveragesma).
+
+The plot of this indicator is overlaid on top of the price plot.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/APO.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=PriceOscillator.htm)
+
+### Percentage Price Oscillator (PPO)
+
+The PPO is like [APO](#absolutepriceoscillatorapo) where the generated values
+are the ratio of the APO values to the fast moving average multiplied by 100.
+
+This indicator takes three parameters: a fast rolling period window between 2
+and 100,000 with a default value of 12, a slow period window between 2 and 100,000
+with a default value of 26 and the type of moving average with a default value
+of [SMA](#simplemovingaveragesma).
+
+The plot of this indicator is overlaid on top of the price plot.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/PPO.htm)
+- [FK Labs](http://www.fmlabs.com/reference/default.htm?url=PriceOscillatorPct.htm)
 
 ### Aroon
 
+The Aroon indicator attempts to show when a new trend is beginning. The
+indicator consists of two lines - _Up_ and _Down_ - that measure how long it has
+been since the higest high and lowest low have occurred within a rolling period
+window. This indicator works on the high and low prices of the security.
+
+This indicator takes one parameter: the rolling period window which is an
+integer between 2 and 100,000 with a default value of 14.
+
+The plot of this indicator is a sub-plot in the plot window.
+
+For more details refer to the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/AROON.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=Aroon.htm)
+
 ### Aroon Oscillator
+
+The Aroon Oscillator is the difference between the [Aroon](#aroon) _Up_ and _Down_
+values.
+
+This indicator takes one parameter: the rolling period window which is an
+integer between 2 and 100,000 with a default value of 14.
+
+The plot of this indicator is a sub-plot in the plot window.
+
+For more details refer to the resources at:
+
+- [Wikipedia](http://tadoc.org/indicator/AROONOSC.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=AroonOscillator.htm)
+
+### Chande Momentum Oscillator (CMO)
+
+The CMO is a modified [RSI](#relativestrengthindexrsi) where the CMO divides the
+net movement by the total movement.
+
+This indicator takes one parameter: the rolling period window which is an
+integer between 2 and 100,000 with a default value of 14.
+
+The plot of this indicator is a sub-plot in the plot window.
+
+For more details refer to the resources at:
+
+- [Wikipedia](http://tadoc.org/indicator/CMO.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=CMO.htm)
 
 ### Balance of Power (BOP)
 
-### Chande Momentum Oscillator
+The BOP is a simple indicator which is just a ratio of the differences of the
+close and open price and the high and low prices of the current day.
 
-### Directional Movement Index
+This indicator has no parameters.
 
-### Percentage Price Oscillator
+The plot of this indicator is a sub-plot in the plot window.
 
-**COMING SOON**
+For more details refer to the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/BOP.htm)
+- [tradeforextrading.com](http://www.tradeforextrading.com/index.php/balance-power-indicator)
 
 ## Statistic Functions
 
@@ -962,6 +1056,8 @@ For more details refer to the resources at:
 ### Sine Wave
 
 ### Trend vs Cycle Mode
+
+**COMING SOON**
 
 ## Candlestick Patterns
 
