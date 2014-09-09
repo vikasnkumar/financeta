@@ -1357,7 +1357,7 @@ has hilbert => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     ht_trendmode => {
-        name => 'Hilbert Transform - Market Mode (Trend vs Cycle)'
+        name => 'Hilbert Transform - Market Mode (Trend vs Cycle)',
         params => [
             #no params,
         ],
