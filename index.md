@@ -65,6 +65,7 @@ and backtesting on stocks.
         1. [Accumulation/Distribution Index](./indicators.html#accumulationdistributionadindex)
         1. [On Balance Volume](./indicators.html#onbalancevolumeobv)
     1. [Price Transform](./indicators.html#pricetransform)
+        1. [Typical Price](./indicators.html#typicalpriceakapivotpoint)
     1. [Cycle Indicators](./indicators.html#cycleindicatorshilberttransform)
     1. [Candlestick Patterns](./indicators.html#candlestickpatterns)
 1. [Rules](./rules.html)
