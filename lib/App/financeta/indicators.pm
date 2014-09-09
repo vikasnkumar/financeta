@@ -2049,6 +2049,23 @@ has statistic => {
         },
         gnuplot => \&_plot_gnuplot_additional,
     },
+    linearreg_tsf => {
+        name => 'Linear Regression - Forecast',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_tsf with parameters", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_tsf($inpdl, @args);
+            return [
+                ["FORECAST($period)", $outpdl, undef, "forecast_$period"],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
     stddev => {
         name => 'Standard Deviation',
         params => [
@@ -2067,23 +2084,6 @@ has statistic => {
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
-    },
-    tsf => {
-        name => 'Timeseries Forecast',
-        params => [
-            # key, pretty name, type, default value
-            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
-        ],
-        code => sub {
-            my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_tsf with parameters", Dumper(\@args) if $obj->debug;
-            my $period = $args[0];
-            my $outpdl = PDL::ta_tsf($inpdl, @args);
-            return [
-                ["FORECAST($period)", $outpdl, undef, "forecast_$period"],
-            ];
-        },
-        gnuplot => \&_plot_gnuplot_general,
     },
     var => {
         name => 'Variance',
