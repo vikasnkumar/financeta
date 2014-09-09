@@ -390,20 +390,23 @@ For more details refer the resources at:
 
 #### MACD - with EMA
 
-This is the default MACD indicator which uses the EMA to do the moving average.
+This is the default MACD indicator which uses the
+[EMA](#exponentialmovingaverageema) to do the moving average.
 
 #### MACD - Extended
 
 This is the extended MACD indicator which allows the user to select a different
 moving average type for each of the fast, slow and signal smoothing period
-windows. If the user selects EMA for all, then this is the same as the default
-MACD.
+windows. If the user selects [EMA](#exponentialmovingaverageema) for all, then this is the same as the default
+MACD. The default moving average types are set to
+[SMA](#simplemovingaveragesma).
 
 #### MACD Fixed 12/26 with EMA
 
 This is a quicker implementation of the indicator where the user only selects
 the signal smoothing period window. The slow and fast period windows are fixed
-to 26 and 12, respectively. The moving average type is fixed to EMA.
+to 26 and 12, respectively. The moving average type is fixed to
+[EMA](#exponentialmovingaverageema).
 
 ### Money Flow Index (MFI)
 
@@ -538,7 +541,7 @@ This indicator is special in the sense that it creates the stochastic of the
 
 The configurable parameters are as follows:
 
-- the period window for calculating the RSI which is an integer between 2 and
+- the period window for calculating the [RSI](#relativestrengthindexrsi) which is an integer between 2 and
   100,000
 - the period window for the fast `K` signal which is an integer between 1 and
   100,000 with a default value of 5
