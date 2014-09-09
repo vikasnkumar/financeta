@@ -731,9 +731,96 @@ this range indicate over-bought or over-sold conditions.</p>
 <li><a href="http://www.fmlabs.com/reference/default.htm?url=CCI.htm">FM Labs</a></li>
 </ul>
 
-<h3 id="averagedirectionalmovementindex">Average Directional Movement Index</h3>
+<h3 id="averagedirectionalmovementindexadx">Average Directional Movement Index (ADX)</h3>
 
-<h3 id="averagedirectionalmovementindexrating">Average Directional Movement Index Rating</h3>
+<p>ADX is an indicator that denotes the strength of the trend in a security&#8217;s
+prices. It is a lagging indicator and depends on the period window being used.</p>
+
+<p>ADX combines the <a href="#minusdirectionalindicator-di">-DI</a> and <a href="#plusdirectionalindicatordi">+DI</a>
+indicator using an <a href="#exponentialmovingaverageema">EMA</a>.</p>
+
+<p>There is one parameter for this indicator: the period window which is an integer
+between 2 and 100,000 with a default value of 14.</p>
+
+<p>The plot of this indicator shows up as a sub-plot on the regular plot window.</p>
+
+<h4 id="adx">ADX</h4>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Average_directional_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/ADX.htm">tadoc.org</a></li>
+<li><a href="http://www.investopedia.com/articles/technical/02/041002.asp">Investopedia</a></li>
+</ul>
+
+<h4 id="averagedirectionalmovementindexratingadxr">Average Directional Movement Index Rating (ADXR)</h4>
+
+<p>This is the ratio of the current <a href="#averagedirectionalmovementindexadx">ADX</a> with the
+ADX value from the beginning of the previous rolling period window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/ADXR.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=ADXR.htm">FM Labs</a></li>
+</ul>
+
+<h4 id="minusdirectionalmovement-dm">Minus Directional Movement (-DM)</h4>
+
+<p>The -DM value is a series where the value is the difference between the previous
+day&#8217;s low price and the current low price if the difference is positive and greater than the
+difference between the previous day&#8217;s high price and the current high price, or
+if not, then the value is 0.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Average_directional_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/MINUS_DM.htm">tadoc.org</a></li>
+<li><a href="http://www.investopedia.com/articles/technical/02/050602.asp">Investopedia</a></li>
+</ul>
+
+<h4 id="plusdirectionalmovementdm">Plus Directional Movement (+DM)</h4>
+
+<p>The +DM value is a series where the value is the difference between the previous
+day&#8217;s high price and the current high price if the difference is positive and greater than the
+difference between the previous day&#8217;s low price and the current low price, or
+if not, then the value is 0.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Average_directional_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/PLUS_DM.htm">tadoc.org</a></li>
+<li><a href="http://www.investopedia.com/articles/technical/02/050602.asp">Investopedia</a></li>
+</ul>
+
+<h4 id="minusdirectionalindicator-di">Minus Directional Indicator (-DI)</h4>
+
+<p>The -DI value is 100 times the <a href="#exponentialmovingaverageema">EMA</a> value of
+<a href="#minusdirectionalmovement-dm">-DM</a> divided by the <a href="#averagetruerangeatr">ATR</a>.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Average_directional_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/MINUS_DI.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=DI.htm">FM Labs</a></li>
+</ul>
+
+<h4 id="plusdirectionalindicatordi">Plus Directional Indicator (+DI)</h4>
+
+<p>The +DI value is 100 times the <a href="#exponentialmovingaverageema">EMA</a> value of
+<a href="#plusdirectionalmovementdm">+DM</a> divided by the <a href="#averagetruerangeatr">ATR</a>.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Average_directional_index">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/PLUS_DI.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=DI.htm">FM Labs</a></li>
+</ul>
 
 <h3 id="absolutepriceoscillator">Absolute Price Oscillator</h3>
 
@@ -746,14 +833,6 @@ this range indicate over-bought or over-sold conditions.</p>
 <h3 id="chandemomentumoscillator">Chande Momentum Oscillator</h3>
 
 <h3 id="directionalmovementindex">Directional Movement Index</h3>
-
-<h3 id="minusdirectionalindicator">Minus Directional Indicator</h3>
-
-<h3 id="minusdirectionalmovement">Minus Directional Movement</h3>
-
-<h3 id="plusdirectionalindicator">Plus Directional Indicator</h3>
-
-<h3 id="plusdirectionalmovement">Plus Directional Movement</h3>
 
 <h3 id="percentagepriceoscillator">Percentage Price Oscillator</h3>
 
@@ -1047,7 +1126,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 22:50:36 -0400.
+        This page was last updated on 2014-09-08 22:56:40 -0400.
     </p>
     </div></footer>
     

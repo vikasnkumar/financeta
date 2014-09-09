@@ -627,9 +627,84 @@ For more details refer the resources at:
 - [tadoc.org](http://tadoc.org/indicator/CCI.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=CCI.htm)
 
-### Average Directional Movement Index
+### Average Directional Movement Index (ADX)
 
-### Average Directional Movement Index Rating
+ADX is an indicator that denotes the strength of the trend in a security's
+prices. It is a lagging indicator and depends on the period window being used.
+
+ADX combines the [-DI](#minusdirectionalindicator-di) and [+DI](#plusdirectionalindicatordi)
+indicator using an [EMA](#exponentialmovingaverageema).
+
+There is one parameter for this indicator: the period window which is an integer
+between 2 and 100,000 with a default value of 14.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+####  ADX
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
+- [tadoc.org](http://tadoc.org/indicator/ADX.htm)
+- [Investopedia](http://www.investopedia.com/articles/technical/02/041002.asp)
+
+#### Average Directional Movement Index Rating (ADXR)
+
+This is the ratio of the current [ADX](#averagedirectionalmovementindexadx) with the
+ADX value from the beginning of the previous rolling period window.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/ADXR.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=ADXR.htm)
+
+#### Minus Directional Movement (-DM)
+
+The -DM value is a series where the value is the difference between the previous
+day's low price and the current low price if the difference is positive and greater than the
+difference between the previous day's high price and the current high price, or
+if not, then the value is 0.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
+- [tadoc.org](http://tadoc.org/indicator/MINUS_DM.htm)
+- [Investopedia](http://www.investopedia.com/articles/technical/02/050602.asp)
+
+#### Plus Directional Movement (+DM)
+
+The +DM value is a series where the value is the difference between the previous
+day's high price and the current high price if the difference is positive and greater than the
+difference between the previous day's low price and the current low price, or
+if not, then the value is 0.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
+- [tadoc.org](http://tadoc.org/indicator/PLUS_DM.htm)
+- [Investopedia](http://www.investopedia.com/articles/technical/02/050602.asp)
+
+#### Minus Directional Indicator (-DI)
+
+The -DI value is 100 times the [EMA](#exponentialmovingaverageema) value of
+[-DM](#minusdirectionalmovement-dm) divided by the [ATR](#averagetruerangeatr).
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
+- [tadoc.org](http://tadoc.org/indicator/MINUS_DI.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=DI.htm)
+
+#### Plus Directional Indicator (+DI)
+
+The +DI value is 100 times the [EMA](#exponentialmovingaverageema) value of
+[+DM](#plusdirectionalmovementdm) divided by the [ATR](#averagetruerangeatr).
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Average_directional_index)
+- [tadoc.org](http://tadoc.org/indicator/PLUS_DI.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=DI.htm)
 
 ### Absolute Price Oscillator
 
@@ -639,18 +714,9 @@ For more details refer the resources at:
 
 ### Balance of Power (BOP)
 
-
 ### Chande Momentum Oscillator
 
 ### Directional Movement Index
-
-### Minus Directional Indicator
-
-### Minus Directional Movement
-
-### Plus Directional Indicator
-
-### Plus Directional Movement
 
 ### Percentage Price Oscillator
 
