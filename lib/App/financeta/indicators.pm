@@ -1325,7 +1325,7 @@ has hilbert => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     ht_phasor => {
-        name => 'Hilbert Transform - Phasor Components',
+        name => 'Hilbert Transform - In-Phase & Quadrature',
         params => [
             #no params,
         ],
@@ -1357,7 +1357,7 @@ has hilbert => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     ht_trendmode => {
-        name => 'Hilbert Transform - Trend vs Cycle Mode',
+        name => 'Hilbert Transform - Market Mode (Trend vs Cycle)'
         params => [
             #no params,
         ],
