@@ -1112,7 +1112,15 @@ For more details refer the resources at:
 
 ## Candlestick Patterns
 
-**COMING SOON**
+**We shall be documenting candlestick patterns in detail soon.** Until then please
+refer [Wikipedia](https://en.wikipedia.org/wiki/Candlestick_pattern). They
+explain most of the patterns we support.
+
+The output of the candlestick pattern indicators is a series of integers which
+we overlay on the price plot window as straight lines when they are non-zero.
+The plot of these candlestick patterns will only show if the user has selected
+_Candlesticks_ or _Candlesticks & Volume_ plot in the Plot options.
+
 
 Now that you are aware of the indicators that you may want to use, let's
 learn how to write some rules to generate buy and sell signals in the [next
