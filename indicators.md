@@ -607,6 +607,8 @@ For more details refer the resources at:
 - [tadoc.org](http://tadoc.org/indicator/WILLR.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WilliamsR.htm)
 
+### Commodity Channel Index
+
 ### Average Directional Movement Index
 
 ### Average Directional Movement Index Rating
@@ -619,7 +621,6 @@ For more details refer the resources at:
 
 ### Balance of Power (BOP)
 
-### Commodity Channel Index
 
 ### Chande Momentum Oscillator
 
@@ -641,25 +642,128 @@ For more details refer the resources at:
 
 ### Beta
 
+The Beta indicator compares one security with another to give the user an
+indication on how these securities move with respect to each other in the
+market. The other security could be an index like Dow Jones Industrial Average
+or S&P 500 or could be another security itself.
+
+The most common usage of Beta is to understand the volatility of a security with
+respect to a market index. A value less than 1 implies the security varies less
+than the market and a value greater than 1 implies the security varies more than
+the market and if the value is 1 the security follows the market.
+
+Beta is calculated using a rolling period window which is an integer between 1
+and 100,000 with a default value of 5.
+
+The plot of this indicator has the second security overlaid on the first
+security and a sub-plot showing the Beta line.
+
+For more details refer the following resources:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Beta_coefficient)
+- [tadoc.org](http://tadoc.org/indicator/BETA.htm)
+
 ### Correlation (Pearson's Correlation Coefficient)
+
+Pearson's correlation coefficient is an indicator that compares how two securities are related to each
+other. It always has a value between -1.0 and 1.0. A negative value implies one
+of the securities moves in an opposite direction to the other and a positive
+value implies they move in sync. The closer these values are to the 1.0 line,
+the more correlated these securities are to one another.
+
+The correlation coefficient is calculated using a rolling period window which is an integer
+between 1 and 100,000 with a default value of 5.
+
+The plot of this indicator has the second security overlaid on the first
+security and a sub-plot showing the Beta line.
+
+For more details refer the following resources:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient)
+- [tadoc.org](http://tadoc.org/indicator/CORREL.htm)
 
 ### Linear Regression
 
+Linear regression attempts to fit a straight line between several data points in
+such a way that the distance between each data point and the line is minimized.
+
+For each point, a straight line over the specified previous bar period is
+determined in terms of `y = b + m * x`.
+
+The linear regression indicators take one parameter: the rolling period window
+which is an integer between 2 and 100,000 with a default value of 14.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
+- [tadoc.org](http://tadoc.org/indicator/LINEARREG.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=RegressionLineMv.htm)
+
 #### Linear Regression - Default
 
-#### Linear Regression Angle
+This returns the series that has the value `b + m * (period - 1)`.
 
-#### Linear Regression Intercept
+The plot of this indicator is overlaid on the price plot.
 
 #### Linear Regression Slope
 
+This returns the series that has the value `m`.
+
+The plot of this indicator is in a sub-plot on the plot window.
+
+#### Linear Regression Angle
+
+This returns the series that has the value `m` in degrees.
+
+The plot of this indicator is in a sub-plot on the plot window.
+
+#### Linear Regression Intercept
+
+This returns the series that has the value `b`.
+
+The plot of this indicator is in a sub-plot on the plot window.
+
+#### Linear Regression Forecast
+
+This returns the series that has the value `b + m * period`.
+
+The plot of this indicator is overlaid on the price plot.
+
 ### Standard Deviation
 
-### Timeseries Forecast
+Standard Deviation is a signal line created using a rolling period window of the
+close price multiplied by the number of standard deviations requested by the
+user.
+
+This indicator has two parameters: the period window which is a value between 2
+and 100,000 and the number of standard deviations requested. The default values
+of the period window and number of standard deviations are 5 and 1.0,
+respectively.
+
+The plot of this indicator is in a sub-plot on the plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
+- [tadoc.org](http://tadoc.org/indicator/STDDEV.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=StdDevMv.htm)
 
 ### Variance
 
-**COMING SOON**
+Variance is similar to the [standard deviation](#standarddeviation) indicator
+where the variance is just the square of the standard deviation values.
+
+This indicator has two parameters: the period window which is a value between 2
+and 100,000 and the number of standard deviations requested. The default values
+of the period window and number of standard deviations are 5 and 1.0,
+respectively.
+
+The plot of this indicator is in a sub-plot on the plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Variance)
+- [tadoc.org](http://tadoc.org/indicator/VAR.htm)
 
 ## Volume Indicators
 

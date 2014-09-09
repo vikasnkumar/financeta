@@ -709,6 +709,8 @@ between of its recent trading range.</p>
 <li><a href="http://www.fmlabs.com/reference/default.htm?url=WilliamsR.htm">FM Labs</a></li>
 </ul>
 
+<h3 id="commoditychannelindex">Commodity Channel Index</h3>
+
 <h3 id="averagedirectionalmovementindex">Average Directional Movement Index</h3>
 
 <h3 id="averagedirectionalmovementindexrating">Average Directional Movement Index Rating</h3>
@@ -720,8 +722,6 @@ between of its recent trading range.</p>
 <h3 id="aroonoscillator">Aroon Oscillator</h3>
 
 <h3 id="balanceofpowerbop">Balance of Power (BOP)</h3>
-
-<h3 id="commoditychannelindex">Commodity Channel Index</h3>
 
 <h3 id="chandemomentumoscillator">Chande Momentum Oscillator</h3>
 
@@ -743,25 +743,138 @@ between of its recent trading range.</p>
 
 <h3 id="beta">Beta</h3>
 
+<p>The Beta indicator compares one security with another to give the user an
+indication on how these securities move with respect to each other in the
+market. The other security could be an index like Dow Jones Industrial Average
+or S&amp;P 500 or could be another security itself.</p>
+
+<p>The most common usage of Beta is to understand the volatility of a security with
+respect to a market index. A value less than 1 implies the security varies less
+than the market and a value greater than 1 implies the security varies more than
+the market and if the value is 1 the security follows the market.</p>
+
+<p>Beta is calculated using a rolling period window which is an integer between 1
+and 100,000 with a default value of 5.</p>
+
+<p>The plot of this indicator has the second security overlaid on the first
+security and a sub-plot showing the Beta line.</p>
+
+<p>For more details refer the following resources:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Beta_coefficient">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/BETA.htm">tadoc.org</a></li>
+</ul>
+
 <h3 id="correlationpearsonscorrelationcoefficient">Correlation (Pearson&#8217;s Correlation Coefficient)</h3>
+
+<p>Pearson&#8217;s correlation coefficient is an indicator that compares how two securities are related to each
+other. It always has a value between &#8211;1.0 and 1.0. A negative value implies one
+of the securities moves in an opposite direction to the other and a positive
+value implies they move in sync. The closer these values are to the 1.0 line,
+the more correlated these securities are to one another.</p>
+
+<p>The correlation coefficient is calculated using a rolling period window which is an integer
+between 1 and 100,000 with a default value of 5.</p>
+
+<p>The plot of this indicator has the second security overlaid on the first
+security and a sub-plot showing the Beta line.</p>
+
+<p>For more details refer the following resources:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/CORREL.htm">tadoc.org</a></li>
+</ul>
 
 <h3 id="linearregression">Linear Regression</h3>
 
+<p>Linear regression attempts to fit a straight line between several data points in
+such a way that the distance between each data point and the line is minimized.</p>
+
+<p>For each point, a straight line over the specified previous bar period is
+determined in terms of <code>y = b + m * x</code>.</p>
+
+<p>The linear regression indicators take one parameter: the rolling period window
+which is an integer between 2 and 100,000 with a default value of 14.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Linear_regression">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/LINEARREG.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=RegressionLineMv.htm">FM Labs</a></li>
+</ul>
+
 <h4 id="linearregression-default">Linear Regression - Default</h4>
 
-<h4 id="linearregressionangle">Linear Regression Angle</h4>
+<p>This returns the series that has the value <code>b + m * (period - 1)</code>.</p>
 
-<h4 id="linearregressionintercept">Linear Regression Intercept</h4>
+<p>The plot of this indicator is overlaid on the price plot.</p>
 
 <h4 id="linearregressionslope">Linear Regression Slope</h4>
 
+<p>This returns the series that has the value <code>m</code>.</p>
+
+<p>The plot of this indicator is in a sub-plot on the plot window.</p>
+
+<h4 id="linearregressionangle">Linear Regression Angle</h4>
+
+<p>This returns the series that has the value <code>m</code> in degrees.</p>
+
+<p>The plot of this indicator is in a sub-plot on the plot window.</p>
+
+<h4 id="linearregressionintercept">Linear Regression Intercept</h4>
+
+<p>This returns the series that has the value <code>b</code>.</p>
+
+<p>The plot of this indicator is in a sub-plot on the plot window.</p>
+
+<h4 id="linearregressionforecast">Linear Regression Forecast</h4>
+
+<p>This returns the series that has the value <code>b + m * period</code>.</p>
+
+<p>The plot of this indicator is overlaid on the price plot.</p>
+
 <h3 id="standarddeviation">Standard Deviation</h3>
 
-<h3 id="timeseriesforecast">Timeseries Forecast</h3>
+<p>Standard Deviation is a signal line created using a rolling period window of the
+close price multiplied by the number of standard deviations requested by the
+user.</p>
+
+<p>This indicator has two parameters: the period window which is a value between 2
+and 100,000 and the number of standard deviations requested. The default values
+of the period window and number of standard deviations are 5 and 1.0,
+respectively.</p>
+
+<p>The plot of this indicator is in a sub-plot on the plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Standard_deviation">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/STDDEV.htm">tadoc.org</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=StdDevMv.htm">FM Labs</a></li>
+</ul>
 
 <h3 id="variance">Variance</h3>
 
-<p><strong>COMING SOON</strong></p>
+<p>Variance is similar to the <a href="#standarddeviation">standard deviation</a> indicator
+where the variance is just the square of the standard deviation values.</p>
+
+<p>This indicator has two parameters: the period window which is a value between 2
+and 100,000 and the number of standard deviations requested. The default values
+of the period window and number of standard deviations are 5 and 1.0,
+respectively.</p>
+
+<p>The plot of this indicator is in a sub-plot on the plot window.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Variance">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/VAR.htm">tadoc.org</a></li>
+</ul>
 
 <h2 id="volumeindicators">Volume Indicators</h2>
 
@@ -914,7 +1027,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 21:22:26 -0400.
+        This page was last updated on 2014-09-08 21:47:08 -0400.
     </p>
     </div></footer>
     
