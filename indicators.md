@@ -249,43 +249,6 @@ direction if negative, or auto-detect if 0. The default is 0.
 
 If all the default values are used, SAREXT is the same as SAR.
 
-### Mid-point Prices
-
-#### Mid-point over period
-
-This indicator calculates the average of the highest and lowest values of the
-close prices in the period window selected.
-
-There is only one parameter for this indicator: the period window which is a
-valid integer between 2 and 100,000.
-
-For more details refer the resource at:
-
-- [tadoc.org](http://tadoc.org/indicator/MIDPOINT.htm)
-
-#### Mid-point Price over period
-
-This indicator calculates the average of the highest high price and lowest low
-price of the period window selected.
-
-There is only one parameter for this indicator: the period window which is a
-valid integer between 2 and 100,000.
-
-For more details refer the resource at:
-
-- [tadoc.org](http://tadoc.org/indicator/MIDPRICE.htm)
-
-### Hilbert Transform - Instantaneous Trendline
-
-This indicator has no parameters and works on the close price. It creates a
-trend line that works on the current close price bar thus not have the same lag as the
-various moving average indicators.
-
-For more details refer the resources at:
-
-- [tadoc.org](http://tadoc.org/indicator/HT_TRENDLINE.htm)
-- [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTTrendLine.ashx)
-
 ## Volatility Indicators
 
 ### True Range
@@ -774,7 +737,7 @@ For more details refer to the resources at:
 - [tadoc.org](http://tadoc.org/indicator/AROON.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=Aroon.htm)
 
-### Aroon Oscillator
+#### Aroon Oscillator
 
 The Aroon Oscillator is the difference between the [Aroon](#aroon) _Up_ and _Down_
 values.
@@ -1047,7 +1010,42 @@ For more details refer to the resources at:
 - [tadoc.org](http://tadoc.org/indicator/WCLPRICE.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WeightedCloses.htm)
 
+### Mid-point Close over period
+
+This indicator calculates the average of the highest and lowest values of the
+close prices in the period window selected.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resource at:
+
+- [tadoc.org](http://tadoc.org/indicator/MIDPOINT.htm)
+
+### Mid-point Price over period
+
+This indicator calculates the average of the highest high price and lowest low
+price of the period window selected.
+
+There is only one parameter for this indicator: the period window which is a
+valid integer between 2 and 100,000.
+
+For more details refer the resource at:
+
+- [tadoc.org](http://tadoc.org/indicator/MIDPRICE.htm)
+
 ## Cycle Indicators (Hilbert Transform)
+
+### Instantaneous Trendline
+
+This indicator has no parameters and works on the close price. It creates a
+trend line that works on the current close price bar thus not have the same lag as the
+various moving average indicators.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/HT_TRENDLINE.htm)
+- [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTTrendLine.ashx)
 
 ### Dominant Cycle Period
 
