@@ -589,7 +589,7 @@ has volatility => {
 
 has momentum => {
     adx => {
-        name => 'Average Directional Movement Index',
+        name => 'Average Directional Movement Index (ADX)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
@@ -607,7 +607,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     adxr => {
-        name => 'Average Directional Movement Index Rating',
+        name => 'Average Directional Movement Index Rating (ADXR)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
@@ -625,7 +625,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     apo => {
-        name => 'Absolute Price Oscillator',
+        name => 'Absolute Price Oscillator (APO)',
         params => [
             # key, pretty name, type, default value
             [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
@@ -696,7 +696,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     bop => {
-        name => 'Balance Of Power',
+        name => 'Balance Of Power (BOP)',
         params => [
             # no params
         ],
@@ -712,7 +712,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     cci => {
-        name => 'Commodity Channel Index',
+        name => 'Commodity Channel Index (CCI)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
@@ -730,7 +730,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     cmo => {
-        name => 'Chande Momentum Oscillator',
+        name => 'Chande Momentum Oscillator (CMO)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
@@ -747,7 +747,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     dx => {
-        name => 'Directional Movement Index',
+        name => 'Directional Movement Index (DX)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
@@ -765,7 +765,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     macd => {
-        name => 'Moving Average Convergence/Divergence',
+        name => 'Moving Average Convergence/Divergence (MACD)',
         params => [
             # key, pretty name, type, default value
             [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
@@ -872,7 +872,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     mfi => {
-        name => 'Money Flow Index',
+        name => 'Money Flow Index (MFI)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(2 - 100000)', PDL::long, 14],
@@ -890,7 +890,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     minus_di => {
-        name => 'Minus Directional Indicator',
+        name => 'Minus Directional Indicator (-DI)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
@@ -902,13 +902,13 @@ has momentum => {
             my $period = $args[0];
             my $outpdl = PDL::ta_minus_di($high, $low, $close, @args);
             return [
-                ["MINUS-DI($period)", $outpdl, undef, "minusdi_$period"],
+                ["-DI($period)", $outpdl, undef, "minusdi_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
     },
     minus_dm => {
-        name => 'Minus Directional Movement',
+        name => 'Minus Directional Movement (-DM)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
@@ -920,7 +920,7 @@ has momentum => {
             my $period = $args[0];
             my $outpdl = PDL::ta_minus_dm($high, $low, @args);
             return [
-                ["MINUS-DM($period)", $outpdl, undef, "minusdm_$period"],
+                ["-DM($period)", $outpdl, undef, "minusdm_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -943,7 +943,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     plus_di => {
-        name => 'Plus Directional Indicator',
+        name => 'Plus Directional Indicator (+DI)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
@@ -955,13 +955,13 @@ has momentum => {
             my $period = $args[0];
             my $outpdl = PDL::ta_plus_di($high, $low, $close, @args);
             return [
-                ["PLUS-DI($period)", $outpdl, undef, "plusdi_$period"],
+                ["+DI($period)", $outpdl, undef, "plusdi_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
     },
     plus_dm => {
-        name => 'Plus Directional Indicator',
+        name => 'Plus Directional Movement (+DM)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 14],
@@ -973,13 +973,13 @@ has momentum => {
             my $period = $args[0];
             my $outpdl = PDL::ta_plus_dm($high, $low, @args);
             return [
-                ["PLUS-DM($period)", $outpdl, undef, "plusdm_$period"],
+                ["+DM($period)", $outpdl, undef, "plusdm_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
     },
     ppo => {
-        name => 'Percentage Price Oscillator',
+        name => 'Percentage Price Oscillator (PPO)',
         params => [
             # key, pretty name, type, default value
             [ 'InFastPeriod', 'Fast MA Period Window (2 - 100000)', PDL::long, 12],
@@ -1013,7 +1013,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     roc => {
-        name => 'Rate of Change',
+        name => 'Rate of Change (ROC)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
@@ -1030,7 +1030,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     rocp => {
-        name => 'Rate of Change Precentage',
+        name => 'Rate of Change Precentage (ROCP)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
@@ -1047,7 +1047,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     rocr => {
-        name => 'Rate of Change Ratio',
+        name => 'Rate of Change Ratio (ROCR)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
@@ -1064,7 +1064,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     rocr100 => {
-        name => 'Rate of Change Ratio - scale 100',
+        name => 'Rate of Change Ratio x 100 (ROCR100)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(1 - 100000)', PDL::long, 10],
@@ -1081,7 +1081,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     rsi => {
-        name => 'Relative Strength Index',
+        name => 'Relative Strength Index (RSI)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window(2 - 100000)', PDL::long, 14],
@@ -1183,7 +1183,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     stochrsi => {
-        name => 'Stochastic Relative Strength Index',
+        name => 'Stochastic Relative Strength Index (STOCHRSI)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
@@ -1220,7 +1220,7 @@ has momentum => {
         gnuplot => \&_plot_gnuplot_additional,
     },
     trix => {
-        name => '1-day ROC of Triple Smooth EMA',
+        name => 'ROC of Triple Smooth EMA (TRIX)',
         params => [
             # key, pretty name, type, default value
             [ 'InTimePeriod', 'Period Window (1 - 100000)', PDL::long, 30],
@@ -1278,7 +1278,7 @@ has momentum => {
     },
 };
 
-has cycle => {
+has hilbert => {
     ht_trendline => {
         name => 'Hilbert Transform - Instantaneous Trendline',
         params => [
@@ -1366,7 +1366,7 @@ has cycle => {
             say "Executing ta_ht_trendmode" if $obj->debug;
             my $outpdl = PDL::ta_ht_trendmode($inpdl);
             return [
-                ['HT-Trend vs Cycle', $outpdl, { with => 'impulses', axes => 'x1y2' }, "ht_trendcycle"],
+                ['HT-TrendvCycle', $outpdl, { with => 'impulses', axes => 'x1y2' }, "ht_trendcycle"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,
@@ -1375,7 +1375,7 @@ has cycle => {
 
 has volume => {
     ad => {
-        name => 'Accumulation/Distribution line',
+        name => 'Accumulation/Distribution line (A/D)',
         params => [
             # no params
         ],
@@ -1411,7 +1411,7 @@ has volume => {
         gnuplot => \&_plot_gnuplot_volume,
     },
     obv => {
-        name => 'On Balance Volume',
+        name => 'On Balance Volume (OBV)',
         params => [
             # no params
         ],
@@ -2175,24 +2175,24 @@ has price => {
 
 has group_name => {
     overlaps => 'Overlap Studies',
-    volatility => 'Volatility Indicators',
     momentum => 'Momentum Indicators',
-    cycle => 'Cycle Indicators',
+    volatility => 'Volatility Indicators',
     volume => 'Volume Indicators',
-    candlestick => 'Candlestick Patterns',
     statistic => 'Statistic Functions',
     price => 'Price Transform',
+    hilbert => 'Hilbert Transform',
+    candlestick => 'Candlestick Patterns',
 };
 
 has group_key => {
     'Overlap Studies' => 'overlaps',
-    'Volatility Indicators' => 'volatility',
     'Momentum Indicators' => 'momentum',
-    'Cycle Indicators' => 'cycle',
+    'Volatility Indicators' => 'volatility',
     'Volume Indicators' => 'volume',
-    'Candlestick Patterns' => 'candlestick',
     'Statistic Functions' => 'statistic',
     'Price Transform' => 'price',
+    'Hilbert Transform' => 'hilbert',
+    'Candlestick Patterns' => 'candlestick',
 };
 
 sub get_groups {
@@ -2200,13 +2200,13 @@ sub get_groups {
     ## NEEDS TO BE IN THIS ORDER
     my @groups = (
         'Overlap Studies',
-        'Volatility Indicators',
         'Momentum Indicators',
-        'Cycle Indicators',
+        'Volatility Indicators',
         'Volume Indicators',
-        'Candlestick Patterns',
         'Statistic Functions',
         'Price Transform',
+        'Hilbert Transform',
+        'Candlestick Patterns',
     );
     return wantarray ? @groups : \@groups;
 }
