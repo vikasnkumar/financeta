@@ -224,7 +224,7 @@ For more details refer the resources at:
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=SAR.htm)
 - [tadoc.org](http://tadoc.org/indicator/SAR.htm)
 
-### Parabolic Stop And Reverse - Extended (SAREXT)
+#### Parabolic Stop And Reverse - Extended (SAREXT)
 
 This is an extension to the above SAR indicator which gives the user the freedom
 to use different acceleration factors for the long and short side trades.
@@ -249,7 +249,9 @@ direction if negative, or auto-detect if 0. The default is 0.
 
 If all the default values are used, SAREXT is the same as SAR.
 
-### Mid-point over period
+### Mid-point Prices
+
+#### Mid-point over period
 
 This indicator calculates the average of the highest and lowest values of the
 close prices in the period window selected.
@@ -261,7 +263,7 @@ For more details refer the resource at:
 
 - [tadoc.org](http://tadoc.org/indicator/MIDPOINT.htm)
 
-### Mid-point Price over period
+#### Mid-point Price over period
 
 This indicator calculates the average of the highest high price and lowest low
 price of the period window selected.
@@ -841,7 +843,7 @@ For more details refer the following resources:
 - [Wikipedia](https://en.wikipedia.org/wiki/Beta_coefficient)
 - [tadoc.org](http://tadoc.org/indicator/BETA.htm)
 
-### Correlation (Pearson's Correlation Coefficient)
+### Pearson's Correlation Coefficient
 
 Pearson's correlation coefficient is an indicator that compares how two securities are related to each
 other. It always has a value between -1.0 and 1.0. A negative value implies one
