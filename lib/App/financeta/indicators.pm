@@ -261,21 +261,6 @@ has overlaps => {
         },
         gnuplot => \&_plot_gnuplot_general,
     },
-    ht_trendline => {
-        name => 'Hilbert Transform - Instantaneous Trendline',
-        params => [
-            # no params
-        ],
-        code => sub {
-            my ($obj, $inpdl) = @_;
-            say "Executing ta_ht_trendline" if $obj->debug;
-            my $outpdl = PDL::ta_ht_trendline($inpdl);
-            return [
-                ['HT-trendline', $outpdl, undef, "ht_trend"],
-            ];
-        },
-        gnuplot => \&_plot_gnuplot_general,
-    },
     kama => {
         name => 'Kaufman Adaptive Moving Average',
         params => [
@@ -389,41 +374,6 @@ has overlaps => {
             my $outpdl = PDL::ta_mavp($inpdl, $np, @args);
             return [
                 ["MAVP($type)", $outpdl, undef, "mavp_$type"],
-            ];
-        },
-        gnuplot => \&_plot_gnuplot_general,
-    },
-    midpoint => {
-        name => 'Mid-point over period',
-        params => [
-            # key, pretty name, type, default value
-            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
-        ],
-        code => sub {
-            my ($obj, $inpdl, @args) = @_;
-            say "Executing ta_midpoint with parameters: ", Dumper(\@args) if $obj->debug;
-            my $period = $args[0];
-            my $outpdl = PDL::ta_midpoint($inpdl, @args);
-            return [
-                ["MIDPOINT($period)", $outpdl, undef, "midpt_$period"],
-            ];
-        },
-        gnuplot => \&_plot_gnuplot_general,
-    },
-    midprice => {
-        name => 'Mid-point Price over period',
-        params => [
-            # key, pretty name, type, default value
-            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
-        ],
-        input => ['high', 'low'],
-        code => sub {
-            my ($obj, $highpdl, $lowpdl, @args) = @_;
-            say "Executing ta_midprice parameters: ", Dumper(\@args) if $obj->debug;
-            my $period = $args[0];
-            my $outpdl = PDL::ta_midprice($highpdl, $lowpdl, @args);
-            return [
-                ["MIDPRICE($period)", $outpdl, undef, "midpx_$period"],
             ];
         },
         gnuplot => \&_plot_gnuplot_general,
@@ -1329,6 +1279,21 @@ has momentum => {
 };
 
 has cycle => {
+    ht_trendline => {
+        name => 'Hilbert Transform - Instantaneous Trendline',
+        params => [
+            # no params
+        ],
+        code => sub {
+            my ($obj, $inpdl) = @_;
+            say "Executing ta_ht_trendline" if $obj->debug;
+            my $outpdl = PDL::ta_ht_trendline($inpdl);
+            return [
+                ['HT-trendline', $outpdl, undef, "ht_trend"],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
     ht_dcperiod => {
         name => 'Hilbert Transform - Dominant Cycle Period',
         params => [
@@ -2107,6 +2072,41 @@ has statistic => {
 };
 
 has price => {
+    midpoint => {
+        name => 'Mid-point over period',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        code => sub {
+            my ($obj, $inpdl, @args) = @_;
+            say "Executing ta_midpoint with parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_midpoint($inpdl, @args);
+            return [
+                ["MIDPOINT($period)", $outpdl, undef, "midpt_$period"],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
+    midprice => {
+        name => 'Mid-point Price over period',
+        params => [
+            # key, pretty name, type, default value
+            [ 'InTimePeriod', 'Period Window (2 - 100000)', PDL::long, 14],
+        ],
+        input => ['high', 'low'],
+        code => sub {
+            my ($obj, $highpdl, $lowpdl, @args) = @_;
+            say "Executing ta_midprice parameters: ", Dumper(\@args) if $obj->debug;
+            my $period = $args[0];
+            my $outpdl = PDL::ta_midprice($highpdl, $lowpdl, @args);
+            return [
+                ["MIDPRICE($period)", $outpdl, undef, "midpx_$period"],
+            ];
+        },
+        gnuplot => \&_plot_gnuplot_general,
+    },
     avgprice => {
         name => 'Average Price',
         params => [
