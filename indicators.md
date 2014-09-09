@@ -1034,12 +1034,19 @@ For more details refer the resource at:
 
 - [tadoc.org](http://tadoc.org/indicator/MIDPRICE.htm)
 
-## Cycle Indicators (Hilbert Transform)
+## Hilbert Transform
+
+All of these indicators are from the book by John F. Ehlers titled [Rocket Science for Traders: Digital Signal Processing Applications](http://www.amazon.com/exec/obidos/tg/detail/-/0471405671).
+
+These indicators have no parameters and work on the close price of the security.
+
+The Hilbert Transform is a technique used to generate in-phase and quadrature
+components of a de-trended real-valued price series in order to understand
+variations of the instant phase and amplitude.
 
 ### Instantaneous Trendline
 
-This indicator has no parameters and works on the close price. It creates a
-trend line that works on the current close price bar thus not have the same lag as the
+This indicator creates a trend line that works on the current close price bar thus not have the same lag as the
 various moving average indicators.
 
 For more details refer the resources at:
@@ -1049,15 +1056,59 @@ For more details refer the resources at:
 
 ### Dominant Cycle Period
 
+This returns the period of the dominant cycle of the price series. The dominant
+cycle can be thought of as being the _most likely_ period of a sine function of
+the price series.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/HT_DCPERIOD.htm)
+- [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTPeriod.ashx)
+
 ### Dominant Cycle Phase
 
-### Phasor Components
+The dominant cycle phase is a value between 0&#176; and 360&#176; and returns the
+phase of the dominant cycle of the Hilbert Transform of the price series.
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/HT_DCPHASE.htm)
+- [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTDCPhase.ashx)
+
+### In-Phase & Quadrature
+
+This indicator returns the in-phase and quadrature components of the price
+series.
+
+For more details refer the resources at:
+
+- [tadoc.org - In-Phase](http://tadoc.org/indicator/HT_PHASOR.htm)
+- [tadoc.org - Quadrature](http://tadoc.org/indicator/HT_QUADRA.htm)
+- [Wealth Lab - In-Phase](http://www2.wealth-lab.com/WL5Wiki/HTInPhase.ashx)
+- [Wealth Lab - Quadrature](http://www2.wealth-lab.com/WL5Wiki/HTQuadrature.ashx)
 
 ### Sine Wave
 
-### Trend vs Cycle Mode
+This indicator returns two sets of values: the sine and the _lead sine_ waves.
+The sine wave is just the sine of the [Dominant Cycle
+Phase](#dominantcyclephase). The _lead sine_ is the sine of the Dominant Cycle
+Phase advanced by 45&#176;.
 
-**COMING SOON**
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/HT_SINE.htm)
+- [Wealth Lab](http://www2.wealth-lab.com/WL5Wiki/HTDCPhase.ashx)
+- [Wealth Lab - Sine](http://www2.wealth-lab.com/WL5Wiki/HTSin.ashx)
+- [Wealth Lab - Lead Sine](http://www2.wealth-lab.com/WL5Wiki/HTLeadSin.ashx)
+
+### Market Mode (Trend vs Cycle)
+
+This indicator returns a series of 0's and 1's denoting whether the price series
+is in a trend mode (denoted by 1) or not (denoted by 0).
+
+For more details refer the resources at:
+
+- [tadoc.org](http://tadoc.org/indicator/HT_TRENDMODE.htm)
 
 ## Candlestick Patterns
 

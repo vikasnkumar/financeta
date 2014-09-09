@@ -1186,12 +1186,19 @@ valid integer between 2 and 100,000.</p>
 <li><a href="http://tadoc.org/indicator/MIDPRICE.htm">tadoc.org</a></li>
 </ul>
 
-<h2 id="cycleindicatorshilberttransform">Cycle Indicators (Hilbert Transform)</h2>
+<h2 id="hilberttransform">Hilbert Transform</h2>
+
+<p>All of these indicators are from the book by John F. Ehlers titled <a href="http://www.amazon.com/exec/obidos/tg/detail/-/0471405671">Rocket Science for Traders: Digital Signal Processing Applications</a>.</p>
+
+<p>These indicators have no parameters and work on the close price of the security.</p>
+
+<p>The Hilbert Transform is a technique used to generate in-phase and quadrature
+components of a de-trended real-valued price series in order to understand
+variations of the instant phase and amplitude.</p>
 
 <h3 id="instantaneoustrendline">Instantaneous Trendline</h3>
 
-<p>This indicator has no parameters and works on the close price. It creates a
-trend line that works on the current close price bar thus not have the same lag as the
+<p>This indicator creates a trend line that works on the current close price bar thus not have the same lag as the
 various moving average indicators.</p>
 
 <p>For more details refer the resources at:</p>
@@ -1203,15 +1210,69 @@ various moving average indicators.</p>
 
 <h3 id="dominantcycleperiod">Dominant Cycle Period</h3>
 
+<p>This returns the period of the dominant cycle of the price series. The dominant
+cycle can be thought of as being the <em>most likely</em> period of a sine function of
+the price series.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/HT_DCPERIOD.htm">tadoc.org</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTPeriod.ashx">Wealth Lab</a></li>
+</ul>
+
 <h3 id="dominantcyclephase">Dominant Cycle Phase</h3>
 
-<h3 id="phasorcomponents">Phasor Components</h3>
+<p>The dominant cycle phase is a value between 0&#176; and 360&#176; and returns the
+phase of the dominant cycle of the Hilbert Transform of the price series.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/HT_DCPHASE.htm">tadoc.org</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTDCPhase.ashx">Wealth Lab</a></li>
+</ul>
+
+<h3 id="in-phasequadrature">In-Phase &amp; Quadrature</h3>
+
+<p>This indicator returns the in-phase and quadrature components of the price
+series.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/HT_PHASOR.htm">tadoc.org - In-Phase</a></li>
+<li><a href="http://tadoc.org/indicator/HT_QUADRA.htm">tadoc.org - Quadrature</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTInPhase.ashx">Wealth Lab - In-Phase</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTQuadrature.ashx">Wealth Lab - Quadrature</a></li>
+</ul>
 
 <h3 id="sinewave">Sine Wave</h3>
 
-<h3 id="trendvscyclemode">Trend vs Cycle Mode</h3>
+<p>This indicator returns two sets of values: the sine and the <em>lead sine</em> waves.
+The sine wave is just the sine of the <a href="#dominantcyclephase">Dominant Cycle
+Phase</a>. The <em>lead sine</em> is the sine of the Dominant Cycle
+Phase advanced by 45&#176;.</p>
 
-<p><strong>COMING SOON</strong></p>
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/HT_SINE.htm">tadoc.org</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTDCPhase.ashx">Wealth Lab</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTSin.ashx">Wealth Lab - Sine</a></li>
+<li><a href="http://www2.wealth-lab.com/WL5Wiki/HTLeadSin.ashx">Wealth Lab - Lead Sine</a></li>
+</ul>
+
+<h3 id="marketmodetrendvscycle">Market Mode (Trend vs Cycle)</h3>
+
+<p>This indicator returns a series of 0&#8217;s and 1&#8217;s denoting whether the price series
+is in a trend mode (denoted by 1) or not (denoted by 0).</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="http://tadoc.org/indicator/HT_TRENDMODE.htm">tadoc.org</a></li>
+</ul>
 
 <h2 id="candlestickpatterns">Candlestick Patterns</h2>
 

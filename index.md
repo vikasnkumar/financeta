@@ -73,6 +73,6 @@ and backtesting on stocks.
         1. [Weighted Close Price](./indicators.html#weightedcloseprice)
         1. [Mid-point Close over period](./indicators.html#mid-pointcloseoverperiod)
         1. [Mid-point Price over period](./indicators.html#mid-pointpriceoverperiod)
-    1. [Cycle Indicators (Hilbert Transform)](./indicators.html#cycleindicatorshilberttransform)
+    1. [Hilbert Transform](./indicators.html#hilberttransform)
     1. [Candlestick Patterns](./indicators.html#candlestickpatterns)
 1. [Rules](./rules.html)
