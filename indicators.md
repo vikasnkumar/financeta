@@ -485,11 +485,67 @@ multiplied by 100.
 
 ### Stochastic
 
-#### Stochastic - Default
+The stochastic indicator refers to the point of a current price in relation to
+the price range over time. The method tries to predict the turn in price change
+by comparing the closing price to the price range.
 
-#### Stochastic - Fast
+There are two signals named `K` and `D` created by using the high, low and
+close prices over a fast and slow period window for the `K` and the `D` signals.
 
-#### Stochastic - Relative Strength Index
+Typical fast and slow period windows for `K` and `D` are 5 and 3, respectively.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Stochastic_oscillator)
+- [tadoc.org - STOCH](http://tadoc.org/indicator/STOCH.htm)
+- [tadoc.org - STOCHF](http://tadoc.org/indicator/STOCHF.htm)
+- [FM Labs - STOCH and STOCHF](http://www.fmlabs.com/reference/default.htm?url=StochasticOscillator.htm)
+- [tadoc.org - STOCHRSI](http://tadoc.org/indicator/STOCHRSI.htm)
+- [FM Labs - STOCHRSI](http://www.fmlabs.com/reference/default.htm?url=StochRSI.htm)
+
+#### Stochastic - Slow (STOCH)
+
+This returns the slow `K` and `D` signal streams by using the following
+parameters that are configurable by the user:
+
+- the period window for the fast `K` signal which is an integer between 1 and
+  100,000 with a default value of 5
+- the period window for the slow `K` signal which is an integer between 1 and
+  100,000 with a default value of 3
+- the moving average type for the slow `K` signal which by default is
+  [SMA](#simplemovingaveragesma)
+- the period window for the slow `D` signal which is an integer between 1 and
+  100,000 with a default value of 3
+- the moving average type for the slow `D` signal which by default is
+  [SMA](#simplemovingaveragesma)
+
+#### Stochastic - Fast (STOCHF)
+
+This returns the fast `K` and `D` signal streams by using the following
+parameters that are configurable by the user:
+
+- the period window for the fast `K` signal which is an integer between 1 and
+  100,000 with a default value of 5
+- the period window for the fast `D` signal which is an integer between 1 and
+  100,000 with a default value of 3
+- the moving average type for the fast `D` signal which by default is
+  [SMA](#simplemovingaveragesma)
+
+#### Stochastic - Relative Strength Index (STOCHRSI)
+
+This indicator is special in the sense that it creates the stochastic of the
+[RSI](#relativestrengthindexrsi) indicator.
+
+The configurable parameters are as follows:
+
+- the period window for calculating the RSI which is an integer between 2 and
+  100,000
+- the period window for the fast `K` signal which is an integer between 1 and
+  100,000 with a default value of 5
+- the period window for the fast `D` signal which is an integer between 1 and
+  100,000 with a default value of 3
+- the moving average type for the fast `D` signal which by default is
+  [SMA](#simplemovingaveragesma)
 
 ### Average Directional Movement Index
 

@@ -573,11 +573,75 @@ multiplied by 100.</p>
 
 <h3 id="stochastic">Stochastic</h3>
 
-<h4 id="stochastic-default">Stochastic - Default</h4>
+<p>The stochastic indicator refers to the point of a current price in relation to
+the price range over time. The method tries to predict the turn in price change
+by comparing the closing price to the price range.</p>
 
-<h4 id="stochastic-fast">Stochastic - Fast</h4>
+<p>There are two signals named <code>K</code> and <code>D</code> created by using the high, low and
+close prices over a fast and slow period window for the <code>K</code> and the <code>D</code> signals.</p>
 
-<h4 id="stochastic-relativestrengthindex">Stochastic - Relative Strength Index</h4>
+<p>Typical fast and slow period windows for <code>K</code> and <code>D</code> are 5 and 3, respectively.</p>
+
+<p>For more details refer the resources at:</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Stochastic_oscillator">Wikipedia</a></li>
+<li><a href="http://tadoc.org/indicator/STOCH.htm">tadoc.org - STOCH</a></li>
+<li><a href="http://tadoc.org/indicator/STOCHF.htm">tadoc.org - STOCHF</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=StochasticOscillator.htm">FM Labs - STOCH and STOCHF</a></li>
+<li><a href="http://tadoc.org/indicator/STOCHRSI.htm">tadoc.org - STOCHRSI</a></li>
+<li><a href="http://www.fmlabs.com/reference/default.htm?url=StochRSI.htm">FM Labs - STOCHRSI</a></li>
+</ul>
+
+<h4 id="stochastic-slowstoch">Stochastic - Slow (STOCH)</h4>
+
+<p>This returns the slow <code>K</code> and <code>D</code> signal streams by using the following
+parameters that are configurable by the user:</p>
+
+<ul>
+<li>the period window for the fast <code>K</code> signal which is an integer between 1 and
+ 100,000 with a default value of 5</li>
+<li>the period window for the slow <code>K</code> signal which is an integer between 1 and
+ 100,000 with a default value of 3</li>
+<li>the moving average type for the slow <code>K</code> signal which by default is
+ <a href="#simplemovingaveragesma">SMA</a></li>
+<li>the period window for the slow <code>D</code> signal which is an integer between 1 and
+ 100,000 with a default value of 3</li>
+<li>the moving average type for the slow <code>D</code> signal which by default is
+ <a href="#simplemovingaveragesma">SMA</a></li>
+</ul>
+
+<h4 id="stochastic-faststochf">Stochastic - Fast (STOCHF)</h4>
+
+<p>This returns the fast <code>K</code> and <code>D</code> signal streams by using the following
+parameters that are configurable by the user:</p>
+
+<ul>
+<li>the period window for the fast <code>K</code> signal which is an integer between 1 and
+ 100,000 with a default value of 5</li>
+<li>the period window for the fast <code>D</code> signal which is an integer between 1 and
+ 100,000 with a default value of 3</li>
+<li>the moving average type for the fast <code>D</code> signal which by default is
+ <a href="#simplemovingaveragesma">SMA</a></li>
+</ul>
+
+<h4 id="stochastic-relativestrengthindexstochrsi">Stochastic - Relative Strength Index (STOCHRSI)</h4>
+
+<p>This indicator is special in the sense that it creates the stochastic of the
+<a href="#relativestrengthindexrsi">RSI</a> indicator.</p>
+
+<p>The configurable parameters are as follows:</p>
+
+<ul>
+<li>the period window for calculating the RSI which is an integer between 2 and
+ 100,000</li>
+<li>the period window for the fast <code>K</code> signal which is an integer between 1 and
+ 100,000 with a default value of 5</li>
+<li>the period window for the fast <code>D</code> signal which is an integer between 1 and
+ 100,000 with a default value of 3</li>
+<li>the moving average type for the fast <code>D</code> signal which by default is
+ <a href="#simplemovingaveragesma">SMA</a></li>
+</ul>
 
 <h3 id="averagedirectionalmovementindex">Average Directional Movement Index</h3>
 
@@ -790,7 +854,7 @@ chapter</a>.</p>
     with your own intelligence. The application comes with no warranty. For more
     details refer the <a href="./license.html">license</a> page.</em>
     <br/><br/><p style="font-size:10px;">
-        This page was last updated on 2014-09-08 17:51:27 -0400.
+        This page was last updated on 2014-09-08 18:16:24 -0400.
     </p>
     </div></footer>
     
