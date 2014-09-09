@@ -607,7 +607,25 @@ For more details refer the resources at:
 - [tadoc.org](http://tadoc.org/indicator/WILLR.htm)
 - [FM Labs](http://www.fmlabs.com/reference/default.htm?url=WilliamsR.htm)
 
-### Commodity Channel Index
+### Commodity Channel Index (CCI)
+
+The CCI is used to detect the beginning and end of market trends. It uses the
+high, low and close prices to calculate the [typical price](#typicalpriceakapivotpoint) and
+the [SMA](#simplemovingaveragesma) of the typical price and retrieve a ratio
+between the difference of these values and their mean deviations. A value
+between -100 and 100 is the normal trading range, and any other values outside
+this range indicate over-bought or over-sold conditions.
+
+The parameters for this indicator is a period window which is an integer from
+2 to 100,000 with a default value of 14.
+
+The plot of this indicator shows up as a sub-plot on the regular plot window.
+
+For more details refer the resources at:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Commodity_channel_index)
+- [tadoc.org](http://tadoc.org/indicator/CCI.htm)
+- [FM Labs](http://www.fmlabs.com/reference/default.htm?url=CCI.htm)
 
 ### Average Directional Movement Index
 
