@@ -92,3 +92,4 @@ TALib.pm$
 \.swp$
 gh-pages/
 testnotebook.pl
+testthreading.pl

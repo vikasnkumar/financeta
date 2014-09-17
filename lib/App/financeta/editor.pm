@@ -55,7 +55,7 @@ sub _build_main {
                         my ($win, $item) = @_;
                         my $ed = $win->menu->data($item);
                         my $txt = $win->editor_edit->text;
-                        $ed->parent->update_editor($txt, $ed->tab_name, 0);
+                        $ed->parent->save_editor($txt, $ed->tab_name, 0);
                     },
                     $self,
                 ],
@@ -65,7 +65,7 @@ sub _build_main {
                         my ($win, $item) = @_;
                         my $ed = $win->menu->data($item);
                         my $txt = $win->editor_edit->text;
-                        $ed->parent->update_editor($txt, $ed->tab_name, 1);
+                        $ed->parent->save_editor($txt, $ed->tab_name, 1);
                         $ed->parent->close_editor($ed->tab_name); # force it
                         $win->close;
                     },
@@ -111,7 +111,7 @@ sub close {
     my $self = shift;
     #my $win = $self->main;
     #my $txt = $win->editor_edit->text;
-    #$self->parent->update_editor($txt, $self->tab_name, 1);
+    #$self->parent->save_editor($txt, $self->tab_name, 1);
     if ($self->parent) {
         $self->parent->close_editor($self->tab_name);
     }

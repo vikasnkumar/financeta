@@ -1893,7 +1893,7 @@ sub open_editor {
     $self->editors->{$tabname} = $editor;
 }
 
-sub update_editor {
+sub save_editor {
     my ($self, $txt, $tabname, $is_closing) = @_;
     unless (defined $tabname) {
         carp "Tab-name not retrieved. not sure which tab to save it for.";
