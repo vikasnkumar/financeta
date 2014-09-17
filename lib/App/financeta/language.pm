@@ -58,8 +58,7 @@ start-nested: /- LPAREN -/
 end-nested: /- RPAREN -/
 identifier: /(! keyword)( ALPHA [ WORDS ]*)/
 keyword: /(i:
-        'buy' | 'BUY' | 'sell' | 'SELL' | 'at' | 'equals' |
-        'true' | 'false' | 'TRUE' | 'FALSE' | 'if' |
+        'buy' | 'sell' | 'at' | 'equals' | 'true' | 'false' | 'if' |
         'when' | 'and' | 'or' | 'not' | 'above' | 'is' |
         'becomes' | 'crosses' | 'below' | 'from' | 'to' |
         'positive' | 'negative' | 'zero' | 'over' | 'into'
