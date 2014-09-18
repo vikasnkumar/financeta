@@ -33,14 +33,15 @@ any-condition-expr: single-condition-expr | nested-condition-expr
 nested-condition-expr: start-nested single-condition-expr end-nested
 single-condition-expr: comparison | complement
 comparison: comparison-state | comparison-basic
-comparison-state: - variable - state-op - state -
+comparison-state: - variable - state-op-pre - state - state-op-post? -
 comparison-basic: - value - compare-op - value -
 
 complement: - not-op - value-expression
 value: complement | value-expression
 state: /((i:'positive' | 'negative' | 'zero'))/ | value-expression
 value-expression: variable | number
-state-op: (/(i:'becomes')/ | /(i:'crosses' - (i:'over' | 'into')?)/)
+state-op-pre: /((i: 'becomes' | 'crosses' ))/
+state-op-post: /(i: 'from') - ((i: 'above' | 'below'))/
 compare-op: /((i:'is' | 'equals'))/ |
     /([ BANG EQUAL LANGLE RANGLE] EQUAL | (: LANGLE | RANGLE ))/
 not-op: /((i:'not') | BANG)/
@@ -87,11 +88,41 @@ extends 'Pegex::Tree';
 
 has debug => 0;
 
+has preset_vars => {};
+
 sub got_comment {} # strip the comments out
+
+sub got_boolean {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
+    return ($got eq 'true') ? 1 : 0;
+}
+
+sub got_variable {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
+    return "\$$got" if exists $self->preset_vars->{$got};
+    $self->parser->throw_error("$got is not a defined variable\n");
+}
+
+sub got_price {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
+    return $got;
+}
 
 sub final {
     my ($self, $got) = @_;
-    $self->flatten($got);
+    $self->flatten($got) if ref $got eq 'ARRAY';
     say Dumper($got) if $self->debug;
     return wantarray ? @$got : $got;
 }
@@ -114,6 +145,8 @@ use App::financeta::mo;
 $| = 1;
 has debug => 0;
 
+has preset_vars => {};
+
 has grammar => (default => sub {
     return App::financeta::language::grammar->new;
 });
@@ -122,7 +155,10 @@ has receiver => (builder => '_build_receiver');
 
 sub _build_receiver {
     my $self = shift;
-    return App::financeta::language::receiver->new(debug => $self->debug);
+    return App::financeta::language::receiver->new(
+        debug => $self->debug,
+        preset_vars => $self->preset_vars,
+    );
 }
 
 has parser => (builder => '_build_parser');
@@ -138,8 +174,10 @@ sub _build_parser {
 }
 
 sub compile {
-    my ($self, $text) = @_;
+    my ($self, $text, $presets) = @_;
     return unless (defined $text and length $text);
+    # update the preset vars if necessary
+    $self->receiver->preset_vars($presets || $self->preset_vars);
     return $self->parser->parse($text);
 }
 

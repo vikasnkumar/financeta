@@ -27,9 +27,16 @@ my $test2 = << 'TEST2';
 # MACD variables: macd, macd_signal, macd_hist
 # --END OF DO NOT EDIT--
 # Add your own comments here
-buy at $open WHEN $macd_hist becomes positive and $macd CROSSES over $macd_signal;
+buy at $open WHEN $macd_hist becomes positive and $macd CROSSES $macd_signal FROM BELOW;
 TEST2
-isnt($lang->compile($test2), undef, 'compiler can parse an instruction');
+####
+# macd_hist becomes positive => macd_hist[i] > 0 && macd_hist[i - L1] < 0
+# macd crosses macd_signal from below => macd[i - L2] < macd_signal[i - L2] && macd[i] > macd_signal[i]
+#
+isnt($lang->compile($test2, {
+        open => 1, high => 1, low => 1, close => 1,
+        macd => 1, macd_signal => 1, macd_hist => 1,
+    }), undef, 'compiler can parse an instruction');
 
 done_testing();
 
