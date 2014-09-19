@@ -8,14 +8,14 @@ use PDL::NiceSlice;
 
 thread_define 'test1(x(n);i(n);[o]z(n))', over {
     my ($x, $i, $z) = @_;
-    $z .= ($x > $x->index($i)) * 3.14159;
+    $z .= ($x > $x->index($i)) * $x;
 };
 
 thread_define 'test2(x(n);[o]z(n))', over {
     my ($x, $z) = @_;
     my $i = xvals($x->dims) - 1;
     $i = $i->setbadif($i < 0)->setbadtoval(0);
-    $z .= 3.14159 * ($x > $x->index($i));
+    $z .= $x * ($x > $x->index($i));
 };
 
 my $a = randsym 20;
@@ -33,6 +33,6 @@ my $c; test2($a, $c = null);
 print $c, "\n";
 
 my $d = zeroes($a->dims);
-my $d_i =  $d->where($a > $a->index($i));
-$d_i .= 3.14159;
+my $d_i =  which($a > $a->index($i));
+$d->index($d_i) .= $a->index($d_i);
 print $d, "\n";

@@ -32,7 +32,19 @@ TEST2
 ####
 # macd_hist becomes positive => macd_hist[i] > 0 && macd_hist[i - L1] < 0
 # macd crosses macd_signal from below => macd[i - L2] < macd_signal[i - L2] && macd[i] > macd_signal[i]
-#
+# buy at $open => $buy = $open
+# actual code in PDL
+# my $i1 = xvals($macd_hist->dims) - $L1;
+# $i1 = $i1->setbadif($i1 < 0)->setbadtoval(0);
+# my $i2 = xvals($macd_hist->dims) - $L2;
+# $i2 = $i2->setbadif($i2 < 0)->setbadtoval(0);
+# my $buys = zeroes($macd_hist->dims);
+# my $buys_i = which($macd_hist > 0 &&
+#           $macd_hist->index($i1) < 0 &&
+#           macd->index($i2) < macd_signal->index($i2) &&
+#           macd > macd_signal
+#           );
+# $buys->index($buys_i) .= $open->index($buys_i);
 isnt($lang->compile($test2, {
         open => 1, high => 1, low => 1, close => 1,
         macd => 1, macd_signal => 1, macd_hist => 1,
