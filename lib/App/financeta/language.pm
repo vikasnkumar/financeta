@@ -162,23 +162,23 @@ sub got_buy_sell {
 sub got_compare_op {
     my ($self, $got) = @_;
     $got = lc $got;
-    return '==' if ($got eq 'is' or $got eq 'equals');
-    return $got;
+    $got = '==' if ($got eq 'is' or $got eq 'equals');
+    return { compare => $got};
 }
 
 sub got_not_op {
     my ($self, $got) = @_;
     $got = lc $got;
-    return '!' if $got eq 'not';
-    return $got;
+    $got = '!' if $got eq 'not';
+    return { complement => $got };
 }
 
 sub got_logic_op {
     my ($self, $got) = @_;
     $got = lc $got;
-    return '&&' if $got eq 'and';
-    return '||' if $got eq 'or';
-    return $got;
+    $got = '&&' if $got eq 'and';
+    $got = '||' if $got eq 'or';
+    return { logic => $got };
 }
 
 sub got_state_op_pre {
@@ -210,31 +210,32 @@ sub got_comparison_state {
         XXX {comparison_state => $got};
     }
     my ($var, $act, $state, $dirxn) = @$got;
-    my $res;
+    my $fn;
     if ($act eq 'ACT::becomes') {
         if ($state =~ /^\$/) {
             # state is a variable
-            $res = join("::", 'FN_MERGE', $var, $state);
+            $fn = 'merge';
         } else {
             $state =~ s/^STATE:://;
             # use the const_var values
             $state = $self->const_vars->{$state} if $state =~ /\w/;
-            $res = join("::", 'FN_BECOME', $var, $state);
+            $fn = 'become';
         }
     } elsif ($act eq 'ACT::crosses') {
         $dirxn = 'DIRXN::below' unless defined $dirxn;
-        my $fn = 'FN_XBELOW' if $dirxn eq 'DIRXN::below';
-        $fn = 'FN_XABOVE' if $dirxn eq 'DIRXN::above';
-        if ($state =~ /^\$/) {
-            $res = join("::", $fn, $var, $state);
-        } else {
-            $state =~ s/^STATE:://;
+        $fn = "x$1" if $dirxn =~ /DIRXN::(.*)/;
+        if ($state =~ /STATE::(.*)/) {
+            $state = $1;
             # use the const_var values
             $state = $self->const_vars->{$state} if $state =~ /\w/;
-            $res = join("::", $fn, $var, $state);
         }
+    } else {
+        XXX {comparison_state => $got};
     }
-    return $res;
+    unless (defined $fn) {
+        XXX {comparison_state => $got};
+    }
+    return { $fn => [ $var, $state ] };
 }
 
 sub got_order {
