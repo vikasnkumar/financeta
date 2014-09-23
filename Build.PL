@@ -41,6 +41,7 @@ my $build = Module::Build->new(
         'Browser::Open' => 0,
         'YAML::Any' => 0,
         'Pegex' => 0.55,
+        'Perl::Tidy' => 0,
     },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],

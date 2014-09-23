@@ -82,6 +82,7 @@ use feature 'say';
 our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
+use Perl::Tidy;
 use Pegex::Base;
 extends 'Pegex::Tree';
 
@@ -98,7 +99,7 @@ has const_vars => {
 
 has local_vars => {};
 
-has index_vars => 0;
+has index_var_count => 0;
 
 sub got_comment {} # strip the comments out
 
@@ -275,8 +276,92 @@ sub got_instruction {
 
 sub _generate_pdl {
     my ($self, $ins) = @_;
-    YYY { instruction => $ins };
-    return '';
+    #YYY { instruction => $ins };
+    if (ref $ins ne 'HASH') {
+        XXX $ins;
+    }
+    my $order = $ins->{order};
+    my $conds = $ins->{conditions};
+    if (ref $order ne 'HASH' or ref $conds ne 'ARRAY') {
+        XXX $ins;
+    }
+    # TODO:lookback should be machine-learned
+    my $lookback = $self->const_vars->{lookback};
+    # conds is a stack of hashes
+    my @indexes = ();
+    my @expressions = ();
+    while (@$conds) {
+        my $c = shift @$conds;
+        next unless ref $c eq 'HASH';
+        if (defined $c->{become}) {
+            my ($state1, $state2) = @{$c->{become}};
+            my $expr;
+            my $index = $self->index_var_count;
+            my $idxvar = '$idx_' . $index;
+            push @indexes, "my $idxvar = xvals($state1" .
+                            "->dims) - $lookback; ";
+            push @indexes, "$idxvar = $idxvar" .
+                        "->setbadif($idxvar < 0)->setbadtoval(0);";
+            $self->index_var_count($index + 1);
+            # state is not a var but a number for become
+            if ($state2 >= 0) {
+                $expr = "$state1 >= $state2 && $state1" .
+                "->index($idxvar) < $state2";
+            } else {
+                $expr = "$state1 =< $state2 && $state1" .
+                "->index($idxvar) > $state2";
+            }
+            push @expressions, $expr;
+        }
+        if (defined $c->{xbelow}) {
+            my ($state1, $state2) = @{$c->{xbelow}};
+            my $index = $self->index_var_count;
+            #TODO: whatif the state1 and state2 have different dims ?
+            my $idxvar = '$idx_' . $index;
+            push @indexes, "my $idxvar = xvals($state1" .
+                            "->dims) - $lookback; ";
+            push @indexes, "$idxvar = $idxvar" .
+                        "->setbadif($idxvar < 0)->setbadtoval(0);";
+            $self->index_var_count($index + 1);
+            # state2 can be var or number
+            my $expr;
+            if ($state2 =~ /^\$/) {
+                $expr = $state1 . "->index($idxvar) < $state2" .
+                        "->index($idxvar) && $state1 > $state2";
+            } else {
+                $expr = $state1 . "->index($idxvar) < $state2 "
+                        . "&& $state1 > $state2";
+            }
+            push @expressions, $expr;
+        }
+        if (defined $c->{logic}) {
+            push @expressions, $c->{logic};
+        }
+    }
+    #YYY { expressions => \@expressions, indexes => \@indexes };
+    my @oexprs = ();
+    if (defined $order->{trigger} and defined $order->{price}) {
+        my $trig = $order->{trigger};
+        my $px = $order->{price};
+        my $qty = $order->{quantity} || 100;
+        # px can be a variable or number
+        my $tvar = '$' . $trig . 's';
+        push @oexprs, "my $tvar = zeroes(\$close->dims);";
+        push @oexprs, "my $tvar\_idx = which(" .
+                join(' ', @expressions) . ');';
+        if ($px =~ /^\$/) {
+            push @oexprs, $tvar . "->index($tvar\_idx) .= " .
+                            "$px\->index($tvar\_idx);";
+        } else {
+            push @oexprs, $tvar . "->index($tvar\_idx) .= $px;";
+        }
+    } else {
+        XXX $order;
+    }
+    my $code = join("\n", @indexes, @oexprs);
+    my $dest;
+    Perl::Tidy::perltidy(source => \$code, destination => \$dest);
+    return $dest;
 }
 
 sub final {
@@ -286,7 +371,7 @@ sub final {
     foreach (@$got) {
         push @code, $self->_generate_pdl($_);
     }
-    YYY \@code if $self->debug;
+    say join("\n", @code) if $self->debug;
     return wantarray ? @code : \@code;
 }
 
