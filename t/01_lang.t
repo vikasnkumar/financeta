@@ -44,7 +44,7 @@ TEST2
 #           macd > macd_signal
 #           );
 # $buys->index($buys_i) .= $open->index($buys_i);
-my $expected2 = <<'EXPECTED';
+my $expected2_src = <<'EXPECTED';
 my $buys     = zeroes( $close->dims );
 my $sells    = zeroes( $close->dims );
 my $lookback = 1;
@@ -59,6 +59,8 @@ my $idx_2 =
       && $macd > $macd_signal );
 $buys->index($idx_2) .= $open->index($idx_2);
 EXPECTED
+my $expected2;
+Perl::Tidy::perltidy(source => \$expected2_src, destination => \$expected2);
 my $output2 = $lang->compile(
     $test2,
     {
