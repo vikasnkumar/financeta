@@ -274,7 +274,16 @@ sub got_instruction {
     return $res;
 }
 
-sub _generate_pdl {
+sub _generate_pdl_required {
+    my $self = shift;
+    my @exprs = (
+        'my $buys = zeroes($close->dims);',
+        'my $sells = zeroes($close->dims);',
+    );
+    return join("\n", @exprs);
+}
+
+sub _generate_pdl_custom {
     my ($self, $ins) = @_;
     #YYY { instruction => $ins };
     if (ref $ins ne 'HASH') {
@@ -339,29 +348,27 @@ sub _generate_pdl {
         }
     }
     #YYY { expressions => \@expressions, indexes => \@indexes };
-    my @oexprs = ();
     if (defined $order->{trigger} and defined $order->{price}) {
         my $trig = $order->{trigger};
         my $px = $order->{price};
         my $qty = $order->{quantity} || 100;
         # px can be a variable or number
         my $tvar = '$' . $trig . 's';
-        push @oexprs, "my $tvar = zeroes(\$close->dims);";
-        push @oexprs, "my $tvar\_idx = which(" .
+        my $index = $self->index_var_count;
+        my $idxvar = '$idx_' . $index;
+        push @indexes, "my $idxvar = which(" .
                 join(' ', @expressions) . ');';
         if ($px =~ /^\$/) {
-            push @oexprs, $tvar . "->index($tvar\_idx) .= " .
-                            "$px\->index($tvar\_idx);";
+            push @indexes, $tvar . "->index($idxvar) .= $px" .
+                          "->index($idxvar);";
         } else {
-            push @oexprs, $tvar . "->index($tvar\_idx) .= $px;";
+            push @indexes, $tvar . "->index($idxvar) .= $px;";
         }
+        $self->index_var_count($index + 1);
     } else {
         XXX $order;
     }
-    my $code = join("\n", @indexes, @oexprs);
-    my $dest;
-    Perl::Tidy::perltidy(source => \$code, destination => \$dest);
-    return $dest;
+    return join("\n", @indexes);
 }
 
 sub final {
@@ -369,10 +376,14 @@ sub final {
     $self->flatten($got) if ref $got eq 'ARRAY';
     my @code = ();
     foreach (@$got) {
-        push @code, $self->_generate_pdl($_);
+        push @code, $self->_generate_pdl_custom($_);
     }
-    say join("\n", @code) if $self->debug;
-    return wantarray ? @code : \@code;
+    return unless scalar @code;
+    my $final_code = join("\n", $self->_generate_pdl_required(), @code) if scalar @code;
+    my $tidy_code;
+    Perl::Tidy::perltidy(source => \$final_code, destination => \$tidy_code);
+    say $tidy_code if $self->debug;
+    return $tidy_code;
 }
 
 1;
