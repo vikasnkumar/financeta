@@ -45,10 +45,12 @@ TEST2
 #           macd > macd_signal
 #           );
 # $buys->index($buys_i) .= $open->index($buys_i);
-isnt($lang->compile($test2, {
+my $output2 = $lang->compile($test2, {
         open => 1, high => 1, low => 1, close => 1,
         macd => 1, macd_signal => 1, macd_hist => 1,
-    }), undef, 'compiler can parse an instruction');
+    });
+isnt($output2, undef, 'compiler can parse an instruction');
+note($output2);
 
 done_testing();
 
