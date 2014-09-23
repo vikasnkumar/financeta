@@ -273,11 +273,21 @@ sub got_instruction {
     return $res;
 }
 
+sub _generate_pdl {
+    my ($self, $ins) = @_;
+    YYY { instruction => $ins };
+    return '';
+}
+
 sub final {
     my ($self, $got) = @_;
     $self->flatten($got) if ref $got eq 'ARRAY';
-    YYY $got if $self->debug;
-    return wantarray ? @$got : $got;
+    my @code = ();
+    foreach (@$got) {
+        push @code, $self->_generate_pdl($_);
+    }
+    YYY \@code if $self->debug;
+    return wantarray ? @code : \@code;
 }
 
 1;
