@@ -82,13 +82,23 @@ use feature 'say';
 our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
-use Data::Dumper;
 use Pegex::Base;
 extends 'Pegex::Tree';
 
 has debug => 0;
 
 has preset_vars => {};
+
+has const_vars => {
+    positive => 1e-6,
+    negative => -1e-6,
+    zero => 0,
+    lookback => 1,
+};
+
+has local_vars => {};
+
+has index_vars => 0;
 
 sub got_comment {} # strip the comments out
 
@@ -107,8 +117,19 @@ sub got_variable {
         $self->flatten($got);
         $got = shift @$got;
     }
+    $got = lc $got; # case-insensitive
     return "\$$got" if exists $self->preset_vars->{$got};
-    $self->parser->throw_error("$got is not a defined variable\n");
+    return "\$$got" if exists $self->local_vars->{$got};
+    $self->local_vars->{$got} = 1;
+}
+
+sub got_quantity {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
+    return 'QTY::' . $got;
 }
 
 sub got_price {
@@ -117,13 +138,144 @@ sub got_price {
         $self->flatten($got);
         $got = shift @$got;
     }
+    return { price => $got };
+}
+
+sub got_value_expression {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        XXX {value_expression => $got};
+    }
     return $got;
+}
+
+sub got_buy_sell {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
+    return { trigger => lc $got };
+}
+
+sub got_compare_op {
+    my ($self, $got) = @_;
+    $got = lc $got;
+    return '==' if ($got eq 'is' or $got eq 'equals');
+    return $got;
+}
+
+sub got_not_op {
+    my ($self, $got) = @_;
+    $got = lc $got;
+    return '!' if $got eq 'not';
+    return $got;
+}
+
+sub got_logic_op {
+    my ($self, $got) = @_;
+    $got = lc $got;
+    return '&&' if $got eq 'and';
+    return '||' if $got eq 'or';
+    return $got;
+}
+
+sub got_state_op_pre {
+    my ($self, $got) = @_;
+    return 'ACT::' . lc $got;
+}
+
+sub got_state_op_post {
+    my ($self, $got) = @_;
+    return 'DIRXN::' . lc $got;
+}
+
+sub got_state {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        XXX {state => $got};
+    }
+    return $got if $got =~ /^\$/;
+    $got = 0 if $got eq 'zero';
+    return 'STATE::' . lc $got;
+}
+
+sub got_comparison_state {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+    } else {
+        XXX {comparison_state => $got};
+    }
+    my ($var, $act, $state, $dirxn) = @$got;
+    my $res;
+    if ($act eq 'ACT::becomes') {
+        if ($state =~ /^\$/) {
+            # state is a variable
+            $res = join("::", 'FN_MERGE', $var, $state);
+        } else {
+            $state =~ s/^STATE:://;
+            # use the const_var values
+            $state = $self->const_vars->{$state} if $state =~ /\w/;
+            $res = join("::", 'FN_BECOME', $var, $state);
+        }
+    } elsif ($act eq 'ACT::crosses') {
+        $dirxn = 'DIRXN::below' unless defined $dirxn;
+        my $fn = 'FN_XBELOW' if $dirxn eq 'DIRXN::below';
+        $fn = 'FN_XABOVE' if $dirxn eq 'DIRXN::above';
+        if ($state =~ /^\$/) {
+            $res = join("::", $fn, $var, $state);
+        } else {
+            $state =~ s/^STATE:://;
+            # use the const_var values
+            $state = $self->const_vars->{$state} if $state =~ /\w/;
+            $res = join("::", $fn, $var, $state);
+        }
+    }
+    return $res;
+}
+
+sub got_order {
+    my ($self, $got) = @_;
+    $self->flatten($got) if ref $got eq 'ARRAY';
+    my $res = {};
+    # merge the order trigger details into one hash
+    foreach (@$got) {
+        if (ref $_ eq 'HASH') {
+            $res = { %$res, %{$_} };
+        } else {
+            XXX {order => $got};
+        }
+    }
+    return { order => $res };
+}
+
+sub got_conditions {
+    my ($self, $got) = @_;
+    # conditions have to be in the order that the user asked them
+    return { conditions => $got };
+}
+
+sub got_instruction {
+    my ($self, $got) = @_;
+    my $res = {};
+    # merge the order trigger details into one hash
+    foreach (@$got) {
+        if (ref $_ eq 'HASH') {
+            $res = { %$res, %{$_} };
+        } else {
+            XXX { instruction => $got };
+        }
+    }
+    return $res;
 }
 
 sub final {
     my ($self, $got) = @_;
     $self->flatten($got) if ref $got eq 'ARRAY';
-    say Dumper($got) if $self->debug;
+    YYY $got if $self->debug;
     return wantarray ? @$got : $got;
 }
 
@@ -176,6 +328,8 @@ sub _build_parser {
 sub compile {
     my ($self, $text, $presets) = @_;
     return unless (defined $text and length $text);
+    # update the debug flag to keep it dynamic
+    $self->receiver->debug($self->debug);
     # update the preset vars if necessary
     $self->receiver->preset_vars($presets || $self->preset_vars);
     return $self->parser->parse($text);
