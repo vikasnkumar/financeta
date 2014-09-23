@@ -276,9 +276,11 @@ sub got_instruction {
 
 sub _generate_pdl_required {
     my $self = shift;
+    my $lookback = $self->const_vars->{lookback};
     my @exprs = (
         'my $buys = zeroes($close->dims);',
         'my $sells = zeroes($close->dims);',
+        "my \$lookback = $lookback;",
     );
     return join("\n", @exprs);
 }
@@ -294,8 +296,6 @@ sub _generate_pdl_custom {
     if (ref $order ne 'HASH' or ref $conds ne 'ARRAY') {
         XXX $ins;
     }
-    # TODO:lookback should be machine-learned
-    my $lookback = $self->const_vars->{lookback};
     # conds is a stack of hashes
     my @indexes = ();
     my @expressions = ();
@@ -308,7 +308,7 @@ sub _generate_pdl_custom {
             my $index = $self->index_var_count;
             my $idxvar = '$idx_' . $index;
             push @indexes, "my $idxvar = xvals($state1" .
-                            "->dims) - $lookback; ";
+                            '->dims) - $lookback; ';
             push @indexes, "$idxvar = $idxvar" .
                         "->setbadif($idxvar < 0)->setbadtoval(0);";
             $self->index_var_count($index + 1);
@@ -328,7 +328,7 @@ sub _generate_pdl_custom {
             #TODO: whatif the state1 and state2 have different dims ?
             my $idxvar = '$idx_' . $index;
             push @indexes, "my $idxvar = xvals($state1" .
-                            "->dims) - $lookback; ";
+                            '->dims) - $lookback; ';
             push @indexes, "$idxvar = $idxvar" .
                         "->setbadif($idxvar < 0)->setbadtoval(0);";
             $self->index_var_count($index + 1);

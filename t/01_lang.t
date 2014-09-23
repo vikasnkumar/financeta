@@ -2,12 +2,12 @@ use Test::More;
 
 use_ok('App::financeta::language');
 
-my $lang = new_ok('App::financeta::language' => [ debug => 0]);
-can_ok($lang, 'grammar');
-can_ok($lang, 'receiver');
-can_ok($lang, 'parser');
-can_ok($lang, 'compile');
-is($lang->compile(''), undef, 'compiler works on undefined');
+my $lang = new_ok( 'App::financeta::language' => [ debug => 0 ] );
+can_ok( $lang, 'grammar' );
+can_ok( $lang, 'receiver' );
+can_ok( $lang, 'parser' );
+can_ok( $lang, 'compile' );
+is( $lang->compile(''), undef, 'compiler works on undefined' );
 
 my $test1 = << 'TEST1';
 # --DO NOT EDIT--
@@ -17,8 +17,7 @@ my $test1 = << 'TEST1';
 # --END OF DO NOT EDIT--
 # Add your own comments here
 TEST1
-is($lang->compile($test1), undef, 'compiler works on comments');
-
+is( $lang->compile($test1), undef, 'compiler works on comments' );
 
 my $test2 = << 'TEST2';
 # --DO NOT EDIT--
@@ -45,12 +44,36 @@ TEST2
 #           macd > macd_signal
 #           );
 # $buys->index($buys_i) .= $open->index($buys_i);
-my $output2 = $lang->compile($test2, {
-        open => 1, high => 1, low => 1, close => 1,
-        macd => 1, macd_signal => 1, macd_hist => 1,
-    });
-isnt($output2, undef, 'compiler can parse an instruction');
+my $expected2 = <<'EXPECTED';
+my $buys     = zeroes( $close->dims );
+my $sells    = zeroes( $close->dims );
+my $lookback = 1;
+my $idx_0    = xvals( $macd_hist->dims ) - $lookback;
+$idx_0 = $idx_0->setbadif( $idx_0 < 0 )->setbadtoval(0);
+my $idx_1 = xvals( $macd->dims ) - $lookback;
+$idx_1 = $idx_1->setbadif( $idx_1 < 0 )->setbadtoval(0);
+my $idx_2 =
+  which( $macd_hist >= 1e-06
+      && $macd_hist->index($idx_0) < 1e-06
+      && $macd->index($idx_1) < $macd_signal->index($idx_1)
+      && $macd > $macd_signal );
+$buys->index($idx_2) .= $open->index($idx_2);
+EXPECTED
+my $output2 = $lang->compile(
+    $test2,
+    {
+        open        => 1,
+        high        => 1,
+        low         => 1,
+        close       => 1,
+        macd        => 1,
+        macd_signal => 1,
+        macd_hist   => 1,
+    }
+);
+isnt( $output2, undef, 'compiler can parse an instruction' );
 note($output2);
+is( $output2, $expected2, 'compiler output matches expected output' );
 
 done_testing();
 
