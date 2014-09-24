@@ -24,7 +24,7 @@ _: / BLANK* EOL?/
 __: / BLANK+ EOL?/
 line-ending: /- SEMI - EOL?/
 
-instruction: order - /(i:'when'|'if')/ - conditions line-ending
+instruction: order - /(i:'when'|'if')/ - conditions - line-ending
 conditions: single-condition | nested-condition
 
 nested-condition: start-nested single-condition end-nested
@@ -40,8 +40,8 @@ complement: - not-op - value-expression
 value: complement | value-expression
 state: /((i:'positive' | 'negative' | 'zero'))/ | value-expression
 value-expression: variable | number
-state-op-pre: /((i: 'becomes' | 'crosses' ))/
-state-op-post: /(i: 'from') - ((i: 'above' | 'below'))/
+state-op-pre: - /((i: 'becomes' | 'crosses' ))/ -
+state-op-post: - /(i: 'from') - ((i: 'above' | 'below'))/ -
 compare-op: /((i:'is' | 'equals'))/ |
     /([ BANG EQUAL LANGLE RANGLE] EQUAL | (: LANGLE | RANGLE ))/
 not-op: /((i:'not') | BANG)/
@@ -184,11 +184,19 @@ sub got_logic_op {
 
 sub got_state_op_pre {
     my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
     return 'ACT::' . lc $got;
 }
 
 sub got_state_op_post {
     my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+        $got = shift @$got;
+    }
     return 'DIRXN::' . lc $got;
 }
 
@@ -317,13 +325,15 @@ sub _generate_pdl_custom {
                 $expr = "$state1 >= $state2 && $state1" .
                 "->index($idxvar) < $state2";
             } else {
-                $expr = "$state1 =< $state2 && $state1" .
+                $expr = "$state1 <= $state2 && $state1" .
                 "->index($idxvar) > $state2";
             }
             push @expressions, $expr;
         }
-        if (defined $c->{xbelow}) {
-            my ($state1, $state2) = @{$c->{xbelow}};
+        if (defined $c->{xbelow} or defined $c->{xabove}) {
+            my $dirxn = 'xabove' if defined $c->{xabove};
+            $dirxn = 'xbelow' if defined $c->{xbelow};
+            my ($state1, $state2) = @{$c->{$dirxn}};
             my $index = $self->index_var_count;
             #TODO: whatif the state1 and state2 have different dims ?
             my $idxvar = '$idx_' . $index;
@@ -334,12 +344,16 @@ sub _generate_pdl_custom {
             $self->index_var_count($index + 1);
             # state2 can be var or number
             my $expr;
+            my $s1 = '<' if $dirxn eq 'xbelow';
+            $s1 = '>' if $dirxn eq 'xabove';
+            my $s2 = '>' if $dirxn eq 'xbelow';
+            $s2 = '<' if $dirxn eq 'xabove';
             if ($state2 =~ /^\$/) {
-                $expr = $state1 . "->index($idxvar) < $state2" .
-                        "->index($idxvar) && $state1 > $state2";
+                $expr = $state1 . "->index($idxvar) $s1 $state2" .
+                        "->index($idxvar) && $state1 $s2 $state2";
             } else {
-                $expr = $state1 . "->index($idxvar) < $state2 "
-                        . "&& $state1 > $state2";
+                $expr = $state1 . "->index($idxvar) $s1 $state2 "
+                        . "&& $state1 $s2 $state2";
             }
             push @expressions, $expr;
         }
@@ -437,6 +451,7 @@ sub compile {
     return unless (defined $text and length $text);
     # update the debug flag to keep it dynamic
     $self->receiver->debug($self->debug);
+    $self->receiver->index_var_count(0); # reset for each compilation
     # update the preset vars if necessary
     $self->receiver->preset_vars($presets || $self->preset_vars);
     return $self->parser->parse($text);
