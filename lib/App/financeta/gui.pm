@@ -1602,7 +1602,11 @@ sub save_current_tab {
             directory => $self->datadir,
         );
         $mfile = $dlg->fileName if $dlg->execute;
-        $mfile = File::Spec->catfile($self->datadir, $mfile) unless ($mfile =~ /^\//);
+        if ($^O !~ /Win32/) {
+            $mfile = File::Spec->catfile($self->datadir, $mfile) unless ($mfile =~ /^\//);
+        } else {
+            $mfile .= '.yml' unless $mfile =~ /\.yml$/; #windows is weird
+        }
     }
     if ($info and defined $info->{rules}) {
         $saved->{rules} = $info->{rules};
@@ -2025,7 +2029,7 @@ sub plot_data_gnuplot {
     $pwin->reset();
     # use multiplot
     $pwin->multiplot();
-    my %binmode = (binary => 1);
+    my %binmode = ();
     if ($^O !~ /Win32/ and $Alien::Gnuplot::version < 4.6) {
         say "Binary mode is set to 0 due to gnuplot $Alien::Gnuplot::version" if $self->debug;
         $binmode{binary} = 0;
