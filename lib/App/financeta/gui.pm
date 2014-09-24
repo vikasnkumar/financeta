@@ -1923,7 +1923,7 @@ AUTOGEN
     } else {
         $rules = $autogen . "\n";
     }
-    if ($editor->update_editor($rules, $tabname)) {
+    if ($editor->update_editor($rules, $tabname, \@vars)) {
     }
     $self->editors->{$tabname} = $editor;
 }

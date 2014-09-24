@@ -866,7 +866,7 @@ has momentum => {
             return [
                 ["MACD(12/26/$signal)", $omacd, undef, "macd_12_26_$signal"],
                 ["MACD Signal(12/26/$signal)", $omacdsig, undef, "macdsig_12_26_$signal"],
-                ["MACD Histogram(12/26/$signal)", $omacdhist, { with => 'impulses' }, undef, "macdhist_12_26_$signal"],
+                ["MACD Histogram(12/26/$signal)", $omacdhist, { with => 'impulses' }, "macdhist_12_26_$signal"],
             ];
         },
         gnuplot => \&_plot_gnuplot_additional,

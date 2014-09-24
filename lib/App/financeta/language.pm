@@ -14,9 +14,10 @@ use constant text => <<GRAMMAR;
 %grammar financeta
 %version 0.10
 
-program: statement* EOS
+program: statement* end-of-program
 statement: comment | instruction
 
+end-of-program: - EOS
 comment: /- HASH ANY* EOL/ | blank-line
 blank-line: /- EOL/
 
@@ -51,7 +52,7 @@ logic-op: /((i:'and' | 'or'))/ | /([ AMP PIPE ]{2})/
 order: buy-sell quantity? - /(i:'at')/ - price -
 buy-sell: - /((i:'buy' | 'sell'))/ -
 quantity: number
-price: variable | number
+price: - variable | number -
 variable: DOLLAR identifier
 
 # basic tokens
@@ -119,9 +120,13 @@ sub got_variable {
         $got = shift @$got;
     }
     $got = lc $got; # case-insensitive
-    return "\$$got" if exists $self->preset_vars->{$got};
-    return "\$$got" if exists $self->local_vars->{$got};
-    $self->local_vars->{$got} = 1;
+    if (exists $self->preset_vars->{$got} or
+        exists $self->local_vars->{$got}) {
+        # do nothing
+    } else {
+        $self->local_vars->{$got} = 1;
+    }
+    return '$' . $got;
 }
 
 sub got_quantity {

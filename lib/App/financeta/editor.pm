@@ -12,6 +12,8 @@ use Carp;
 use File::ShareDir 'dist_file';
 use POE 'Loop::Prima';
 use Prima qw(Application Edit MsgBox);
+use Try::Tiny;
+use App::financeta::language;
 
 $| = 1;
 has debug => 0;
@@ -20,6 +22,9 @@ has main => (builder => '_build_main');
 has icon => (builder => '_build_icon');
 has brand => __PACKAGE__;
 has tab_name => undef;
+has compiler => (default => sub {
+    return App::financeta::language->new(debug => 0);
+});
 
 sub _build_icon {
     my $self = shift;
@@ -71,6 +76,19 @@ sub _build_main {
                     },
                     $self,
                 ],
+                [
+                    'compile_rules', 'Compile', 'Ctrl+B', '^B',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $ed = $win->menu->data($item);
+                        my $txt = $win->editor_edit->text;
+                        $ed->parent->save_editor($txt, $ed->tab_name, 1);
+                        my $output = $ed->compile($txt);
+                        message_box('Compiled Output', $output,
+                            mb::Ok | mb::Information) if defined $output;
+                    },
+                    $self,
+                ],
             ],
         ]],
         onDestroy => sub {
@@ -99,8 +117,12 @@ sub _build_main {
 }
 
 sub update_editor {
-    my ($self, $rules, $tabname) = @_;
+    my ($self, $rules, $tabname, $vars) = @_;
     $self->tab_name($tabname) if defined $tabname;
+    if (defined $vars) {
+        my %presets = map { $_ => 1 } @$vars;
+        $self->compiler->preset_vars(\%presets);
+    }
     $self->main->editor_edit->text($rules);
     $self->main->show;
     $self->main->bring_to_front;
@@ -121,6 +143,17 @@ sub close {
 sub get_text {
     my $self = shift;
     return $self->main->editor_edit->text;
+}
+
+sub compile {
+    my ($self, $txt) = @_;
+    my $output;
+    try {
+        $output = $self->compiler->compile($txt);
+    } catch {
+        message("Error compiling rules");
+    };
+    return $output;
 }
 
 1;
