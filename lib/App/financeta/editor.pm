@@ -84,6 +84,7 @@ sub _build_main {
                         my $txt = $win->editor_edit->text;
                         $ed->parent->save_editor($txt, $ed->tab_name, 1);
                         my $output = $ed->compile($txt);
+                        #TODO: do something with the output
                         message_box('Compiled Output', $output,
                             mb::Ok | mb::Information) if defined $output;
                     },
@@ -151,7 +152,10 @@ sub compile {
     try {
         $output = $self->compiler->compile($txt);
     } catch {
-        message("Error compiling rules");
+        my $err = $_;
+        say $err if $self->debug;
+        #TODO: create a better window
+        message("Compiler Error\n$err");
     };
     return $output;
 }
