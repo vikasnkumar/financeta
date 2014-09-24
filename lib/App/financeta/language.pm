@@ -89,7 +89,9 @@ extends 'Pegex::Tree';
 
 has debug => 0;
 
-has preset_vars => {};
+has preset_vars => [];
+
+has preset_vars_hash => undef;
 
 has const_vars => {
     positive => 1e-6,
@@ -120,7 +122,12 @@ sub got_variable {
         $got = shift @$got;
     }
     $got = lc $got; # case-insensitive
-    if (exists $self->preset_vars->{$got} or
+    unless (defined $self->preset_vars_hash) {
+        my $arr = $self->preset_vars;
+        my %pvars = map { $_ => 1 } @$arr;
+        $self->preset_vars_hash(\%pvars);
+    }
+    if (exists $self->preset_vars_hash->{$got} or
         exists $self->local_vars->{$got}) {
         # do nothing
     } else {
@@ -287,13 +294,30 @@ sub got_instruction {
     return $res;
 }
 
-sub _generate_pdl_required {
+sub _generate_pdl_begin {
+    my $self = shift;
+    my $lookback = $self->const_vars->{lookback};
+    my $pvars = $self->preset_vars;
+    my @decls = ();
+    foreach (@$pvars) {
+        push @decls, 'my $' . $_ . ' = shift;';
+    }
+    my @exprs = (
+        'sub user_rules {',
+        @decls,
+        'my $buys = zeroes($close->dims);',
+        'my $sells = zeroes($close->dims);',
+        'my $lookback = ' . $lookback . ';',
+    );
+    return join("\n", @exprs);
+}
+
+sub _generate_pdl_end {
     my $self = shift;
     my $lookback = $self->const_vars->{lookback};
     my @exprs = (
-        'my $buys = zeroes($close->dims);',
-        'my $sells = zeroes($close->dims);',
-        "my \$lookback = $lookback;",
+        'return { buys => $buys, sells => $sells };',
+        '}', # end of subroutine
     );
     return join("\n", @exprs);
 }
@@ -398,7 +422,8 @@ sub final {
         push @code, $self->_generate_pdl_custom($_);
     }
     return unless scalar @code;
-    my $final_code = join("\n", $self->_generate_pdl_required(), @code) if scalar @code;
+    my $final_code = join("\n", $self->_generate_pdl_begin(), @code,
+                            $self->_generate_pdl_end());
     my $tidy_code;
     Perl::Tidy::perltidy(source => \$final_code, destination => \$tidy_code);
     say $tidy_code if $self->debug;
@@ -423,7 +448,7 @@ use App::financeta::mo;
 $| = 1;
 has debug => 0;
 
-has preset_vars => {};
+has preset_vars => [];
 
 has grammar => (default => sub {
     return App::financeta::language::grammar->new;
@@ -459,6 +484,7 @@ sub compile {
     $self->receiver->index_var_count(0); # reset for each compilation
     # update the preset vars if necessary
     $self->receiver->preset_vars($presets || $self->preset_vars);
+    $self->receiver->preset_vars_hash(undef);
     return $self->parser->parse($text);
 }
 

@@ -45,6 +45,14 @@ TEST2
 #           );
 # $buys->index($buys_i) .= $open->index($buys_i);
 my $expected2_src = <<'EXPECTED';
+sub user_rules {
+    my $open = shift;
+    my $high = shift;
+    my $low = shift;
+    my $close = shift;
+    my $macd = shift;
+    my $macd_signal = shift;
+    my $macd_hist = shift;
 my $buys     = zeroes( $close->dims );
 my $sells    = zeroes( $close->dims );
 my $lookback = 1;
@@ -58,20 +66,22 @@ my $idx_2 =
       && $macd->index($idx_1) < $macd_signal->index($idx_1)
       && $macd > $macd_signal );
 $buys->index($idx_2) .= $open->index($idx_2);
+return { buys => $buys, sells => $sells };
+}
 EXPECTED
 my $expected2;
 Perl::Tidy::perltidy(source => \$expected2_src, destination => \$expected2);
 my $output2 = $lang->compile(
     $test2,
-    {
-        open        => 1,
-        high        => 1,
-        low         => 1,
-        close       => 1,
-        macd        => 1,
-        macd_signal => 1,
-        macd_hist   => 1,
-    }
+    [qw/
+        open
+        high
+        low
+        close
+        macd
+        macd_signal
+        macd_hist
+    /]
 );
 isnt( $output2, undef, 'compiler can parse an instruction' );
 note($output2);
@@ -105,6 +115,14 @@ TEST3
 # macd crosses macd_signal from above => macd[i - L2] > macd_signal[i - L2] && macd[i] < macd_signal[i]
 # sell at $high => $sell = $high
 my $expected3_src = << 'EXPECTED';
+sub user_rules {
+    my $open = shift;
+    my $high = shift;
+    my $low = shift;
+    my $close = shift;
+    my $macd = shift;
+    my $macd_signal = shift;
+    my $macd_hist = shift;
 my $buys     = zeroes( $close->dims );
 my $sells    = zeroes( $close->dims );
 my $lookback = 1;
@@ -118,19 +136,21 @@ which( $macd_hist <= -1e-06
 && $macd->index($idx_1) > $macd_signal->index($idx_1)
 && $macd < $macd_signal );
 $sells->index($idx_2) .= $high->index($idx_2);
+return { buys => $buys, sells => $sells };
+}
 EXPECTED
 my $expected3;
 Perl::Tidy::perltidy(source => \$expected3_src, destination => \$expected3);
 my $output3 = $lang->compile($test3,
-    {
-        open        => 1,
-        high        => 1,
-        low         => 1,
-        close       => 1,
-        macd        => 1,
-        macd_signal => 1,
-        macd_hist   => 1,
-    }
+    [qw/
+        open
+        high
+        low
+        close
+        macd
+        macd_signal
+        macd_hist
+    /]
 );
 isnt( $output3, undef, 'compiler can parse an instruction' );
 note($output3);
@@ -156,18 +176,18 @@ sell at
   $high WHEN $macdhist_12_26_9 becomes negative AND $macd_12_26_9 crosses $macdsig_12_26_9
   from above;
 TEST4
-my $output4 = $lang->compile($test4, {
-open => 1,
-high => 1,
-low => 1,
-close => 1,
-bbands_upper_5 => 1,
-bbands_middle_5 => 1,
-bands_lower_5 => 1,
-macd_12_26_9 => 1,
-macdsig_12_26_9 => 1,
-macdhist_12_26_9 => 1,
-});
+my $output4 = $lang->compile($test4, [qw/
+open
+high
+low
+close
+bbands_upper_5
+bbands_middle_5
+bands_lower_5
+macd_12_26_9
+macdsig_12_26_9
+macdhist_12_26_9
+/]);
 isnt($output4, undef, 'compiler can parse rules');
 note($output4);
 done_testing();

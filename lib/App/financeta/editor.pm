@@ -90,6 +90,19 @@ sub _build_main {
                     },
                     $self,
                 ],
+                [
+                    'execute_rules', 'Execute', 'Ctrl+R', '^R',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $ed = $win->menu->data($item);
+                        my $txt = $win->editor_edit->text;
+                        $ed->parent->save_editor($txt, $ed->tab_name, 1);
+                        my $output = $ed->compile($txt);
+                        return unless defined $output;
+                        #TODO: do something with the output
+                    },
+                    $self,
+                ],
             ],
         ]],
         onDestroy => sub {
@@ -120,10 +133,7 @@ sub _build_main {
 sub update_editor {
     my ($self, $rules, $tabname, $vars) = @_;
     $self->tab_name($tabname) if defined $tabname;
-    if (defined $vars) {
-        my %presets = map { $_ => 1 } @$vars;
-        $self->compiler->preset_vars(\%presets);
-    }
+    $self->compiler->preset_vars($vars) if defined $vars;
     $self->main->editor_edit->text($rules);
     $self->main->show;
     $self->main->bring_to_front;
