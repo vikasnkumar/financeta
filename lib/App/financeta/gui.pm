@@ -879,6 +879,7 @@ sub run_and_display_indicator {
     return unless $win;
     if (defined $data and defined $symbol and defined $indicators and
         ref $indicators eq 'ARRAY') {
+        my $icount = scalar @$indicators;
         foreach my $iref (@$indicators) {
             say "Trying to run indicator for :", Dumper($iref) if $self->debug;
             my $output;
@@ -915,7 +916,9 @@ sub run_and_display_indicator {
                     mb::Ok | mb::Error);
                 return;
             }
-            $self->display_data($win, $data, $symbol, $iref, $output);
+            my ($next_data) = $self->display_data($win, $data, $symbol, $iref, $output);
+            $icount--;
+            $data = $next_data if $icount > 0;
         }
         return 1;
     }
@@ -1502,7 +1505,7 @@ sub display_data {
     $dl->{-symbol} = $symbol;
     $dl->{-indicators} = $existing_indicators if defined $existing_indicators;
     $dl->{-info} = $info || {};
-    1;
+    return wantarray ? ($data) : 1;
 }
 
 sub enable_menu_options {
