@@ -303,6 +303,8 @@ sub _generate_pdl_begin {
         push @decls, 'my $' . $_ . ' = shift;';
     }
     my @exprs = (
+        'use PDL;',
+        'use PDL::NiceSlice;',
         'sub {', # an anonymous sub
         @decls,
         'my $buys = zeroes($close->dims);',

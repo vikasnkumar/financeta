@@ -53,6 +53,8 @@ TEST2
 #           );
 # $buys->index($buys_i) .= $open->index($buys_i);
 my $expected2_src = <<'EXPECTED';
+use PDL;
+use PDL::NiceSlice;
 sub  {
     my $open = shift;
     my $high = shift;
@@ -124,6 +126,8 @@ TEST3
 # macd crosses macd_signal from above => macd[i - L2] > macd_signal[i - L2] && macd[i] < macd_signal[i]
 # sell at $high => $sell = $high
 my $expected3_src = << 'EXPECTED';
+use PDL;
+use PDL::NiceSlice;
 sub  {
     my $open = shift;
     my $high = shift;

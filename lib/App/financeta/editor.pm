@@ -175,14 +175,17 @@ sub execute {
     try {
         my $coderef = $self->compiler->generate_coderef($code);
         if ($self->parent) {
-            say "Tab Name: ", $self->tab_name if $self->debug;
+            say "Executing rules for tab name: ", $self->tab_name if $self->debug;
             $self->parent->execute_rules($self->tab_name, $coderef);
         }
     } catch {
         my $err = $_;
-        say $err if $self->debug;
+        if ($self->debug) {
+            say $err;
+            say $code;
+        }
         #TODO: create a better window
-        message("Error generating code-ref\n$err");
+        message("Error executing generated code:\n$err");
     };
 }
 

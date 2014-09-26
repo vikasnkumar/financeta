@@ -1867,6 +1867,27 @@ sub set_tab_info_by_name {
     }
 }
 
+sub set_tab_results_by_name {
+    my ($self, $win, $name, $results) = @_;
+    return unless $win;
+    return unless $name;
+    return unless $results;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        if ($dl and $dl->name eq $name) {
+            say "Setting results for ", $dl->name if $self->debug;
+            $dl->{-results} = $results;
+            return 1;
+        }
+    }
+}
+
 sub get_tab_names($) {
     my ($self, $win) = @_;
     return unless $win;
@@ -1963,9 +1984,42 @@ sub close_editor {
 }
 
 sub execute_rules {
-    my ($self, $tabname, $coderef) = @_;
+    my ($self, $tabname, $coderef, $win_in) = @_;
     if (defined $tabname) {
         return unless ref $coderef eq 'CODE';
+        # ok now we have the code ready.
+        # let's make sure the variables needed by the code
+        # are in the same order as the code expects them to be in
+        # then we invoke the code, and retrieve the results
+        # and update the display
+        my $win = $win_in || $self->main;
+        # find the list of indicators and the variable names
+        my ($data, $sym, $indicators, $headers) =
+            $self->get_tab_data_by_name($win, $tabname);
+        my @var_pdls = ();
+        $indicators = [] unless defined $indicators;
+        push @var_pdls, $data(, (1)); # open
+        push @var_pdls, $data(, (2)); # high
+        push @var_pdls, $data(, (3)); # low
+        push @var_pdls, $data(, (4)); # close
+        foreach (@$indicators) {
+            my $iref = $_->{indicator};
+            my $idata = $_->{data};
+            next unless defined $idata;
+            foreach (@$idata) {
+                push @var_pdls, $_->[1]; # this is the PDL
+            }
+        }
+        my $results = &$coderef(@var_pdls); # invoke the rules sub
+        if (defined $results and ref $results eq 'HASH') {
+            say "Retrieved results successfully from code-ref" if $self->debug;
+            $self->set_tab_results_by_name($win, $tabname, $results);
+            say "BUYS: ", $results->{buys};
+            say "SELLS: ", $results->{sells};
+        } else {
+            carp "Unable to execute rules strategy code-ref";
+            return;
+        }
     } else {
         carp "Code for non-existent tab $tabname was being executed";
     }
