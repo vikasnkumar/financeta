@@ -72,8 +72,8 @@ $idx_0 = $idx_0->setbadif( $idx_0 < 0 )->setbadtoval(0);
 my $idx_1 = xvals( $macd->dims ) - $lookback;
 $idx_1 = $idx_1->setbadif( $idx_1 < 0 )->setbadtoval(0);
 my $idx_2 =
-  which( ($macd_hist >= 1e-06)
-      & ($macd_hist->index($idx_0) < 1e-06)
+  which( ($macd_hist >= 0.000001)
+      & ($macd_hist->index($idx_0) < 0.000001)
       & ($macd->index($idx_1) < $macd_signal->index($idx_1))
       & ($macd > $macd_signal) );
 $buys->index($idx_2) .= $open->index($idx_2);
@@ -145,8 +145,8 @@ $idx_0 = $idx_0->setbadif( $idx_0 < 0 )->setbadtoval(0);
 my $idx_1 = xvals( $macd->dims ) - $lookback;
 $idx_1 = $idx_1->setbadif( $idx_1 < 0 )->setbadtoval(0);
 my $idx_2 =
-which( ($macd_hist <= -1e-06)
-& ($macd_hist->index($idx_0) > -1e-06)
+which( ($macd_hist <= -0.000001)
+& ($macd_hist->index($idx_0) > -0.000001)
 & ($macd->index($idx_1) > $macd_signal->index($idx_1))
 & ($macd < $macd_signal) );
 $sells->index($idx_2) .= $high->index($idx_2);

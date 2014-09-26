@@ -94,8 +94,8 @@ has preset_vars => [];
 has preset_vars_hash => undef;
 
 has const_vars => {
-    positive => 1e-6,
-    negative => -1e-6,
+    positive => sprintf("%0.06f", 1e-6),
+    negative => sprintf("%0.06f", -1e-6),
     zero => 0,
     lookback => 1,
 };
