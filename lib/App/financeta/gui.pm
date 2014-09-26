@@ -1692,6 +1692,7 @@ sub close_current_tab {
             my $ed = $self->editors->{$e};
             $ed->close;
         }
+        $self->editors({});
         if ($win->{plot}) {
             $win->{plot}->close();
         }
@@ -1959,6 +1960,15 @@ sub save_editor {
 sub close_editor {
     my ($self, $tabname) = @_;
     delete $self->editors->{$tabname} if defined $tabname;
+}
+
+sub execute_rules {
+    my ($self, $tabname, $coderef) = @_;
+    if (defined $tabname) {
+        return unless ref $coderef eq 'CODE';
+    } else {
+        carp "Code for non-existent tab $tabname was being executed";
+    }
 }
 
 sub plot_data {

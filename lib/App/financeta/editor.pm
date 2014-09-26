@@ -82,7 +82,7 @@ sub _build_main {
                         my ($win, $item) = @_;
                         my $ed = $win->menu->data($item);
                         my $txt = $win->editor_edit->text;
-                        $ed->parent->save_editor($txt, $ed->tab_name, 1);
+                        $ed->parent->save_editor($txt, $ed->tab_name, 0);
                         my $output = $ed->compile($txt);
                         #TODO: do something with the output
                         message_box('Compiled Output', $output,
@@ -96,10 +96,10 @@ sub _build_main {
                         my ($win, $item) = @_;
                         my $ed = $win->menu->data($item);
                         my $txt = $win->editor_edit->text;
-                        $ed->parent->save_editor($txt, $ed->tab_name, 1);
+                        $ed->parent->save_editor($txt, $ed->tab_name, 0);
                         my $output = $ed->compile($txt);
                         return unless defined $output;
-                        #TODO: do something with the output
+                        $ed->execute($output);
                     },
                     $self,
                 ],
@@ -168,6 +168,22 @@ sub compile {
         message("Compiler Error\n$err");
     };
     return $output;
+}
+
+sub execute {
+    my ($self, $code) = @_;
+    try {
+        my $coderef = $self->compiler->generate_coderef($code);
+        if ($self->parent) {
+            say "Tab Name: ", $self->tab_name if $self->debug;
+            $self->parent->execute_rules($self->tab_name, $coderef);
+        }
+    } catch {
+        my $err = $_;
+        say $err if $self->debug;
+        #TODO: create a better window
+        message("Error generating code-ref\n$err");
+    };
 }
 
 1;

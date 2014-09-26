@@ -303,7 +303,7 @@ sub _generate_pdl_begin {
         push @decls, 'my $' . $_ . ' = shift;';
     }
     my @exprs = (
-        'sub user_rules {',
+        'sub {', # an anonymous sub
         @decls,
         'my $buys = zeroes($close->dims);',
         'my $sells = zeroes($close->dims);',
@@ -486,6 +486,14 @@ sub compile {
     $self->receiver->preset_vars($presets || $self->preset_vars);
     $self->receiver->preset_vars_hash(undef);
     return $self->parser->parse($text);
+}
+
+sub generate_coderef {
+    my ($self, $code) = @_;
+    return unless $code;
+    my $coderef = eval $code;
+    carp "Unable to compile into a code-ref: $@" if $@;
+    return $coderef;
 }
 
 1;
