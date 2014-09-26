@@ -304,7 +304,7 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-edit_rules', 'Add/Edit Rules', 'Ctrl+E', '^E',
+                    '-edit_rules', 'Edit Rules', 'Ctrl+E', '^E',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
@@ -1425,7 +1425,7 @@ sub display_data {
     # default headers
     my $headers = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume'];
     my $existing_indicators = [];
-    my $info;
+    my ($info, $buysells);
     for my $idx (0 .. $pc) {
         my @wids = $nt->widgets_from_page($idx);
         next unless @wids;
@@ -1436,6 +1436,7 @@ sub display_data {
                 $headers = $_->headers if defined $_->headers;
                 push @$existing_indicators, @{$_->{-indicators}} if exists $_->{-indicators};
                 $info = $_->{-info} if exists $_->{-info};
+                $buysells = $_->{-buysells} if exists $_->{-buysells};
                 $nt->delete_widget($_);
             }
             $pageno = $idx;
@@ -1458,7 +1459,25 @@ sub display_data {
     }
     say "Data dimension: ", Dumper([$data->dims]) if $self->debug;
     say "Updated headers: ", Dumper($headers) if $self->debug;
-    my $items = $data->transpose->unpdl;
+    my $items;
+    if (defined $buysells and ref $buysells eq 'HASH' and
+        defined $buysells->{buys} and
+        defined $buysells->{sells}) {
+        my $buys = $buysells->{buys};
+        my $sells = $buysells->{sells};
+        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
+            my $ldata = $data->copy;
+            $ldata = $ldata->glue(1, $buys);
+            $ldata = $ldata->glue(1, $sells);
+            push @$headers, 'Buys', 'Sells';
+            $items = $ldata->transpose->unpdl;
+        } else {
+            carp "Buy-sells object is corrupt. Not using.";
+            $items = $data->transpose->unpdl;
+        }
+    } else {
+        $items = $data->transpose->unpdl;
+    }
     my $tz = $self->timezone;
     # reformat
     foreach my $arr (@$items) {
@@ -1505,6 +1524,7 @@ sub display_data {
     $dl->{-symbol} = $symbol;
     $dl->{-indicators} = $existing_indicators if defined $existing_indicators;
     $dl->{-info} = $info || {};
+    $dl->{-buysells} = $buysells if defined $buysells;
     return wantarray ? ($data) : 1;
 }
 
@@ -1867,11 +1887,11 @@ sub set_tab_info_by_name {
     }
 }
 
-sub set_tab_results_by_name {
-    my ($self, $win, $name, $results) = @_;
+sub set_tab_buysells_by_name {
+    my ($self, $win, $name, $buysells) = @_;
     return unless $win;
     return unless $name;
-    return unless $results;
+    return unless $buysells;
     my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
     return unless @tabs;
     my $pc = $win->data_tabs->pageCount - 1;
@@ -1881,9 +1901,28 @@ sub set_tab_results_by_name {
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->name eq $name) {
-            say "Setting results for ", $dl->name if $self->debug;
-            $dl->{-results} = $results;
+            say "Setting buy-sells for ", $dl->name if $self->debug;
+            $dl->{-buysells} = $buysells;
             return 1;
+        }
+    }
+}
+
+sub get_tab_buysells_for_name {
+    my ($self, $win, $name) = @_;
+    return unless $win;
+    return unless $name;
+    my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
+    return unless @tabs;
+    my $pc = $win->data_tabs->pageCount - 1;
+    return unless $pc >= 0;
+    for my $idx (0 .. $pc) {
+        my @nt = $win->data_tabs->widgets_from_page($idx);
+        next unless @nt;
+        my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
+        if ($dl and $dl->name eq $name) {
+            say "Getting buy-sells for ", $dl->name if $self->debug;
+            return wantarray ? ($dl->{-buysells}, $dl->name) : $dl->{-buysells};
         }
     }
 }
@@ -1990,7 +2029,7 @@ sub execute_rules {
         # ok now we have the code ready.
         # let's make sure the variables needed by the code
         # are in the same order as the code expects them to be in
-        # then we invoke the code, and retrieve the results
+        # then we invoke the code, and retrieve the buy-sell results
         # and update the display
         my $win = $win_in || $self->main;
         # find the list of indicators and the variable names
@@ -2010,12 +2049,16 @@ sub execute_rules {
                 push @var_pdls, $_->[1]; # this is the PDL
             }
         }
-        my $results = &$coderef(@var_pdls); # invoke the rules sub
-        if (defined $results and ref $results eq 'HASH') {
-            say "Retrieved results successfully from code-ref" if $self->debug;
-            $self->set_tab_results_by_name($win, $tabname, $results);
-            say "BUYS: ", $results->{buys};
-            say "SELLS: ", $results->{sells};
+        my $buysells = &$coderef(@var_pdls); # invoke the rules sub
+        if (defined $buysells and ref $buysells eq 'HASH') {
+            say "Retrieved buy-sells successfully from code-ref" if $self->debug;
+            if ($self->set_tab_buysells_by_name($win, $tabname, $buysells)) {
+                say "Successully set buy-sells for tab $tabname\n";
+            }
+            say "BUYS: ", $buysells->{buys} if $self->debug;
+            say "SELLS: ", $buysells->{sells} if $self->debug;
+            # this $data should not change theoretically
+            $self->display_data($win, $data, $sym);
         } else {
             carp "Unable to execute rules strategy code-ref";
             return;

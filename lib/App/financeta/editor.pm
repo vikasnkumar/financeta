@@ -97,9 +97,7 @@ sub _build_main {
                         my $ed = $win->menu->data($item);
                         my $txt = $win->editor_edit->text;
                         $ed->parent->save_editor($txt, $ed->tab_name, 0);
-                        my $output = $ed->compile($txt);
-                        return unless defined $output;
-                        $ed->execute($output);
+                        $ed->execute($txt);
                     },
                     $self,
                 ],
@@ -171,7 +169,9 @@ sub compile {
 }
 
 sub execute {
-    my ($self, $code) = @_;
+    my ($self, $txt) = @_;
+    my $code = $self->compile($txt);
+    return unless $code;
     try {
         my $coderef = $self->compiler->generate_coderef($code);
         if ($self->parent) {
