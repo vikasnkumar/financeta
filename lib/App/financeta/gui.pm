@@ -1479,7 +1479,7 @@ sub display_data {
             my $ldata = $data->copy;
             $ldata = $ldata->glue(1, $buys);
             $ldata = $ldata->glue(1, $sells);
-            push @$headers, 'Buys', 'Sells';
+            push @$headers, 'Buys', 'Sells' unless grep {/Buys|Sells/} @$headers;
             $items = $ldata->transpose->unpdl;
         } else {
             carp "Buy-sells object is corrupt. Not using.";
