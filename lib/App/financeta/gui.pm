@@ -2107,7 +2107,7 @@ sub plot_data {
 }
 
 sub plot_data_gnuplot {
-    my ($self, $win, $data, $symbol, $type, $indicators) = @_;
+    my ($self, $win, $data, $symbol, $type, $indicators, $buysell) = @_;
     return unless defined $data;
     # use the x11 term by default first
     my $term = 'x11';
@@ -2158,6 +2158,25 @@ sub plot_data_gnuplot {
             } else {
                 carp 'Unable to handle plot arguments in ' . ref($iplot) . ' form!';
             }
+        }
+    }
+    if (defined $buysell and ref $buysell eq 'HASH' and
+        defined $buysell->{buys} and defined $buysell->{sells}) {
+        my $buys = $buysell->{buys};
+        my $sells = $buysell->{sells};
+        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
+            my $bsplot = $self->indicator->get_plot_args_buysell(
+                $data(,(0)), $buys, $sells);
+            if (defined $bsplot and ref $bsplot eq 'ARRAY') {
+                push @general_plot, @$bsplot if scalar @$bsplot;
+            } elsif (ref $bsplot eq 'HASH') {
+                my $bsplot_gen = $bsplot->{general};
+                if ($bsplot_gen) {
+                    push @general_plot, @$bsplot_gen if scalar @$bsplot_gen;
+                }
+            }
+        } else {
+            carp "Unable to plot invalid buy-sell data";
         }
     }
     $pwin->reset();

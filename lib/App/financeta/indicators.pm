@@ -2326,6 +2326,22 @@ sub get_plot_args($$$) {
     return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
 }
 
+has buysell => {
+    gnuplot => \&_plot_gnuplot_general,
+};
+
+sub get_plot_args_buysell {
+    my ($self, $xdata, $buys, $sells) = @_;
+    my $plotref = $self->buysell->{lc($self->plot_engine)};
+    carp "There is no plotting function available for buy-sell" unless ref $plotref eq 'CODE';
+    my $output = [
+        # plotting beautifier
+        [ 'Buys', $buys->setbadif($buys == 0), { with => 'points', pointtype => 5, linecolor => 'green', }, 'buys' ],
+        [ 'Sells', $sells->setbadif($sells == 0), { with => 'points', pointtype => 7, linecolor => 'red', }, 'sells' ],
+    ];
+    return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
+}
+
 1;
 __END__
 ### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
