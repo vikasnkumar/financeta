@@ -189,8 +189,8 @@ sub got_not_op {
 sub got_logic_op {
     my ($self, $got) = @_;
     $got = lc $got;
-    $got = '&&' if $got eq 'and';
-    $got = '||' if $got eq 'or';
+    $got = '&' if $got eq 'and';
+    $got = '|' if $got eq 'or';
     return { logic => $got };
 }
 
@@ -352,12 +352,13 @@ sub _generate_pdl_custom {
                         "->setbadif($idxvar < 0)->setbadtoval(0);";
             $self->index_var_count($index + 1);
             # state is not a var but a number for become
+            # masks use bitwise & instead of logical &&
             if ($state2 >= 0) {
-                $expr = "$state1 >= $state2 && $state1" .
-                "->index($idxvar) < $state2";
+                $expr = "($state1 >= $state2) & ($state1" .
+                "->index($idxvar) < $state2)";
             } else {
-                $expr = "$state1 <= $state2 && $state1" .
-                "->index($idxvar) > $state2";
+                $expr = "($state1 <= $state2) & ($state1" .
+                "->index($idxvar) > $state2)";
             }
             push @expressions, $expr;
         }
@@ -379,12 +380,13 @@ sub _generate_pdl_custom {
             $s1 = '>' if $dirxn eq 'xabove';
             my $s2 = '>' if $dirxn eq 'xbelow';
             $s2 = '<' if $dirxn eq 'xabove';
+            # masks use bitwise & instead of logical &&
             if ($state2 =~ /^\$/) {
-                $expr = $state1 . "->index($idxvar) $s1 $state2" .
-                        "->index($idxvar) && $state1 $s2 $state2";
+                $expr = "($state1" . "->index($idxvar) $s1 $state2" .
+                        "->index($idxvar)) & ($state1 $s2 $state2)";
             } else {
-                $expr = $state1 . "->index($idxvar) $s1 $state2 "
-                        . "&& $state1 $s2 $state2";
+                $expr = "($state1" . "->index($idxvar) $s1 $state2) "
+                        . "& ($state1 $s2 $state2)";
             }
             push @expressions, $expr;
         }

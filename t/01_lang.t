@@ -47,9 +47,9 @@ TEST2
 # my $i2 = xvals($macd_hist->dims) - $L2;
 # $i2 = $i2->setbadif($i2 < 0)->setbadtoval(0);
 # my $buys = zeroes($macd_hist->dims);
-# my $buys_i = which($macd_hist > 0 &&
-#           $macd_hist->index($i1) < 0 &&
-#           macd->index($i2) < macd_signal->index($i2) &&
+# my $buys_i = which($macd_hist > 0 &
+#           $macd_hist->index($i1) < 0 &
+#           macd->index($i2) < macd_signal->index($i2) &
 #           macd > macd_signal
 #           );
 # $buys->index($buys_i) .= $open->index($buys_i);
@@ -72,10 +72,10 @@ $idx_0 = $idx_0->setbadif( $idx_0 < 0 )->setbadtoval(0);
 my $idx_1 = xvals( $macd->dims ) - $lookback;
 $idx_1 = $idx_1->setbadif( $idx_1 < 0 )->setbadtoval(0);
 my $idx_2 =
-  which( $macd_hist >= 1e-06
-      && $macd_hist->index($idx_0) < 1e-06
-      && $macd->index($idx_1) < $macd_signal->index($idx_1)
-      && $macd > $macd_signal );
+  which( ($macd_hist >= 1e-06)
+      & ($macd_hist->index($idx_0) < 1e-06)
+      & ($macd->index($idx_1) < $macd_signal->index($idx_1))
+      & ($macd > $macd_signal) );
 $buys->index($idx_2) .= $open->index($idx_2);
 return { buys => $buys, sells => $sells };
 }
@@ -123,8 +123,8 @@ my $test3 = << 'TEST3';
     FROM ABOVE;
 TEST3
 ####
-# macd_hist becomes negative => macd_hist[i] < 0 && macd_hist[i - L1] > 0
-# macd crosses macd_signal from above => macd[i - L2] > macd_signal[i - L2] && macd[i] < macd_signal[i]
+# macd_hist becomes negative => macd_hist[i] < 0 & macd_hist[i - L1] > 0
+# macd crosses macd_signal from above => macd[i - L2] > macd_signal[i - L2] & macd[i] < macd_signal[i]
 # sell at $high => $sell = $high
 my $expected3_src = << 'EXPECTED';
 use PDL;
@@ -145,10 +145,10 @@ $idx_0 = $idx_0->setbadif( $idx_0 < 0 )->setbadtoval(0);
 my $idx_1 = xvals( $macd->dims ) - $lookback;
 $idx_1 = $idx_1->setbadif( $idx_1 < 0 )->setbadtoval(0);
 my $idx_2 =
-which( $macd_hist <= -1e-06
-&& $macd_hist->index($idx_0) > -1e-06
-&& $macd->index($idx_1) > $macd_signal->index($idx_1)
-&& $macd < $macd_signal );
+which( ($macd_hist <= -1e-06)
+& ($macd_hist->index($idx_0) > -1e-06)
+& ($macd->index($idx_1) > $macd_signal->index($idx_1))
+& ($macd < $macd_signal) );
 $sells->index($idx_2) .= $high->index($idx_2);
 return { buys => $buys, sells => $sells };
 }

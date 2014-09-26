@@ -33,7 +33,7 @@ my $c; test2($a, $c = null);
 print $c, "\n";
 
 my $d = zeroes($a->dims);
-my $d_i =  which($a > 0.5 && $a->index($i) < 0.5);
+my $d_i =  which($a > 0.5 & $a->index($i) < 0.5);
 print $d_i, "\n";
 $d->index($d_i) .= $a->index($d_i);
 print $d, "\n";
