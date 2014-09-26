@@ -18,3 +18,4 @@ share/icon.gif
 share/sm_perl_id_bk_wt.gif
 t/00_use.t
 t/01_lang.t
+t/02_exec.t

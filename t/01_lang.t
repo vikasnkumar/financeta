@@ -15,6 +15,7 @@ can_ok( $lang, 'grammar' );
 can_ok( $lang, 'receiver' );
 can_ok( $lang, 'parser' );
 can_ok( $lang, 'compile' );
+can_ok( $lang, 'generate_coderef' );
 is( $lang->compile(''), undef, 'compiler works on undefined' );
 
 my $test1 = << 'TEST1';
@@ -179,7 +180,7 @@ my $test4 = << 'TEST4';
 #### $close
 #### $bbands_upper_5
 #### $bbands_middle_5
-### $bbands_lower_5
+#### $bbands_lower_5
 #### $macd_12_26_9
 #### $macdsig_12_26_9
 #### $macdhist_12_26_9
