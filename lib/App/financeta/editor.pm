@@ -129,12 +129,14 @@ sub _build_main {
 }
 
 sub update_editor {
-    my ($self, $rules, $tabname, $vars) = @_;
+    my ($self, $rules, $tabname, $vars, $hidden) = @_;
     $self->tab_name($tabname) if defined $tabname;
     $self->compiler->preset_vars($vars) if defined $vars;
     $self->main->editor_edit->text($rules);
-    $self->main->show;
-    $self->main->bring_to_front;
+    unless ($hidden) {
+        $self->main->show;
+        $self->main->bring_to_front;
+    }
     1;
 }
 

@@ -304,12 +304,22 @@ sub _menu_items {
                     $self,
                 ],
                 [
-                    '-edit_rules', 'Edit Rules', 'Ctrl+E', '^E',
+                    '-edit_rules', '~Edit Rules', 'Ctrl+E', '^E',
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
                         my ($info, $tabname) = $self->get_tab_info($win);
                         $self->open_editor($win, $info->{rules}, $tabname);
+                    },
+                    $self,
+                ],
+                [
+                    '-execute_rules', 'Execute ~Rules', 'Ctrl+R', '^R',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($info, $tabname) = $self->get_tab_info($win);
+                        $self->execute_rules_no_editor($win, $tabname, $info->{rules});
                     },
                     $self,
                 ],
@@ -1543,6 +1553,7 @@ sub enable_menu_options {
     $win->menu->plot_cdlv->enabled(1);
     $win->menu->add_indicator->enabled(1);
     $win->menu->edit_rules->enabled(1);
+    $win->menu->execute_rules->enabled(1);
 }
 
 sub disable_menu_options {
@@ -1561,6 +1572,7 @@ sub disable_menu_options {
     $win->menu->add_indicator->enabled(0);
     $win->menu->remove_indicator->enabled(0);
     $win->menu->edit_rules->enabled(0);
+    $win->menu->execute_rules->enabled(0);
 }
 
 #rudimentary
@@ -1951,7 +1963,7 @@ sub get_tab_indicators {
 }
 
 sub open_editor {
-    my ($self, $win, $rules, $tabname) = @_;
+    my ($self, $win, $rules, $tabname, $hidden) = @_;
     # update the editor window with rules
     # once the editor window saves something update the parent tab's rules
     # object
@@ -1991,7 +2003,7 @@ AUTOGEN
     } else {
         $rules = $autogen . "\n";
     }
-    if ($editor->update_editor($rules, $tabname, \@vars)) {
+    if ($editor->update_editor($rules, $tabname, \@vars, $hidden)) {
     }
     $self->editors->{$tabname} = $editor;
 }
@@ -2020,6 +2032,15 @@ sub save_editor {
 sub close_editor {
     my ($self, $tabname) = @_;
     delete $self->editors->{$tabname} if defined $tabname;
+}
+
+sub execute_rules_no_editor {
+    my ($self, $win, $tabname, $code_txt) = @_;
+    return unless ($win and $tabname and $code_txt);
+    return unless length $code_txt;
+    $self->open_editor($win, $code_txt, $tabname, 1);
+    my $editor = $self->editors->{$tabname};
+    $editor->execute($editor->get_text);
 }
 
 sub execute_rules {
