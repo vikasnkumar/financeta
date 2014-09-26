@@ -1634,10 +1634,15 @@ sub save_current_tab {
             directory => $self->datadir,
         );
         $mfile = $dlg->fileName if $dlg->execute;
-        if ($^O !~ /Win32/) {
-            $mfile = File::Spec->catfile($self->datadir, $mfile) unless ($mfile =~ /^\//);
+        if ($mfile) {
+            if ($^O !~ /Win32/) {
+                $mfile = File::Spec->catfile($self->datadir, $mfile) unless ($mfile =~ /^\//);
+            } else {
+                $mfile .= '.yml' unless $mfile =~ /\.yml$/; #windows is weird
+            }
         } else {
-            $mfile .= '.yml' unless $mfile =~ /\.yml$/; #windows is weird
+            carp "Saving the tab was canceled.";
+            return;
         }
     }
     if ($info and defined $info->{rules}) {
