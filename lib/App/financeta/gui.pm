@@ -184,8 +184,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'OHLC', $indicators);
+                        my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'OHLC', $indicators, $bs);
                         $win->menu->check('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
                         $win->menu->uncheck('plot_close');
@@ -200,8 +200,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'OHLCV', $indicators);
+                        my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'OHLCV', $indicators, $bs);
                         $win->menu->check('plot_ohlcv');
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_close');
@@ -216,8 +216,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'CLOSE', $indicators);
+                        my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CLOSE', $indicators, $bs);
                         $win->menu->check('plot_close');
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
@@ -232,8 +232,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'CLOSEV', $indicators);
+                        my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CLOSEV', $indicators, $bs);
                         $win->menu->check('plot_closev');
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
@@ -248,8 +248,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'CANDLE', $indicators);
+                        my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CANDLE', $indicators, $bs);
                         $win->menu->check('plot_cdl');
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
@@ -264,8 +264,8 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        $gui->plot_data($win, $data, $symbol, 'CANDLEV', $indicators);
+                        my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
+                        $gui->plot_data($win, $data, $symbol, 'CANDLEV', $indicators, $bs);
                         $win->menu->check('plot_cdlv');
                         $win->menu->uncheck('plot_ohlc');
                         $win->menu->uncheck('plot_ohlcv');
@@ -703,9 +703,9 @@ sub remove_indicator($) {
         if ($self->set_tab_data_by_name($win, $result->{tab}, $ndata, $symbol, $nindics, \@nhdrs)) {
             say "Successfully set data" if $self->debug;
             $self->display_data($win, $ndata, $symbol);
-            my ($adata, $asymbol, $aindicators) = $self->get_tab_data($win);
+            my ($adata, $asymbol, $aindicators, $ahdr, $abysl) = $self->get_tab_data($win);
             my $type = $self->current->{plot_type} || 'OHLC';
-            $self->plot_data($win, $adata, $asymbol, $type, $aindicators);
+            $self->plot_data($win, $adata, $asymbol, $type, $aindicators, $abysl);
             # disable remove indicator if there are no indicators left
             unless (scalar @$aindicators) {
                 #$self->main->menu->remove_indicator->enabled(0);
@@ -940,9 +940,9 @@ sub add_indicator($$$) {
     if ($self->add_indicator_wizard($win)) {
         my $iref = $self->current->{indicator};
         if ($self->run_and_display_indicator($win, $data, $symbol, [$iref])) {
-            my ($ndata, $nsymbol, $indicators) = $self->get_tab_data($win);
+            my ($ndata, $nsymbol, $indicators, $ndhr, $nbs) = $self->get_tab_data($win);
             my $type = $self->current->{plot_type} || 'OHLC';
-            $self->plot_data($win, $ndata, $nsymbol, $type, $indicators);
+            $self->plot_data($win, $ndata, $nsymbol, $type, $indicators, $nbs);
             return 1;
         }
     }
@@ -1409,9 +1409,9 @@ sub display_data {
                 return if ($oldidx == $newidx and !$self->tab_was_closed);
                 $self->tab_was_closed(0);
                 # ok find the detailed-list object and use it
-                my ($data, $symbol, $indicators) = $self->_get_tab_data($w, $newidx);
+                my ($data, $symbol, $indicators, $h, $bs) = $self->_get_tab_data($w, $newidx);
                 my $type = $self->current->{plot_type} || 'OHLC';
-                $self->plot_data($owner, $data, $symbol, $type, $indicators);
+                $self->plot_data($owner, $data, $symbol, $type, $indicators, $bs);
             },
         );
     }
@@ -1707,9 +1707,9 @@ sub load_new_tab {
         # this is specially done
         $win->menu->remove_indicator->enabled(1);
     }
-    my ($adata, $asym, $aind) = $self->get_tab_data($win);
+    my ($adata, $asym, $aind, $ahdr, $abysl) = $self->get_tab_data($win);
     my $type = $self->current->{plot_type} || 'OHLC';
-    $self->plot_data($win, $adata, $asym, $type, $aind);
+    $self->plot_data($win, $adata, $asym, $type, $aind, $abysl);
 }
 
 sub close_current_tab {
@@ -1769,7 +1769,9 @@ sub _get_tab_data {
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
         say "Found ", $dl->name if $self->debug;
-        return ($dl->{-pdl}, $dl->{-symbol}, $dl->{-indicators});
+        return ($dl->{-pdl}, $dl->{-symbol}, $dl->{-indicators},
+                    [$dl->headers],
+                    $dl->{-buysells});
     }
 }
 
@@ -1799,7 +1801,8 @@ sub get_tab_data_by_name($$) {
             return ($dl->{-pdl},
                     $dl->{-symbol},
                     $dl->{-indicators},
-                    [$dl->headers]);
+                    [$dl->headers],
+                    $dl->{-buysells});
         }
     }
     return undef;
@@ -2080,6 +2083,9 @@ sub execute_rules {
             say "SELLS: ", $buysells->{sells} if $self->debug;
             # this $data should not change theoretically
             $self->display_data($win, $data, $sym);
+            my ($adata, $asym, $aind, $ahdr, $abysl) = $self->get_tab_data_by_name($win, $tabname);
+            my $type = $self->current->{plot_type} || 'OHLC';
+            $self->plot_data($win, $adata, $asym, $type, $aind, $abysl);
         } else {
             carp "Unable to execute rules strategy code-ref";
             return;
