@@ -93,3 +93,4 @@ TALib.pm$
 gh-pages/
 testnotebook.pl
 testthreading.pl
+\.log$

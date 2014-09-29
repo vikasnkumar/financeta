@@ -323,6 +323,17 @@ sub _menu_items {
                     },
                     $self,
                 ],
+                [
+                    '-trade_report', 'Trade Report', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        my $gui = $win->menu->data($item);
+                        my ($info, $tabname) = $self->get_tab_info($win);
+                        my $buysells = $self->get_tab_buysells_for_name($win, $tabname);
+                        $self->show_trade_report($tabname, $buysells);
+                    },
+                    $self,
+                ],
             ],
         ],
         [
@@ -1554,6 +1565,7 @@ sub enable_menu_options {
     $win->menu->add_indicator->enabled(1);
     $win->menu->edit_rules->enabled(1);
     $win->menu->execute_rules->enabled(1);
+    $win->menu->trade_report->enabled(1);
 }
 
 sub disable_menu_options {
@@ -1573,6 +1585,7 @@ sub disable_menu_options {
     $win->menu->remove_indicator->enabled(0);
     $win->menu->edit_rules->enabled(0);
     $win->menu->execute_rules->enabled(0);
+    $win->menu->trade_report->enabled(0);
 }
 
 #rudimentary
@@ -2042,6 +2055,26 @@ sub close_editor {
     delete $self->editors->{$tabname} if defined $tabname;
 }
 
+sub show_trade_report {
+    my ($self, $tabname, $buysells) = @_;
+    return unless defined $buysells;
+    my $long_pnl = $buysells->{longs_pnl};
+    my $short_pnl = $buysells->{shorts_pnl};
+    my $text;
+    #TODO: make this into a nice viewable report
+    if (defined $long_pnl) {
+        $text .= 'Long Trades: $' . $long_pnl . "\n";
+    } else {
+        $text .= "No Long Trades\n";
+    }
+    if (defined $short_pnl) {
+        $text .= 'Short Trades: $' . $short_pnl . "\n";
+    } else {
+        $text .= "No Short Trades\n";
+    }
+    message_box('Trade Report', $text, mb::Ok | mb::Information);
+}
+
 sub execute_rules_no_editor {
     my ($self, $win, $tabname, $code_txt) = @_;
     return unless ($win and $tabname and $code_txt);
@@ -2095,6 +2128,7 @@ sub execute_rules {
             my ($adata, $asym, $aind, $ahdr, $abysl) = $self->get_tab_data_by_name($win, $tabname);
             my $type = $self->current->{plot_type} || 'OHLC';
             $self->plot_data($win, $adata, $asym, $type, $aind, $abysl);
+            $self->show_trade_report($tabname, $abysl);
         } else {
             carp "Unable to execute rules strategy code-ref";
             return;
