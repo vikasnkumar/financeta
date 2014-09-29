@@ -2081,11 +2081,15 @@ sub execute_rules {
         my $buysells = &$coderef(@var_pdls); # invoke the rules sub
         if (defined $buysells and ref $buysells eq 'HASH') {
             say "Retrieved buy-sells successfully from code-ref" if $self->debug;
+            $buysells = $self->indicator->calculate_pnl($data(, (0)), $buysells);
+            say "Done applying P&L calcs to buy-sells" if $self->debug;
             if ($self->set_tab_buysells_by_name($win, $tabname, $buysells)) {
                 say "Successully set buy-sells for tab $tabname\n";
             }
             say "BUYS: ", $buysells->{buys} if $self->debug;
             say "SELLS: ", $buysells->{sells} if $self->debug;
+            say "Longs PnL: ", $buysells->{longs_pnl} if $self->debug;
+            say "Shorts PnL: ", $buysells->{shorts_pnl} if $self->debug;
             # this $data should not change theoretically
             $self->display_data($win, $data, $sym);
             my ($adata, $asym, $aind, $ahdr, $abysl) = $self->get_tab_data_by_name($win, $tabname);

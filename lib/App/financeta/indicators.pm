@@ -9,7 +9,7 @@ $VERSION = eval $VERSION;
 
 use App::financeta::mo;
 use Carp;
-use PDL::Lite;
+use PDL;
 use PDL::NiceSlice;
 use PDL::Finance::TA;
 use Data::Dumper;
@@ -2340,6 +2340,176 @@ sub get_plot_args_buysell {
         [ 'Sells', $sells->setbadif($sells == 0), { with => 'points', pointtype => 7, linecolor => 'red', }, 'sells' ],
     ];
     return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
+}
+
+sub calculate_pnl {
+    my ($self, $xdata, $buysells) = @_;
+    my $buys = $buysells->{buys};
+    my $sells = $buysells->{sells};
+    my $qty = $buysells->{quantity} || 100;
+    my $b_idx = which( $buys > 0 );
+    my $s_idx = which( $sells > 0 );
+    my $final_buys = zeroes($buys->dim(0));
+    my $final_sells = zeroes($sells->dim(0));
+    my $long_flag = $buysells->{long};
+    my $short_flag = $buysells->{short};
+    $buysells->{shorts_pnl} = 0;
+    $buysells->{longs_pnl} = 0;
+    if ($self->debug) {
+        say "buy index: $b_idx\n",  $b_idx->info;
+        say "sell index: $s_idx\n", $s_idx->info;
+    }
+    if ($b_idx->dim(0) > $s_idx->dim(0)) {
+        $b_idx = $b_idx->index(xvals($s_idx->dim(0)));
+        if ($self->debug) {
+            say "adjusting buy index to $b_idx";
+            say "keeping sell index as $s_idx";
+        }
+        # fix the $buys
+    } elsif ($b_idx->dim(0) < $s_idx->dim(0)) {
+        $s_idx = $s_idx->index(xvals($b_idx->dim(0)));
+        if ($self->debug) {
+            say "keeping buy index as $b_idx";
+            say "adjusting sell index to $s_idx";
+        }
+        # fix the $sells
+    }
+    # numbers of buys and sells are equal
+    if ( $b_idx->dim(0) == $s_idx->dim(0) ) {
+        # long only
+        my $longonly  = which( $b_idx < $s_idx );
+        my $shortonly = which( $b_idx > $s_idx );
+        if ($long_flag) {
+            say "allow long trades" if $self->debug;
+            unless ( $longonly->isempty ) {
+                say "long-only index ", $longonly if $self->debug;
+                my $trades = PDL::null;
+                $trades =
+                $trades->glue( 1, $xdata->index( $b_idx->index($longonly) ) );
+                $trades =
+                $trades->glue( 1, $buys->index( $b_idx->index($longonly) ) );
+                $trades =
+                $trades->glue( 1, $xdata->index( $s_idx->index($longonly) ) );
+                $trades =
+                $trades->glue( 1, $sells->index( $s_idx->index($longonly) ) );
+                say "Long Trades: $trades" if $self->debug;
+                $final_buys->index($b_idx->index($longonly)) .= $buys->index($b_idx->index($longonly));
+                $final_sells->index($s_idx->index($longonly)) .= $sells->index($s_idx->index($longonly));
+
+                # since they are ordered correctly as long only
+                my $pnl = $trades ( , (3) ) - $trades ( , (1) );
+                $pnl = sumover($pnl * $qty);
+                say "long-only P&L for $qty shares: $pnl" if $self->debug;
+                $buysells->{longs} = $trades;
+                $buysells->{longs_pnl} += $pnl;
+            } else {
+                say "some long trades possible" if $self->debug;
+                my $s2 = $s_idx->copy;
+                my $b2 = $b_idx->copy;
+                $s2->setbadat(0);
+                $b2 = $b2->setbadat(-1)->rotate(1);
+                $longonly = which( $b2 < $s2 );
+                if ($self->debug) {
+                    say "adjusting sell index to $s2";
+                    say "adjusting buy index to $b2";
+                    say "long-only index: $longonly";
+                }
+                unless ( $longonly->isempty ) {
+                    my $trades = PDL::null;
+                    $trades =
+                    $trades->glue( 1, $xdata->index( $b2->index($longonly) ) );
+                    $trades =
+                    $trades->glue( 1, $buys->index( $b2->index($longonly) ) );
+                    $trades =
+                    $trades->glue( 1, $xdata->index( $s2->index($longonly) ) );
+                    $trades =
+                    $trades->glue( 1, $sells->index( $s2->index($longonly) ) );
+                    say "Long Trades: $trades" if $self->debug;
+                    $final_buys->index($b2->index($longonly)) .= $buys->index($b2->index($longonly));
+                    $final_sells->index($s2->index($longonly)) .= $sells->index($s2->index($longonly));
+
+                    # since they are ordered correctly as long only
+                    my $pnl = $trades ( , (3) ) - $trades ( , (1) );
+                    $pnl = sumover($pnl * $qty);
+                    say "long-only P&L for $qty shares: $pnl" if $self->debug;
+                    $self->debug;
+                    $buysells->{longs} = $trades;
+                    $buysells->{longs_pnl} += $pnl;
+                } else {
+                    carp "No long trades possible";
+                }
+            }
+        }
+        if ($short_flag) {
+            say "allow short trades" if $self->debug;
+            unless ( $shortonly->isempty ) {
+                say "short-only index: $shortonly" if $self->debug;
+                my $trades = PDL::null;
+                $trades =
+                $trades->glue( 1, $xdata->index( $s_idx->index($shortonly) ) );
+                $trades =
+                $trades->glue( 1, $sells->index( $s_idx->index($shortonly) ) );
+                $trades =
+                $trades->glue( 1, $xdata->index( $b_idx->index($shortonly) ) );
+                $trades =
+                $trades->glue( 1, $buys->index( $b_idx->index($shortonly) ) );
+                say "Short Trades: $trades" if $self->debug;
+                $final_buys->index($b_idx->index($shortonly)) .= $buys->index($b_idx->index($shortonly));
+                $final_sells->index($s_idx->index($shortonly)) .= $sells->index($s_idx->index($shortonly));
+
+                # since they are ordered correctly as short only
+                my $pnl = $trades ( , (3) ) - $trades ( , (1) );
+                $pnl = sumover($pnl * $qty);
+                say "short-only P&L for $qty shares: $pnl" if $self->debug;
+                $buysells->{shorts} = $trades;
+                $buysells->{shorts_pnl} += $pnl;
+            } else {
+                say "some short trades possible" if $self->debug;
+                my $s2 = $s_idx->copy;
+                my $b2 = $b_idx->copy;
+                $b2->setbadat(0);
+                $s2 = $s2->setbadat(-1)->rotate(1);
+                $shortonly = which( $b2 > $s2 );
+                if ($self->debug) {
+                    say "adjusting sell index to $s2";
+                    say "adjusting buy index to $b2";
+                    say "short-only index: $shortonly";
+                }
+                unless ( $shortonly->isempty ) {
+                    my $trades = PDL::null;
+                    $trades =
+                    $trades->glue( 1, $xdata->index( $s2->index($shortonly) ) );
+                    $trades =
+                    $trades->glue( 1, $sells->index( $s2->index($shortonly) ) );
+                    $trades =
+                    $trades->glue( 1, $xdata->index( $b2->index($shortonly) ) );
+                    $trades =
+                    $trades->glue( 1, $buys->index( $b2->index($shortonly) ) );
+                    say "Short Trades: $trades" if $self->debug;
+                    $final_buys->index($b2->index($shortonly)) .= $buys->index($b2->index($shortonly));
+                    $final_sells->index($s2->index($shortonly)) .= $sells->index($s2->index($shortonly));
+
+                    # since they are ordered correctly as long only
+                    my $pnl = $trades ( , (3) ) - $trades ( , (1) );
+                    $pnl = sumover($pnl * $qty);
+                    say "short-only P&L for $qty shares: $pnl" if $self->debug;
+                    $buysells->{shorts} = $trades;
+                    $buysells->{shorts_pnl} += $pnl;
+                } else {
+                    carp "No short trades possible";
+                }
+            }
+        }
+    } else {
+        carp "No. of buys and sells are not equal anyway";
+        return $buysells;
+    }
+    # swap the original with the final
+    $buysells->{orig_buys} = $buys;
+    $buysells->{orig_sells} = $sells;
+    $buysells->{buys} = $final_buys;
+    $buysells->{sells} = $final_sells;
+    return $buysells;
 }
 
 1;
