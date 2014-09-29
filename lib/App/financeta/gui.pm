@@ -2094,26 +2094,6 @@ sub close_tradereport {
     delete $self->tradereports->{$tabname} if defined $tabname;
 }
 
-sub show_trade_report {
-    my ($self, $win, $tabname, $buysells) = @_;
-    return unless defined $buysells;
-    my $long_pnl = $buysells->{longs_pnl};
-    my $short_pnl = $buysells->{shorts_pnl};
-    my $text;
-    #TODO: make this into a nice viewable report
-    if (defined $long_pnl) {
-        $text .= 'Long Trades: $' . $long_pnl . "\n";
-    } else {
-        $text .= "No Long Trades\n";
-    }
-    if (defined $short_pnl) {
-        $text .= 'Short Trades: $' . $short_pnl . "\n";
-    } else {
-        $text .= "No Short Trades\n";
-    }
-    message_box('Trade Report', $text, mb::Ok | mb::Information);
-}
-
 sub execute_rules_no_editor {
     my ($self, $win, $tabname, $code_txt) = @_;
     return unless ($win and $tabname and $code_txt);
