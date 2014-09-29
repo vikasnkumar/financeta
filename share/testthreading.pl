@@ -111,16 +111,42 @@ $sells = pdl(
 );
 pnl_calculator( $buys, $sells );
 
+$buys = pdl([qw(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 327.72 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        377.61 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 403.69 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 353 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 323.97 0
+        0 0 0 0 0 0 0 0 306.37 0 0 0 0 0 302.6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 334.83 0 0 0 0 334.71 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 327.8 0 0 0 0 0 0 0 0 0)]);
+$sells = pdl([qw(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 357.9 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 388.35 0 0 0 0 0 0 0 0 0 0 0 0 0 405.63 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0 361.5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        304.39 0 0 0 0 0 309.81 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 329.73 0 0 0 0 0 0 0 0 333.74 0 0 0 0 0 0 0 0 0 0 0 0
+        324.87 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)]);
+pnl_calculator( $buys, $sells );
+
 sub pnl_calculator {
-    my ( $buys, $sells ) = @_;
+    my ( $buys, $sells, $qty ) = @_;
+    $qty = 100 unless defined $qty;
     my $b_idx = which( $buys > 0 );
     my $s_idx = which( $sells > 0 );
     say "buy index: $b_idx\n",  $b_idx->info;
     say "sell index: $s_idx\n", $s_idx->info;
-
+    if ($b_idx->dim(0) > $s_idx->dim(0)) {
+        $b_idx = $b_idx->index(xvals($s_idx->dim(0)));
+        say "adjusting buy index to $b_idx";
+        say "keeping sell index as $s_idx";
+    } elsif ($b_idx->dim(0) < $s_idx->dim(0)) {
+        $s_idx = $s_idx->index(xvals($b_idx->dim(0)));
+        say "keeping buy index as $b_idx";
+        say "adjusting sell index to $s_idx";
+    }
     # numbers of buys and sells are equal
-    if ( $b_idx->dims == $s_idx->dims ) {
-
+    if ( $b_idx->dim(0) == $s_idx->dim(0) ) {
         # long only
         my $longonly  = which( $b_idx < $s_idx );
         my $shortonly = which( $b_idx > $s_idx );
@@ -135,17 +161,17 @@ sub pnl_calculator {
 
             # since they are ordered correctly as long only
             my $pnl = $trades ( , (1) ) - $trades ( , (0) );
-            say "long-only P&L: ", sumover( $pnl * 100 );
+            say "long-only P&L for $qty shares: ", sumover( $pnl * $qty );
         } else {
             say "some long trades possible";
             my $s2 = $s_idx->copy;
             my $b2 = $b_idx->copy;
             $s2->setbadat(0);
             $b2 = $b2->setbadat(-1)->rotate(1);
-            say $s2;
-            say $b2;
+            say "adjusting sell index to $s2";
+            say "adjusting buy index to $b2";
             $longonly = which( $b2 < $s2 );
-            say $longonly;
+            say "long-only: $longonly";
 
             unless ( $longonly->isempty ) {
                 my $trades = null;
@@ -157,7 +183,7 @@ sub pnl_calculator {
 
                 # since they are ordered correctly as long only
                 my $pnl = $trades ( , (1) ) - $trades ( , (0) );
-                say "long-only P&L: ", sumover( $pnl * 100 );
+                say "long-only P&L for $qty shares: ", sumover( $pnl * $qty );
             } else {
                 say "no long trades possible";
             }
@@ -173,17 +199,17 @@ sub pnl_calculator {
 
             # since they are ordered correctly as short only
             my $pnl = $trades ( , (0) ) - $trades ( , (1) );
-            say "short-only P&L: ", sumover( $pnl * 100 );
+            say "short-only P&L for $qty shares: ", sumover( $pnl * $qty );
         } else {
             say "some short trades possible";
             my $s2 = $s_idx->copy;
             my $b2 = $b_idx->copy;
             $b2->setbadat(0);
             $s2 = $s2->setbadat(-1)->rotate(1);
-            say $s2;
-            say $b2;
+            say "adjusting sell index to $s2";
+            say "adjusting buy index to $b2";
             $shortonly = which( $b2 > $s2 );
-            say $shortonly;
+            say "short-only: $shortonly";
 
             unless ( $shortonly->isempty ) {
                 my $trades = null;
@@ -195,7 +221,7 @@ sub pnl_calculator {
 
                 # since they are ordered correctly as long only
                 my $pnl = $trades ( , (0) ) - $trades ( , (1) );
-                say "short-only P&L: ", sumover( $pnl * 100 );
+                say "short-only P&L for $qty shares: ", sumover( $pnl * $qty );
             } else {
                 say "no short trades possible";
             }
