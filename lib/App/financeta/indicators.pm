@@ -2355,6 +2355,7 @@ sub calculate_pnl {
     my $short_flag = $buysells->{short};
     $buysells->{shorts_pnl} = 0;
     $buysells->{longs_pnl} = 0;
+    $buysells->{quantity} = $qty unless defined $buysells->{quantity};
     if ($self->debug) {
         say "buy index: $b_idx\n",  $b_idx->info;
         say "sell index: $s_idx\n", $s_idx->info;

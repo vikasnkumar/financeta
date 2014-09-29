@@ -29,6 +29,7 @@ use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use App::financeta::indicators;
 use App::financeta::editor;
+use App::financeta::tradereport;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
@@ -54,6 +55,7 @@ has current => {};
 has indicator => (builder => '_build_indicator');
 has tab_was_closed => 0;
 has editors => {};
+has tradereports => {};
 
 sub _build_indicator {
     my $self = shift;
@@ -68,6 +70,15 @@ sub _build_editor {
     return App::financeta::editor->new(debug => $self->debug,
         parent => $self, icon => $self->icon,
         brand => $self->brand . " Rules Editor for $name");
+}
+
+sub _build_tradereport {
+    my $self = shift;
+    my $name = shift || '';
+    $name =~ s/tab_//g if length $name;
+    return App::financeta::tradereport->new(debug => $self->debug,
+        parent => $self, icon => $self->icon,
+        brand => $self->brand . " Trade Report for $name");
 }
 
 sub _build_icon {
@@ -320,6 +331,7 @@ sub _menu_items {
                         my $gui = $win->menu->data($item);
                         my ($info, $tabname) = $self->get_tab_info($win);
                         $self->execute_rules_no_editor($win, $tabname, $info->{rules});
+                        $win->menu->trade_report->enabled(1);
                     },
                     $self,
                 ],
@@ -330,7 +342,7 @@ sub _menu_items {
                         my $gui = $win->menu->data($item);
                         my ($info, $tabname) = $self->get_tab_info($win);
                         my $buysells = $self->get_tab_buysells_for_name($win, $tabname);
-                        $self->show_trade_report($tabname, $buysells);
+                        $self->open_tradereport($win, $tabname, $buysells);
                     },
                     $self,
                 ],
@@ -1565,7 +1577,7 @@ sub enable_menu_options {
     $win->menu->add_indicator->enabled(1);
     $win->menu->edit_rules->enabled(1);
     $win->menu->execute_rules->enabled(1);
-    $win->menu->trade_report->enabled(1);
+#    $win->menu->trade_report->enabled(1);
 }
 
 sub disable_menu_options {
@@ -1743,6 +1755,11 @@ sub close_current_tab {
             $ed->close;
         }
         $self->editors({});
+        foreach my $t (keys %{$self->tradereports}) {
+            my $trw = $self->tradereports->{$t};
+            $trw->close;
+        }
+        $self->tradereports({});
         if ($win->{plot}) {
             $win->{plot}->close();
         }
@@ -1760,6 +1777,11 @@ sub close_current_tab {
                     say "Closing the rules editor for ", $dl->name if $self->debug;
                     $self->editors->{$dl->name}->close;
                     delete $self->editors->{$dl->name};
+                }
+                if ($dl and exists $self->tradereports->{$dl->name}) {
+                    say "Closing the trade report for ", $dl->name if $self->debug;
+                    $self->tradereports->{$dl->name}->close;
+                    delete $self->tradereports->{$dl->name};
                 }
             }
             $nt->delete_page($idx);
@@ -2055,8 +2077,25 @@ sub close_editor {
     delete $self->editors->{$tabname} if defined $tabname;
 }
 
+sub open_tradereport {
+    my ($self, $win, $tabname, $buysells) = @_;
+    return unless defined $buysells;
+    my $trw = $self->tradereports->{$tabname} || $self->_build_tradereport($tabname);
+    unless (defined $trw) {
+        carp "Unable to create the trade report window.";
+        return;
+    }
+    $trw->update($tabname, $buysells);
+    $self->tradereports->{$tabname} = $trw;
+}
+
+sub close_tradereport {
+    my ($self, $tabname) = @_;
+    delete $self->tradereports->{$tabname} if defined $tabname;
+}
+
 sub show_trade_report {
-    my ($self, $tabname, $buysells) = @_;
+    my ($self, $win, $tabname, $buysells) = @_;
     return unless defined $buysells;
     my $long_pnl = $buysells->{longs_pnl};
     my $short_pnl = $buysells->{shorts_pnl};
@@ -2128,7 +2167,8 @@ sub execute_rules {
             my ($adata, $asym, $aind, $ahdr, $abysl) = $self->get_tab_data_by_name($win, $tabname);
             my $type = $self->current->{plot_type} || 'OHLC';
             $self->plot_data($win, $adata, $asym, $type, $aind, $abysl);
-            $self->show_trade_report($tabname, $abysl);
+            $self->main->menu->trade_report->enabled(1);
+            $self->open_tradereport($win, $tabname, $abysl);
         } else {
             carp "Unable to execute rules strategy code-ref";
             return;

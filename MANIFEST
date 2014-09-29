@@ -8,6 +8,7 @@ lib/App/financeta/gui.pod
 lib/App/financeta/indicators.pm
 lib/App/financeta/language.pm
 lib/App/financeta/mo.pm
+lib/App/financeta/tradereport.pm
 LICENSE
 MANIFEST			This list of files
 META.json
