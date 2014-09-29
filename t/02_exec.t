@@ -102,7 +102,7 @@ my $coderef_test = sub {
             $macdsig_12_26_9->index($idx_4) ) &
         ( $macd_12_26_9 < $macdsig_12_26_9 ) );
     $sells->index($idx_5) .= $high->index($idx_5);
-    return { buys => $buys, sells => $sells };
+    return { buys => $buys, sells => $sells, long => 1, short => 0 };
 };
 
 my $result = &$coderef(
@@ -117,6 +117,8 @@ my $result = &$coderef(
 is( ref $result,          'HASH', 'results is a hashref' );
 is( ref $result->{buys},  'PDL',  'buys is a PDL' );
 is( ref $result->{sells}, 'PDL',  'sells is a PDL' );
+is($result->{short}, 0, 'no short trades');
+is($result->{long}, 1, 'allow long trades');
 note( $result->{buys} );
 note( $result->{sells} );
 

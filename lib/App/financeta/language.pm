@@ -106,7 +106,7 @@ has local_vars => {};
 
 has index_var_count => 0;
 
-has PnL => {};
+has PnL => { long => 1, short => 0 };
 
 sub got_comment {} # strip the comments out
 
@@ -146,7 +146,7 @@ sub got_quantity {
         $self->flatten($got);
         $got = shift @$got;
     }
-    return 'QTY::' . $got;
+    return { quantity => $got };
 }
 
 sub got_price {
@@ -336,8 +336,12 @@ sub _generate_pdl_begin {
 sub _generate_pdl_end {
     my $self = shift;
     my $lookback = $self->const_vars->{lookback};
+    my $long = $self->PnL->{long};
+    my $short = $self->PnL->{short};
+    $long = 1 unless defined $long;
+    $short = 0 unless defined $short;
     my @exprs = (
-        'return { buys => $buys, sells => $sells };',
+        "return { buys => \$buys, sells => \$sells, long => $long, short => $short };",
         '}', # end of subroutine
     );
     return join("\n", @exprs);

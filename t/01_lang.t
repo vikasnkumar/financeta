@@ -76,7 +76,7 @@ my $idx_2 = which( ($macd_hist >= 0.000001)
       & ($macd->index($idx_1) < $macd_signal->index($idx_1))
       & ($macd > $macd_signal) );
 $buys->index($idx_2) .= $open->index($idx_2);
-return { buys => $buys, sells => $sells };
+return { buys => $buys, sells => $sells, long => 1, short => 0 };
 }
 EXPECTED
 my $expected2;
@@ -148,7 +148,7 @@ my $idx_2 = which( ($macd_hist <= -0.000001)
 & ($macd->index($idx_1) > $macd_signal->index($idx_1))
 & ($macd < $macd_signal) );
 $sells->index($idx_2) .= $high->index($idx_2);
-return { buys => $buys, sells => $sells };
+return { buys => $buys, sells => $sells, long => 1, short => 0 };
 }
 EXPECTED
 my $expected3;
