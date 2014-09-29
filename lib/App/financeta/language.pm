@@ -15,7 +15,7 @@ use constant text => <<GRAMMAR;
 %version 0.10
 
 program: statement* end-of-program
-statement: comment | instruction
+statement: comment | instruction | declaration
 
 end-of-program: - EOS
 comment: /- HASH ANY* EOL/ | blank-line
@@ -25,6 +25,7 @@ _: / BLANK* EOL?/
 __: / BLANK+ EOL?/
 line-ending: /- SEMI - EOL?/
 
+declaration: - /((i:'allow'|'no'))/ - /((i:'long'|'short'))/ - /(i:'trades')/ - line-ending
 instruction: order - /(i:'when'|'if')/ - conditions - line-ending
 conditions: single-condition | nested-condition
 
@@ -83,6 +84,7 @@ use feature 'say';
 our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
+use Carp;
 use Perl::Tidy;
 use Pegex::Base;
 extends 'Pegex::Tree';
@@ -103,6 +105,8 @@ has const_vars => {
 has local_vars => {};
 
 has index_var_count => 0;
+
+has PnL => {};
 
 sub got_comment {} # strip the comments out
 
@@ -294,6 +298,21 @@ sub got_instruction {
     return $res;
 }
 
+sub got_declaration {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+    }
+    return unless scalar @$got >= 2;
+    my $short = 0;
+    my $long = 0;
+    my $val = 1 if $got->[0] eq 'allow';
+    $val = 0 if $got->[0] eq 'no';
+    my $type = $got->[1];
+    $self->PnL->{$type} = $val if defined $val;
+    return; # don't return anything
+}
+
 sub _generate_pdl_begin {
     my $self = shift;
     my $lookback = $self->const_vars->{lookback};
@@ -332,7 +351,8 @@ sub _generate_pdl_custom {
     }
     my $order = $ins->{order};
     my $conds = $ins->{conditions};
-    if (ref $order ne 'HASH' or ref $conds ne 'ARRAY') {
+    if ((defined $order and ref $order ne 'HASH') or
+        (defined $conds and ref $conds ne 'ARRAY')) {
         XXX $ins;
     }
     # conds is a stack of hashes
