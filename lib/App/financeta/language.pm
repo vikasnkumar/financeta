@@ -54,7 +54,7 @@ order: buy-sell quantity? - /(i:'at')/ - price -
 buy-sell: - /((i:'buy' | 'sell'))/ -
 quantity: number
 price: - variable | number -
-variable: DOLLAR identifier
+variable: - DOLLAR identifier -
 
 # basic tokens
 start-nested: /- LPAREN -/
@@ -135,7 +135,9 @@ sub got_variable {
         exists $self->local_vars->{$got}) {
         # do nothing
     } else {
-        $self->local_vars->{$got} = 1;
+        $self->parser->throw_error( "Variable $got does not exist");
+        return;
+#        $self->local_vars->{$got} = 1;
     }
     return '$' . $got;
 }
@@ -224,6 +226,8 @@ sub got_state {
     }
     return $got if $got =~ /^\$/;
     $got = 0 if $got eq 'zero';
+    # if it is a number
+    return "STATE::$got" if $got =~ /^[\d\.\+\-]+$/;
     return 'STATE::' . lc $got;
 }
 
@@ -252,7 +256,8 @@ sub got_comparison_state {
         if ($state =~ /STATE::(.*)/) {
             $state = $1;
             # use the const_var values
-            $state = $self->const_vars->{$state} if $state =~ /\w/;
+            $state = $self->const_vars->{$state} if ($state =~ /\w/ and
+                                defined $self->const_vars->{$state});
         }
     } else {
         XXX {comparison_state => $got};
