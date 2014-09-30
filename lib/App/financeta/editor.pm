@@ -76,6 +76,7 @@ sub _build_main {
                     },
                     $self,
                 ],
+                [],
                 [
                     'compile_rules', 'Compile', 'Ctrl+B', '^B',
                     sub {
@@ -101,6 +102,37 @@ sub _build_main {
                     },
                     $self,
                 ],
+            ]], [
+            '~Edit' => [
+                [
+                    'edit_cut', 'Cut', 'Ctrl+X', '^X',
+                    sub { $_[0]->editor_edit->cut },
+                ],
+                [
+                    'edit_copy', 'Copy', 'Ctrl+C', '^C',
+                    sub { $_[0]->editor_edit->copy },
+                ],
+                [
+                    'edit_paste', 'Paste', 'Ctrl+V', '^V',
+                    sub { $_[0]->editor_edit->paste},
+                ],
+                [
+                    'edit_del', 'Delete', 'Ctrl+Del', '',
+                    sub { $_[0]->editor_edit->delete_block },
+                ],
+                [],
+                [
+                    'edit_undo', 'Undo', '', '',
+                    sub { $_[0]->editor_edit->undo },
+                ],
+                [
+                    'edit_redo', 'Redo', '', '',
+                    sub { $_[0]->editor_edit->redo },
+                ],
+                [
+                    'edit_select', 'Select All', 'Ctrl+A', '^A',
+                    sub { $_[0]->editor_edit->select_all },
+                ],
             ],
         ]],
         onDestroy => sub {
@@ -112,19 +144,38 @@ sub _build_main {
     my @sz = $mw->size;
     $sz[0] *= 0.98;
     $sz[1] *= 0.98;
-    $mw->insert(Edit => name => 'editor_edit',
+    my $ed = $mw->insert(Edit => name => 'editor_edit',
         text => '#This line is auto-generated',
         pack => { expand => 1, fill => 'both' },
         syntaxHilite => 1,
         hScroll => 1,
         growMode => gm::Client | gm::GrowHiX | gm::GrowHiY,
-        hiliteNumbers => cl::Green,
+        hiliteNumbers => cl::Red,
         hiliteQStrings => cl::Red,
         hiliteQQStrings => cl::Red,
+        #    hiliteIDs => [$keywords, cl::Green],
         tabIndent => 4,
         size => \@sz,
         visible => 1,
+        # check these
+        cursorWrap => 1,
+        persistentBlock => 1,
+        wantTabs => 1,
     );
+    my $regexes = $self->compiler->get_grammar_regexes;
+    my @arr = ();
+    foreach my $k (keys %$regexes) {
+        if (ref $regexes->{$k} eq 'ARRAY') {
+            push @arr, '(?i:(' . join('|', @{$regexes->{$k}}) . '))';
+        } else {
+            push @arr, $regexes->{$k};
+        }
+        $k = ucfirst $k;
+        my $color = eval "cl::$k" or cl::Black; # ignore error
+        push @arr, $color;
+    }
+    my $hlres = $ed->hiliteREs;
+    $ed->hiliteREs([@arr, @$hlres]);
     return $mw;
 }
 

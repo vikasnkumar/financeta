@@ -64,7 +64,8 @@ keyword: /(i:
         'buy' | 'sell' | 'at' | 'equals' | 'true' | 'false' | 'if' |
         'when' | 'and' | 'or' | 'not' | 'above' | 'is' |
         'becomes' | 'crosses' | 'below' | 'from' | 'to' |
-        'positive' | 'negative' | 'zero' | 'over' | 'into'
+        'positive' | 'negative' | 'zero' | 'over' | 'into' |
+        'allow' | 'trades' | 'short' | 'long' | 'no'
         )/
 number: real-number | integer | boolean
 real-number: /('-'? DIGIT* '.' DIGIT+)/
@@ -72,6 +73,20 @@ integer: /('-'? DIGIT+)/
 boolean: /((i:'true'|'false'))/
 
 GRAMMAR
+
+sub get_regexes {
+    return {
+        green => [qw(
+            buy sell negative positive zero below above long short
+        )],
+        blue => [qw(
+            at equals if when and or not is becomes crosses from to
+            over into trades
+        )],
+        red => [qw(allow no true false)],
+        black => '(\$\w+)',
+    };
+}
 
 1;
 
@@ -528,6 +543,11 @@ has preset_vars => [];
 has grammar => (default => sub {
     return App::financeta::language::grammar->new;
 });
+
+sub get_grammar_regexes {
+    my $self = shift;
+    return $self->grammar->get_regexes;
+}
 
 has receiver => (builder => '_build_receiver');
 

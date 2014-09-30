@@ -16,6 +16,9 @@ can_ok( $lang, 'receiver' );
 can_ok( $lang, 'parser' );
 can_ok( $lang, 'compile' );
 can_ok( $lang, 'generate_coderef' );
+can_ok( $lang, 'get_grammar_regexes');
+my $gregexes= $lang->get_grammar_regexes;
+is(ref $gregexes, 'HASH', 'keywords is a hash');
 is( $lang->compile(''), undef, 'compiler works on undefined' );
 
 my $test1 = << 'TEST1';
