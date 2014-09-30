@@ -36,12 +36,12 @@ nested-condition-expr: start-nested single-condition-expr end-nested
 single-condition-expr: comparison | complement
 comparison: comparison-state | comparison-basic
 comparison-state: - variable - state-op-pre - state - state-op-post? -
-comparison-basic: - value - compare-op - value -
+comparison-basic: - value-expression - compare-op - value-expression -
 
 complement: - not-op - value-expression
-value: complement | value-expression
-state: /((i:'positive' | 'negative' | 'zero'))/ | value-expression
-value-expression: variable | number
+value-expression: complement | value
+state: /((i:'positive' | 'negative' | 'zero'))/ | value
+value: variable | number
 state-op-pre: - /((i: 'becomes' | 'crosses' ))/ -
 state-op-post: - /(i: 'from') - ((i: 'above' | 'below'))/ -
 compare-op: /((i:'is' | 'equals'))/ |
@@ -160,11 +160,11 @@ sub got_price {
     return { price => $got };
 }
 
-sub got_value_expression {
+sub got_value {
     my ($self, $got) = @_;
     if (ref $got eq 'ARRAY') {
         $self->flatten($got);
-        XXX {value_expression => $got};
+        XXX {value => $got};
     }
     return $got;
 }
@@ -180,8 +180,7 @@ sub got_buy_sell {
 
 sub got_compare_op {
     my ($self, $got) = @_;
-    $got = lc $got;
-    $got = '==' if ($got eq 'is' or $got eq 'equals');
+    $got = '==' if ($got =~ /is|equals/i);
     return { compare => $got};
 }
 
@@ -266,6 +265,44 @@ sub got_comparison_state {
         XXX {comparison_state => $got};
     }
     return { $fn => [ $var, $state ] };
+}
+
+sub got_complement {
+    my ($self, $got) = @_;
+    XXX { complement => $got };
+}
+
+sub got_value_expression {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+    } elsif (ref $got eq 'HASH') {
+        XXX { value_expr => $got };
+    } else {
+        # single values like variables and numbers
+        return $got;
+    }
+    XXX { value_expr => $got };
+}
+
+sub _got_comparison_basic_3 {
+    my ($self, $lhs, $op, $rhs) = @_;
+    if (ref $lhs ne 'HASH' and ref $rhs ne 'HASH' and ref $op eq 'HASH') {
+        return { compare => [ $lhs, $rhs, $op->{compare} ] };
+    } else {
+        XXX { comparison_basic => [$lhs, $op, $rhs] };
+    }
+}
+
+sub got_comparison_basic {
+    my ($self, $got) = @_;
+    if (ref $got eq 'ARRAY') {
+        $self->flatten($got);
+    } else {
+        XXX {comparison_basic => $got};
+    }
+    return $self->_got_comparison_basic_3(@$got) if scalar(@$got) eq 3;
+    XXX {comparison_basic => $got};
 }
 
 sub got_order {
@@ -421,6 +458,11 @@ sub _generate_pdl_custom {
         }
         if (defined $c->{logic}) {
             push @expressions, $c->{logic};
+        }
+        if (defined $c->{compare}) {
+            my ($lhs, $rhs, $op) = @{$c->{compare}};
+            my $expr = "($lhs $op $rhs)";
+            push @expressions, $expr;
         }
     }
     #YYY { expressions => \@expressions, indexes => \@indexes };
