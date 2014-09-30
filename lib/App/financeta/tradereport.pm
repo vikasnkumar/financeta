@@ -10,10 +10,10 @@ $VERSION = eval $VERSION;
 use App::financeta::mo;
 use Carp;
 use File::ShareDir 'dist_file';
+use File::HomeDir;
 use DateTime;
 use POE 'Loop::Prima';
-use Prima qw(Application DetailedList ScrollWidget MsgBox);
-use Try::Tiny;
+use Prima qw(Application DetailedList ScrollWidget MsgBox StdDlg);
 use PDL::Lite;
 
 $| = 1;
@@ -53,10 +53,11 @@ sub _build_main {
         menuItems => [[
             '~Action' => [
                 [
-                    '-save_report', '~Save', 'Ctrl+S', '^S',
+                    'save_report', '~Save', 'Ctrl+S', '^S',
                     sub {
                         my ($win, $item) = @_;
                         my $trw = $win->menu->data($item);
+                        $trw->save;
                     },
                     $self,
                 ],
@@ -107,7 +108,7 @@ sub _create_sheet {
     $sz[0] *= 0.80;
     $sz[1] *= 0.80;
     my $headers = ['Date', 'Entry', 'Price($)', 'Quantity', 'Date', 'Exit', 'Price($)',
-        'Quantity', 'Net ($)'];
+        'Quantity', 'Net($)'];
     return $mw->insert('DetailedList',
         name => 'tradereport_sheet',
         pack => { expand => 1, fill => 'both' },
@@ -184,6 +185,53 @@ sub close {
         $self->parent->close_tradereport($self->tab_name);
     }
     $self->main->close;
+}
+
+sub save {
+    my $self = shift;
+    my @headers = $self->main->tradereport_sheet->headers;
+    my $items = $self->main->tradereport_sheet->items;
+    unless (scalar @$items) {
+        message("Nothing to save in the report");
+        return;
+    }
+    my $symbol = $self->tab_name;
+    $symbol =~ s/tab_//g;
+    my $docdir = File::HomeDir->my_documents || File::HomeDir->my_home;
+    my $ext = 'csv';
+    my $dlg = Prima::SaveDialog->new(
+        defaultExt => $ext,
+        fileName => "tradereport_$symbol",
+        filter => [
+            ['CSV files' => "*.$ext"],
+            ['All files' => '*'],
+        ],
+        filterIndex => 0,
+        multiSelect => 0,
+        overwritePrompt => 1,
+        pathMustExist => 1,
+        directory => $docdir,
+    );
+    my $filename = $dlg->fileName if $dlg->execute;
+    if ($filename) {
+        if ($^O !~ /Win32/) {
+            $filename = File::Spec->catfile($docdir, $filename) unless ($filename =~ /^\//);
+        } else {
+            $filename .= ".$ext" unless $filename =~ /\.$ext$/; #windows is weird
+        }
+    } else {
+        carp "Saving the report was canceled.";
+        return;
+    }
+    CORE::open (my $fh, '>', $filename) or message("Unable to open $filename to write the report");
+    if ($fh) {
+        say $fh join(',', @headers);
+        foreach my $arr (@$items) {
+            say $fh join(',', @$arr);
+        }
+        CORE::close $fh;
+        say "Done writing $filename" if $self->debug;
+    }
 }
 
 1;
