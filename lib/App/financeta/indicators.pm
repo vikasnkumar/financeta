@@ -2375,6 +2375,10 @@ sub calculate_pnl {
         }
         # fix the $sells
     }
+    if ($b_idx->isempty or $s_idx->isempty) {
+        say "no trades possible" if $self->debug;
+        return;
+    }
     # numbers of buys and sells are equal
     if ( $b_idx->dim(0) == $s_idx->dim(0) ) {
         # long only
@@ -2414,6 +2418,10 @@ sub calculate_pnl {
                     say "adjusting sell index to $s2";
                     say "adjusting buy index to $b2";
                     say "long-only index: $longonly";
+                }
+                if ($s2->isempty or $b2->isempty) {
+                    say "no trades possible" if $self->debug;
+                    return;
                 }
                 unless ( $longonly->isempty ) {
                     my $trades = PDL::null;
@@ -2475,6 +2483,10 @@ sub calculate_pnl {
                     say "adjusting sell index to $s2";
                     say "adjusting buy index to $b2";
                     say "short-only index: $shortonly";
+                }
+                if ($s2->isempty or $b2->isempty) {
+                    say "no trades possible" if $self->debug;
+                    return;
                 }
                 unless ( $shortonly->isempty ) {
                     my $trades = PDL::null;
