@@ -1204,14 +1204,14 @@ has momentum => {
                 ],
             ],
         ],
-        input => [qw/high low close/],
+        input => [qw/close/],
         code => sub {
-            my ($obj, $high, $low, $close, @args) = @_;
+            my ($obj, $close, @args) = @_;
             say "Executing ta_stochrsi with parameters ", Dumper(\@args) if $obj->debug;
             my $period = $args[0];
             my $fastK = $args[1];
             my $fastD = $args[2];
-            my ($ofastK, $ofastD) = PDL::ta_stochrsi($high, $low, $close, @args);
+            my ($ofastK, $ofastD) = PDL::ta_stochrsi($close, @args);
             return [
                 ["Fast-K($fastK, $period)", $ofastK, undef, "fastK_$fastK\_$period"],
                 ["Fast-D($fastD, $period)", $ofastD, undef, "fastD_$fastD\_$period"],
