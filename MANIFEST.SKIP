@@ -94,3 +94,4 @@ gh-pages/
 testnotebook.pl
 testthreading.pl
 \.log$
+\.err$
