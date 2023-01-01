@@ -4,7 +4,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
@@ -2527,7 +2527,7 @@ sub calculate_pnl {
 
 1;
 __END__
-### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 17th Aug 2014
 ### LICENSE: Refer LICENSE file

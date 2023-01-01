@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use v5.14;
+use 5.10.0;
 use Module::Build;
 
 my $build = Module::Build->new(
@@ -45,6 +45,7 @@ my $build = Module::Build->new(
         'YAML::Any' => '1.30',
         'Pegex' => '0.75',
         'Perl::Tidy' => 0,
+        'Log::Any' => '1.713',
     },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],

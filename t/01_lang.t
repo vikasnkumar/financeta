@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 use Test::More;
 
 use_ok('App::financeta::language');
@@ -250,7 +252,7 @@ coderef_check($lang, $output5);
 # end of testing
 done_testing();
 __END__
-### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 3rd Sept 2014
 ### LICENSE: Refer LICENSE file

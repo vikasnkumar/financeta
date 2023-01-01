@@ -4,7 +4,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
@@ -17,7 +17,9 @@ use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
     Application Buttons MsgBox Calendar ComboBox Notebooks
-    ScrollWidget DetailedList StdDlg
+    Widget::ScrollWidget DetailedList Dialog::ColorDialog
+    Dialog::FileDialog Dialog::FindDialog ScrollBar
+    Dialog::PrintDialog Dialog::ImageDialog Dialog::FontDialog
 );
 use Prima::Utils ();
 use Data::Dumper;
@@ -2684,7 +2686,7 @@ sub plot_data_gnuplot {
 
 1;
 __END__
-### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 3rd Jan 2014
 ### LICENSE: Refer LICENSE file

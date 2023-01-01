@@ -4,7 +4,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use Pegex::Base;
@@ -12,7 +12,7 @@ extends 'Pegex::Grammar';
 
 use constant text => <<GRAMMAR;
 %grammar financeta
-%version 0.10
+%version 0.11
 
 program: statement* end-of-program
 statement: comment | instruction | declaration
@@ -96,7 +96,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -528,7 +528,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -594,7 +594,7 @@ sub generate_coderef {
 1;
 
 __END__
-### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 3rd Sept 2014
 ### LICENSE: Refer LICENSE file

@@ -4,7 +4,7 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
@@ -13,7 +13,13 @@ use File::ShareDir 'dist_file';
 use File::HomeDir;
 use DateTime;
 use POE 'Loop::Prima';
-use Prima qw(Application DetailedList ScrollWidget MsgBox StdDlg);
+#use Prima qw(Application DetailedList ScrollWidget MsgBox StdDlg);
+use Prima qw(
+    Application Buttons MsgBox Calendar ComboBox Notebooks
+    Widget::ScrollWidget DetailedList Dialog::ColorDialog
+    Dialog::FileDialog Dialog::FindDialog ScrollBar
+    Dialog::PrintDialog Dialog::ImageDialog Dialog::FontDialog
+);
 use PDL::Lite;
 
 $| = 1;
@@ -236,7 +242,7 @@ sub save {
 
 1;
 __END__
-### COPYRIGHT: 2014 Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 29th Sept 2014
 ### LICENSE: Refer LICENSE file
