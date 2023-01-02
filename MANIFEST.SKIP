@@ -93,5 +93,6 @@ TALib.pm$
 gh-pages/
 testnotebook.pl
 testthreading.pl
+testmain.pl
 \.log$
 \.err$

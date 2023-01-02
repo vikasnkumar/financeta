@@ -46,7 +46,7 @@ has debug => 0;
 has timezone => 'America/New_York';
 has brand => __PACKAGE__;
 has main => (builder => '_build_main');
-has icon => (builder => '_build_icon');
+has icon_path => (builder => '_build_icon');
 has tmpdir => ( default => sub {
     return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
     return $ENV{TMPDIR} || '/tmp';
@@ -110,19 +110,22 @@ sub _build_icon {
     };
     $log->debug("Icon path: $icon_path") if defined $icon_path;
     if (defined $icon_path and -e $icon_path) {
-        my $icon = Prima::Icon->create;
-        return $icon if $icon->load($icon_path);
-        $log->warn("Unable to load $icon_path, using system icon");
-        return undef;
+        return $icon_path;
     } else {
         $log->warn("No icon found, using system icon");
         return undef;
     }
 }
 
+sub icon {
+    my $icon_path = shift->icon_path;
+    return Prima::Icon->load($icon_path) if defined $icon_path;
+    return undef;
+}
+
 sub _build_main {
     my $self = shift;
-    my $mw = new Prima::MainWindow(
+    my $mw = Prima::MainWindow->new(
         name => 'main',
         text => $self->brand,
         size => [800, 600],
@@ -133,7 +136,7 @@ sub _build_main {
         borderStyle => bs::Sizeable,
         windowState => ws::Normal,
         icon => $self->icon,
-        ownerIcon => 1,
+        #ownerIcon => 0,
         # origin
         left => 10,
         top => 0,
@@ -145,88 +148,112 @@ sub _build_main {
 
 sub _menu_items {
     my $self = shift;
-    return [
-        [
-            '~Security' => [
-                [
-                    'security_new', '~New', 'Ctrl+N', '^N',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        if ($gui->security_wizard($win)) {
-                            my $bar = $gui->progress_bar_create($win, 'Downloading...');
-                            # download security data
-                            my ($data, $symbol, $csv) = $gui->download_data($bar);
-                            if (defined $data) {
-                                $gui->display_data($win, $data);
-                                my ($info, $tname) = $gui->get_tab_info($win);
-                                if ($info and $csv) {
-                                    $info->{csv} = $csv;
-                                    $gui->set_tab_info($win, $info);
-                                }
-                                my $type = $gui->current->{plot_type} || 'OHLC';
-                                $gui->plot_data($win, $data, $symbol, $type);
-                                $gui->enable_menu_options($win);
-                            }
-                            $gui->progress_bar_close($bar);
-                        }
-                    },
-                    $self,
-                ],
-                [
-                    'security_open', '~Open', 'Ctrl+O', '^O',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        $gui->load_new_tab($win);
-                    },
-                    $self,
-                ],
-                [
-                    '-security_save', '~Save', 'Ctrl+S', '^S',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        $gui->save_current_tab($win, 0);
-                    },
-                    $self,
-                ],
-                [
-                    '-security_saveas', 'Save As', '', '',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        $gui->save_current_tab($win, 1);
-                    },
-                    $self,
-                ],
-                [
-                    '-security_close', '~Close', 'Ctrl+W', '^W',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        $gui->close_current_tab($win);
-                    },
-                    $self,
-                ],
-                [
-                    'app_exit', 'E~xit', 'Ctrl+Q', '^Q',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        $gui->close_all($win);
-                    },
-                    $self,
-                ],
+    $log->debug("Creating menu items");
+    my $help_menu = [
+        '~Help' => [
+            [
+                'help_viewer', 'Documentation', 'F1', kb::F1,
+                sub {
+                my $url = 'https://vikasnkumar.github.io/financeta/';
+                $log->info("Opening $url in your default browser.");
+                my $ok = Browser::Open::open_browser($url, 1);
+                if (not defined $ok) {
+                    message("Error finding a browser to open $url");
+                    $log->warn("Error finding a default browser to open $url");
+                } elsif ($ok != 0) {
+                    message("Error opening $url");
+                    $log->warn("Error opening $url in default browser");
+                }
+            }, $self,
             ],
         ],
-        [
+    ];
+    my $security_menu = [
+        '~Security' => [
+            [
+                'security_new', '~New', 'Ctrl+N', '^N',
+                sub {
+                    my ($win, $item) = @_;
+                    ## as of Prima 1.58 .data was renamed to .options
+                    my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item");
+                        return;
+                    }
+                    if ($gui->security_wizard($win)) {
+                        my $bar = $gui->progress_bar_create($win, 'Downloading...');
+                        # download security data
+                        my ($data, $symbol, $csv) = $gui->download_data($bar);
+                        if (defined $data) {
+                            $gui->display_data($win, $data);
+                            my ($info, $tname) = $gui->get_tab_info($win);
+                            if ($info and $csv) {
+                                $info->{csv} = $csv;
+                                $gui->set_tab_info($win, $info);
+                            }
+                            my $type = $gui->current->{plot_type} || 'OHLC';
+                            $gui->plot_data($win, $data, $symbol, $type);
+                            $gui->enable_menu_options($win);
+                        }
+                        $gui->progress_bar_close($bar);
+                    }
+                },
+                $self,
+            ],
+            [
+                'security_open', '~Open', 'Ctrl+O', '^O',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    $gui->load_new_tab($win);
+                },
+                $self,
+            ],
+            [
+                '-security_save', '~Save', 'Ctrl+S', '^S',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    $gui->save_current_tab($win, 0);
+                },
+                $self,
+            ],
+            [
+                '-security_saveas', 'Save As', '', '',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    $gui->save_current_tab($win, 1);
+                },
+                $self,
+            ],
+            [
+                '-security_close', '~Close', 'Ctrl+W', '^W',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    $gui->close_current_tab($win);
+                },
+                $self,
+            ],
+            [
+                'app_exit', 'E~xit', 'Ctrl+Q', '^Q',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    $gui->close_all($win);
+                },
+                $self,
+            ],
+        ],
+    ];
+    my $plot_menu = [
             '~Plot' => [
                 [
                     '-*plot_ohlc', 'OHLC', '', '',
                     sub {
                         my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
+                        my $gui = $win->menu->options($item);
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'OHLC', $indicators, $bs);
                         $win->menu->check('plot_ohlc');
@@ -242,7 +269,7 @@ sub _menu_items {
                     '-plot_ohlcv', 'OHLC & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
+                        my $gui = $win->menu->options($item);
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'OHLCV', $indicators, $bs);
                         $win->menu->check('plot_ohlcv');
@@ -258,7 +285,7 @@ sub _menu_items {
                     '-plot_close', 'Close Price', '', '',
                     sub {
                         my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
+                        my $gui = $win->menu->options($item);
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CLOSE', $indicators, $bs);
                         $win->menu->check('plot_close');
@@ -274,7 +301,7 @@ sub _menu_items {
                     '-plot_closev', 'Close Price & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
+                        my $gui = $win->menu->options($item);
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CLOSEV', $indicators, $bs);
                         $win->menu->check('plot_closev');
@@ -290,7 +317,7 @@ sub _menu_items {
                     '-plot_cdl', 'Candlesticks', '', '',
                     sub {
                         my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
+                        my $gui = $win->menu->options($item);
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CANDLE', $indicators, $bs);
                         $win->menu->check('plot_cdl');
@@ -306,7 +333,7 @@ sub _menu_items {
                     '-plot_cdlv', 'Candlesticks & Volume', '', '',
                     sub {
                         my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
+                        my $gui = $win->menu->options($item);
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CANDLEV', $indicators, $bs);
                         $win->menu->check('plot_cdlv');
@@ -319,92 +346,68 @@ sub _menu_items {
                     $self,
                 ],
             ],
-        ],
-        [
-            '~Analysis' => [
-                [
-                    '-add_indicator', 'Add Indicator', 'Ctrl+I', '^I',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
-                        # ok add an indicator which also plots it
-                        if ($gui->add_indicator($win, $data, $symbol)) {
-                            $win->menu->remove_indicator->enabled(1);
-                        }
-                    },
-                    $self,
-                ],
-                [
-                    '-remove_indicator', 'Remove Indicator', 'Ctrl+Shift+I', '^#I',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        # ok remove the indicator and update the plots and
-                        # display tables
-                        $gui->remove_indicator($win);
-                    },
-                    $self,
-                ],
-                [
-                    '-edit_rules', '~Edit Rules', 'Ctrl+E', '^E',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        my ($info, $tabname) = $self->get_tab_info($win);
-                        $self->open_editor($win, $info->{rules}, $tabname);
-                    },
-                    $self,
-                ],
-                [
-                    '-execute_rules', 'Execute ~Rules', 'Ctrl+R', '^R',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        my ($info, $tabname) = $self->get_tab_info($win);
-                        $self->execute_rules_no_editor($win, $tabname, $info->{rules});
-                        $win->menu->trade_report->enabled(1);
-                    },
-                    $self,
-                ],
-                [
-                    '-trade_report', 'Trade Report', '', '',
-                    sub {
-                        my ($win, $item) = @_;
-                        my $gui = $win->menu->data($item);
-                        my ($info, $tabname) = $self->get_tab_info($win);
-                        my $buysells = $self->get_tab_buysells_for_name($win, $tabname);
-                        $self->open_tradereport($win, $tabname, $buysells);
-                    },
-                    $self,
-                ],
+        ];
+    my $analysis_menu = [
+        '~Analysis' => [
+            [
+                '-add_indicator', 'Add Indicator', 'Ctrl+I', '^I',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
+                    # ok add an indicator which also plots it
+                    if ($gui->add_indicator($win, $data, $symbol)) {
+                        $win->menu->remove_indicator->enabled(1);
+                    }
+                },
+                $self,
             ],
-        ],
-        [
-            '~Help' => [
-                [
-                    'help_viewer', 'Documentation', 'F1', kb::F1,
-                    sub {
-                        my $url = 'https://vikasnkumar.github.io/financeta/';
-                        my $ok = Browser::Open::open_browser($url, 1);
-                        if (not defined $ok) {
-                            message("Error finding a browser to open $url");
-                        } elsif ($ok != 0) {
-                            message("Error opening $url");
-                        }
-                    },
-                    $self,
-                ],
-                [
-                    'about_logo', 'About Logo', '', kb::NoKey,
-                    sub {
-                        message_box('About Logo', 'http://www.perl.com',
-                                mb::Ok | mb::Information);
-                    }, $self,
-                ],
+            [
+                '-remove_indicator', 'Remove Indicator', 'Ctrl+Shift+I', '^#I',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    # ok remove the indicator and update the plots and
+                    # display tables
+                    $gui->remove_indicator($win);
+                },
+                $self,
+            ],
+            [
+                '-edit_rules', '~Edit Rules', 'Ctrl+E', '^E',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    my ($info, $tabname) = $self->get_tab_info($win);
+                    $self->open_editor($win, $info->{rules}, $tabname);
+                },
+                $self,
+            ],
+            [
+                '-execute_rules', 'Execute ~Rules', 'Ctrl+R', '^R',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    my ($info, $tabname) = $self->get_tab_info($win);
+                    $self->execute_rules_no_editor($win, $tabname, $info->{rules});
+                    $win->menu->trade_report->enabled(1);
+                },
+                $self,
+            ],
+            [
+                '-trade_report', 'Trade Report', '', '',
+                sub {
+                    my ($win, $item) = @_;
+                    my $gui = $win->menu->options($item);
+                    my ($info, $tabname) = $self->get_tab_info($win);
+                    my $buysells = $self->get_tab_buysells_for_name($win, $tabname);
+                    $self->open_tradereport($win, $tabname, $buysells);
+                },
+                $self,
             ],
         ],
     ];
+    return [ $security_menu, $plot_menu, $analysis_menu, $help_menu ];
 }
 
 sub close_all {
@@ -576,7 +579,7 @@ sub security_wizard {
         font => { height => 16 },
         onChange => sub {
             my $cal = shift;
-            $self->current->{start_date} = new DateTime(
+            $self->current->{start_date} = DateTime->new(
                 year => 1900 + $cal->year(),
                 month => 1 + $cal->month(),
                 day => $cal->day(),
@@ -601,7 +604,7 @@ sub security_wizard {
         font => { height => 16 },
         onChange => sub {
             my $cal = shift;
-            $self->current->{end_date} = new DateTime(
+            $self->current->{end_date} = DateTime->new(
                 year => 1900 + $cal->year(),
                 month => 1 + $cal->month(),
                 day => $cal->day(),
@@ -700,7 +703,7 @@ sub security_wizard {
             $self->current->{symbol} = $owner->input_symbol->text;
             unless (defined $self->current->{start_date}) {
                 my $cal = $owner->cal_start;
-                $self->current->{start_date} = new DateTime(
+                $self->current->{start_date} = DateTime->new(
                     year => 1900 + $cal->year(),
                     month => 1 + $cal->month(),
                     day => $cal->day(),
@@ -709,7 +712,7 @@ sub security_wizard {
             }
             unless (defined $self->current->{end_date}) {
                 my $cal = $owner->cal_end;
-                $self->current->{end_date} = new DateTime(
+                $self->current->{end_date} = DateTime->new(
                     year => 1900 + $cal->year(),
                     month => 1 + $cal->month(),
                     day => $cal->day(),
@@ -1396,7 +1399,7 @@ sub download_data {
     my $data;
     unlink $csv if $current->{force_download};
     unless (-e $csv) {
-        my $fq = new Finance::QuoteHist(
+        my $fq = Finance::QuoteHist->new(
             symbols => [ $symbol ],
             start_date => $start->mdy('/'),
             end_date => $end->mdy('/'),
