@@ -154,17 +154,17 @@ sub _menu_items {
             [
                 'help_viewer', 'Documentation', 'F1', kb::F1,
                 sub {
-                my $url = 'https://vikasnkumar.github.io/financeta/';
-                $log->info("Opening $url in your default browser.");
-                my $ok = Browser::Open::open_browser($url, 1);
-                if (not defined $ok) {
-                    message("Error finding a browser to open $url");
-                    $log->warn("Error finding a default browser to open $url");
-                } elsif ($ok != 0) {
-                    message("Error opening $url");
-                    $log->warn("Error opening $url in default browser");
-                }
-            }, $self,
+                    my $url = 'https://vikasnkumar.github.io/financeta/';
+                    $log->info("Opening $url in your default browser.");
+                    my $ok = Browser::Open::open_browser($url, 1);
+                    if (not defined $ok) {
+                        message("Error finding a browser to open $url");
+                        $log->warn("Error finding a default browser to open $url");
+                    } elsif ($ok != 0) {
+                        message("Error opening $url");
+                        $log->warn("Error opening $url in default browser");
+                    }
+                }, $self,
             ],
         ],
     ];
@@ -177,7 +177,7 @@ sub _menu_items {
                     ## as of Prima 1.58 .data was renamed to .options
                     my $gui = $win->menu->options($item);
                     unless (ref $gui eq __PACKAGE__) {
-                        $log->error("Invalid gui object passed to menu item");
+                        $log->error("Invalid gui object passed to menu item $item");
                         return;
                     }
                     if ($gui->security_wizard($win)) {
@@ -205,6 +205,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     $gui->load_new_tab($win);
                 },
                 $self,
@@ -214,6 +218,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     $gui->save_current_tab($win, 0);
                 },
                 $self,
@@ -223,6 +231,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     $gui->save_current_tab($win, 1);
                 },
                 $self,
@@ -232,6 +244,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     $gui->close_current_tab($win);
                 },
                 $self,
@@ -241,6 +257,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     $gui->close_all($win);
                 },
                 $self,
@@ -254,6 +274,10 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'OHLC', $indicators, $bs);
                         $win->menu->check('plot_ohlc');
@@ -270,6 +294,10 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'OHLCV', $indicators, $bs);
                         $win->menu->check('plot_ohlcv');
@@ -286,6 +314,10 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CLOSE', $indicators, $bs);
                         $win->menu->check('plot_close');
@@ -302,6 +334,10 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CLOSEV', $indicators, $bs);
                         $win->menu->check('plot_closev');
@@ -318,6 +354,10 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CANDLE', $indicators, $bs);
                         $win->menu->check('plot_cdl');
@@ -334,6 +374,10 @@ sub _menu_items {
                     sub {
                         my ($win, $item) = @_;
                         my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
                         my ($data, $symbol, $indicators, $h, $bs) = $gui->get_tab_data($win);
                         $gui->plot_data($win, $data, $symbol, 'CANDLEV', $indicators, $bs);
                         $win->menu->check('plot_cdlv');
@@ -354,6 +398,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     my ($data, $symbol, $indicators) = $gui->get_tab_data($win);
                     # ok add an indicator which also plots it
                     if ($gui->add_indicator($win, $data, $symbol)) {
@@ -367,6 +415,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     # ok remove the indicator and update the plots and
                     # display tables
                     $gui->remove_indicator($win);
@@ -378,6 +430,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     my ($info, $tabname) = $self->get_tab_info($win);
                     $self->open_editor($win, $info->{rules}, $tabname);
                 },
@@ -388,6 +444,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     my ($info, $tabname) = $self->get_tab_info($win);
                     $self->execute_rules_no_editor($win, $tabname, $info->{rules});
                     $win->menu->trade_report->enabled(1);
@@ -399,6 +459,10 @@ sub _menu_items {
                 sub {
                     my ($win, $item) = @_;
                     my $gui = $win->menu->options($item);
+                    unless (ref $gui eq __PACKAGE__) {
+                        $log->error("Invalid gui object passed to menu item $item");
+                        return;
+                    }
                     my ($info, $tabname) = $self->get_tab_info($win);
                     my $buysells = $self->get_tab_buysells_for_name($win, $tabname);
                     $self->open_tradereport($win, $tabname, $buysells);
