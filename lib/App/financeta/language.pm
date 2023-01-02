@@ -99,6 +99,8 @@ use feature 'say';
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
+use App::financeta::utils qw(dumper log_filter);
+use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Carp;
 use Perl::Tidy;
 use Pegex::Base;

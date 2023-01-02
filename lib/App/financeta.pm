@@ -4,9 +4,9 @@ use warnings;
 use 5.10.0;
 use feature 'say';
 use Carp;
-use Log::Any '$log';
+use App::financeta::utils qw(dumper log_filter);
+use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Log::Any::Adapter 'Stderr';
-use App::financeta::utils qw(dumper);
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
@@ -38,10 +38,17 @@ sub run {
     my %opts = @args;
     delete $opts{help};
     delete $opts{version};
-    my $log_level = 'trace' if (($opts{verbose} // 0) >= 3);
-    $log_level = 'debug' if (($opts{verbose} // 0) eq 2) or $opts{debug};
-    $log_level = 'info' if (($opts{verbose} // 0) eq 1);
-    $log_level = 'warn' if (($opts{verbose} // 0) eq 0) or $opts{quiet};
+    my $log_level;
+    $opts{verbose} //= 0;
+    if ($opts{verbose} >= 3) {
+        $log_level = 'trace';
+    } elsif ($opts{verbose} eq 2 or $opts{debug}) {
+        $log_level = 'debug';
+    } elsif ($opts{quiet} or $opts{verbose} eq 0) {
+        $log_level = 'warn';
+    } else {
+        $log_level = 'info';
+    }
     delete $opts{quiet};
     Log::Any::Adapter->set('Stderr', log_level => $log_level);
     $log->debug("Options sent to the Gui: " . dumper(\%opts));

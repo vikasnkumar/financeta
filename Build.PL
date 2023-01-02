@@ -22,6 +22,7 @@ my $build = Module::Build->new(
     requires => {
         'Carp' => '0',
         'POSIX' => 0,
+        'Cwd' => 0,
         'Pod::Usage' => '2.03',
         'Data::Dumper' => '2.183',
         'File::Spec' => '3.78',

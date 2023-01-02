@@ -8,6 +8,8 @@ our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
+use App::financeta::utils qw(dumper log_filter);
+use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Carp;
 use File::ShareDir 'dist_file';
 use File::HomeDir;

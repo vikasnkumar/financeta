@@ -4,7 +4,7 @@ use Test::More;
 
 use_ok('App::financeta::mo');
 use_ok('App::financeta::utils');
-foreach (qw(dumper)) {
+foreach (qw(dumper log_filter)) {
     can_ok('App::financeta::utils', $_);
 }
 

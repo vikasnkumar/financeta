@@ -8,11 +8,16 @@ our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
+use App::financeta::utils qw(dumper log_filter);
+use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
+use Try::Tiny;
 use Carp;
 use File::Spec;
 use File::HomeDir;
 use File::Path ();
 use File::ShareDir 'dist_file';
+use File::Spec::Functions qw(rel2abs catfile);
+use Cwd qw(getcwd);
 use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
@@ -31,7 +36,6 @@ use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use App::financeta::indicators;
 use App::financeta::editor;
-use App::financeta::tradereport;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
@@ -85,11 +89,35 @@ sub _build_tradereport {
 
 sub _build_icon {
     my $self = shift;
-    my $icon_path = dist_file('App-financeta', 'icon.gif');
-    my $icon = Prima::Icon->create;
-    say "Icon path: $icon_path" if $self->debug;
-    $icon->load($icon_path) or carp "Unable to load $icon_path";
-    return $icon;
+    my $icon_path;
+    try {
+        $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
+    } catch {
+        $log->warn("Failed to find icon. Error: $_");
+        $icon_path = undef;
+    };
+    unless ($icon_path) {
+        my $dist_share_path = rel2abs(catfile(getcwd, 'share'));
+        try {
+            $log->debug("icon backup dist-share path: $dist_share_path");
+            $File::ShareDir::DIST_SHARE{'App::financeta'} = $dist_share_path;
+            $File::ShareDir::DIST_SHARE{'App-financeta'} = $dist_share_path;
+            $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
+        } catch {
+            $log->warn("Failed to find icon in $dist_share_path. Error: $_");
+            $icon_path = undef;
+        };
+    };
+    $log->debug("Icon path: $icon_path") if defined $icon_path;
+    if (defined $icon_path and -e $icon_path) {
+        my $icon = Prima::Icon->create;
+        return $icon if $icon->load($icon_path);
+        $log->warn("Unable to load $icon_path, using system icon");
+        return undef;
+    } else {
+        $log->warn("No icon found, using system icon");
+        return undef;
+    }
 }
 
 sub _build_main {
@@ -105,11 +133,13 @@ sub _build_main {
         borderStyle => bs::Sizeable,
         windowState => ws::Normal,
         icon => $self->icon,
+        ownerIcon => 1,
         # origin
         left => 10,
         top => 0,
     );
     $mw->maximize;
+    $log->debug("Creating main window");
     return $mw;
 }
 
