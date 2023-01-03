@@ -1704,7 +1704,7 @@ sub save_current_tab {
     my $mfile;
     if ($info and $info->{filename} and not $save_as) {
         $mfile = $info->{filename};
-        $log->info("Saving tab $name to $mfile");
+        $log->info(sprintf "Saving tab %s to %s", ($name ? $name : ''), $mfile);
     } else {
         my $dlg = Prima::Dialog::SaveDialog->new(
             fileName => "$symbol.yml",
@@ -1827,41 +1827,25 @@ sub close_current_tab {
         $nt->close;
         $self->disable_menu_options;
     } else {
-        ##FIXME: make it current
-        my $v = eval $Prima::VERSION;
-        $log->debug("Prima Version is $v");
-        if ($v > 1.40) {
-            $self->tab_was_closed(1);
-            # find corresponding editors and close them
-            my @wids = $win->data_tabs->widgets_from_page($idx);
-            if (@wids) {
-                my ($dl) = grep { $_->name =~ /^tab_/i } @wids;
-                if ($dl and exists $self->editors->{$dl->name}) {
-                    $log->debug("Closing the rules editor for " . $dl->name);
-                    $self->editors->{$dl->name}->close;
-                    delete $self->editors->{$dl->name};
-                }
-                if ($dl and exists $self->tradereports->{$dl->name}) {
-                    $log->debug("Closing the trade report for " . $dl->name);
-                    $self->tradereports->{$dl->name}->close;
-                    delete $self->tradereports->{$dl->name};
-                }
+        $self->tab_was_closed(1);
+        # find corresponding editors and close them
+        my @wids = $win->data_tabs->widgets_from_page($idx);
+        if (@wids) {
+            my ($dl) = grep { $_->name =~ /^tab_/i } @wids;
+            if ($dl and exists $self->editors->{$dl->name}) {
+                $log->debug("Closing the rules editor for " . $dl->name);
+                $self->editors->{$dl->name}->close;
+                delete $self->editors->{$dl->name};
             }
-            $nt->delete_page($idx);
-            $nt->pageIndex($idx >= $nt->pageCount ?
-                $nt->pageCount - 1 : $idx);
-        } else {
-            $log->warn("Your Prima version is lower than expected: 1.401, closing tabs is buggy");
-            my @wids = $nt->widgets_from_page($idx);
-            # close child widgets explicitly
-            map { $_->close } @wids if @wids;
-            $nt->Notebook->delete_page($idx);
-            my @ntabs = @{$nt->TabSet->tabs};
-            $log->debug("Existing tabs: ", dumper(\@ntabs));
-            splice(@ntabs, $idx, 1);
-            $log->debug("New tabs: ", dumper(\@ntabs));
-            $nt->TabSet->tabs(\@ntabs);
+            if ($dl and exists $self->tradereports->{$dl->name}) {
+                $log->debug("Closing the trade report for " . $dl->name);
+                $self->tradereports->{$dl->name}->close;
+                delete $self->tradereports->{$dl->name};
+            }
         }
+        $nt->delete_page($idx);
+        $nt->pageIndex($idx >= $nt->pageCount ?
+            $nt->pageCount - 1 : $idx);
     }
 }
 
