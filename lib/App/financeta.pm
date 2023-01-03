@@ -117,6 +117,8 @@ The commandline script that calls C<App::financeta>.
 
 =head1 DEPENDENCIES FOR DEVELOPERS
 
+=over
+
 =item B<Linux>
 
 For Linux, such as Debian/Ubuntu based systems like Debian Bullseye or Ubuntu 20.04 LTS, you want the following packages installed:
@@ -130,6 +132,8 @@ Then you build L<Prima>, L<PDL>, L<PDL::Graphics::Gnuplot>, L<PDL::Graphics::Sim
 For Windows you need Strawberry Perl installed and install L<Prima>, L<PDL>, L<PDL::Graphics::Prima>, L<PDL::Graphics::Gnuplot>, L<PDL::Graphics::Simple>.
 
 You may want to install Gnuplot from their website.
+
+=back
 
 =head1 COPYRIGHT
 

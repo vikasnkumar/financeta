@@ -72,16 +72,3 @@ LICENSE
     terms of GNU General Public License version 3. Refer LICENSE file in
     the top level source directory for more information.
 
-POD ERRORS
-
-    Hey! The above document had some coding errors, which are explained
-    below:
-
-    Around line 51:
-
-      '=item' outside of any '=over'
-
-    Around line 65:
-
-      You forgot a '=back' before '=head1'
-
