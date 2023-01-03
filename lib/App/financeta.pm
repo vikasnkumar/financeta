@@ -2,8 +2,6 @@ package App::financeta;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
-use Carp;
 use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Log::Any::Adapter 'Stderr';
@@ -22,7 +20,7 @@ sub print_banner {
     for any profits or losses incurred due to the use of this software. Use at your own
     risk and with your own intelligence.
 LICENSE
-    say STDERR $license;
+    print STDERR $license, "\n";
     return;
 }
 
@@ -53,7 +51,7 @@ sub run {
     Log::Any::Adapter->set('Stderr', log_level => $log_level);
     $log->debug("Options sent to the Gui: " . dumper(\%opts));
     $log->debug("Setting log level to $log_level");
-    eval { require App::financeta::gui; } or croak "Unable to load App::financeta::gui";
+    eval { require App::financeta::gui; } or die "Unable to load App::financeta::gui";
     my $gui = App::financeta::gui->new(
         log_level => $log_level,
         debug => $opts{debug},

@@ -4,9 +4,10 @@ use Test::More;
 
 use_ok('App::financeta::mo');
 use_ok('App::financeta::utils');
-foreach (qw(dumper log_filter)) {
+foreach (qw(dumper log_filter get_icon_path)) {
     can_ok('App::financeta::utils', $_);
 }
+use_ok('App::financeta::language');
 
 use_ok('App::financeta::indicators');
 foreach (qw(calculate_pnl get_plot_args_buysell get_plot_args buysell

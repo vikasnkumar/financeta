@@ -7,15 +7,12 @@ our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
-use App::financeta::utils qw(dumper log_filter);
+use App::financeta::utils qw(dumper log_filter get_icon_path);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Try::Tiny;
 use File::Spec;
 use File::HomeDir;
 use File::Path ();
-use File::ShareDir 'dist_file';
-use File::Spec::Functions qw(rel2abs catfile);
-use Cwd qw(getcwd);
 use DateTime;
 use POE 'Loop::Prima';
 use Prima qw(
@@ -43,7 +40,6 @@ has debug => 0;
 has timezone => 'America/New_York';
 has brand => __PACKAGE__;
 has main => (builder => '_build_main');
-has icon_path => (builder => '_build_icon');
 has tmpdir => ( default => sub {
     return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
     return $ENV{TMPDIR} || '/tmp';
@@ -84,40 +80,9 @@ sub _build_tradereport {
         brand => $self->brand . " Trade Report for $name");
 }
 
-sub _build_icon {
-    my $self = shift;
-    my $icon_path;
-    try {
-        $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
-    } catch {
-        $log->warn("Failed to find icon. Error: $_");
-        $icon_path = undef;
-    };
-    unless ($icon_path) {
-        my $dist_share_path = rel2abs(catfile(getcwd, 'share'));
-        try {
-            $log->debug("icon backup dist-share path: $dist_share_path");
-            $File::ShareDir::DIST_SHARE{'App::financeta'} = $dist_share_path;
-            $File::ShareDir::DIST_SHARE{'App-financeta'} = $dist_share_path;
-            $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
-        } catch {
-            $log->warn("Failed to find icon in $dist_share_path. Error: $_");
-            $icon_path = undef;
-        };
-    };
-    $log->debug("Icon path: $icon_path") if defined $icon_path;
-    if (defined $icon_path and -e $icon_path) {
-        return $icon_path;
-    } else {
-        $log->warn("No icon found, using system icon");
-        return undef;
-    }
-}
-
 sub icon {
-    my $icon_path = shift->icon_path;
-    return Prima::Icon->load($icon_path) if defined $icon_path;
-    return undef;
+    my $icon_path = get_icon_path();
+    return (defined $icon_path) ? Prima::Icon->load($icon_path) : undef;
 }
 
 sub _build_main {

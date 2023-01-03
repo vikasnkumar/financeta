@@ -2,13 +2,14 @@ package App::financeta::language::grammar;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use Pegex::Base;
 extends 'Pegex::Grammar';
+use App::financeta::utils qw(log_filter);
+use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 
 use constant text => <<GRAMMAR;
 %grammar financeta
@@ -94,14 +95,12 @@ package App::financeta::language::receiver;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
-use App::financeta::utils qw(dumper log_filter);
+use App::financeta::utils qw(log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
-use Carp;
 use Perl::Tidy;
 use Pegex::Base;
 extends 'Pegex::Tree';
@@ -518,7 +517,7 @@ sub final {
                             $self->_generate_pdl_end());
     my $tidy_code;
     Perl::Tidy::perltidy(source => \$final_code, destination => \$tidy_code);
-    say $tidy_code if $self->debug;
+    $log->debug("Tidy Code:\n$tidy_code");
     return $tidy_code;
 }
 
@@ -528,14 +527,14 @@ package App::financeta::language;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
-use Carp;
 use Pegex::Parser;
 use App::financeta::mo;
+use App::financeta::utils qw(log_filter);
+use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 
 $| = 1;
 has debug => 0;
@@ -589,7 +588,7 @@ sub generate_coderef {
     my ($self, $code) = @_;
     return unless $code;
     my $coderef = eval $code;
-    carp "Unable to compile into a code-ref: $@" if $@;
+    $log->error("Unable to compile into a code-ref: $@") if $@;
     return $coderef;
 }
 

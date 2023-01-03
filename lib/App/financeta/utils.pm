@@ -2,16 +2,19 @@ package App::financeta::utils;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
-use Carp;
 use Data::Dumper ();
 use Exporter qw(import);
+use Log::Any '$log', filter => \&log_filter;
+use Try::Tiny;
+use File::ShareDir 'dist_file';
+use File::Spec::Functions qw(rel2abs catfile);
+use Cwd qw(getcwd);
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 our @EXPORT_OK = (
-    qw(dumper log_filter)
+    qw(dumper log_filter get_icon_path)
 );
 
 sub dumper {
@@ -33,6 +36,35 @@ sub log_filter {
         8 => 'TRACE',
     );
     return "[$levels{$l}]($c) @_";
+}
+
+sub get_icon_path {
+    my $icon_path;
+    try {
+        $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
+    } catch {
+        $log->warn("Failed to find icon. Error: $_");
+        $icon_path = undef;
+    };
+    unless ($icon_path) {
+        my $dist_share_path = rel2abs(catfile(getcwd, 'share'));
+        try {
+            $log->debug("icon backup dist-share path: $dist_share_path");
+            $File::ShareDir::DIST_SHARE{'App::financeta'} = $dist_share_path;
+            $File::ShareDir::DIST_SHARE{'App-financeta'} = $dist_share_path;
+            $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
+        } catch {
+            $log->warn("Failed to find icon in $dist_share_path. Error: $_");
+            $icon_path = undef;
+        };
+    };
+    $log->debug("Icon path: $icon_path") if defined $icon_path;
+    if (defined $icon_path and -e $icon_path) {
+        return $icon_path;
+    } else {
+        $log->warn("No icon found, using system icon");
+        return undef;
+    }
 }
 
 1;

@@ -2,16 +2,13 @@ package App::financeta::tradereport;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
-use App::financeta::utils qw(dumper log_filter);
+use App::financeta::utils qw(dumper log_filter get_icon_path);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
-use Carp;
-use File::ShareDir 'dist_file';
 use File::HomeDir;
 use DateTime;
 use POE 'Loop::Prima';
@@ -28,17 +25,12 @@ $| = 1;
 has debug => 0;
 has parent => undef;
 has main => (builder => '_build_main');
-has icon => (builder => '_build_icon');
 has brand => __PACKAGE__;
 has tab_name => undef;
 
-sub _build_icon {
-    my $self = shift;
-    my $icon_path = dist_file('App-financeta', 'icon.gif');
-    my $icon = Prima::Icon->create;
-    say "Icon path: $icon_path" if $self->debug;
-    $icon->load($icon_path) or carp "Unable to load $icon_path";
-    return $icon;
+sub icon {
+    my $icon_path = get_icon_path();
+    return (defined $icon_path) ? Prima::Icon->load($icon_path) : undef;
 }
 
 sub _build_main {
@@ -53,7 +45,7 @@ sub _build_main {
         borderIcons => bi::All,
         borderStyle => bs::Sizeable,
         windowState => ws::Normal,
-        icon => $self->icon,
+        icon => $self->icon(),
         # origin
         left => 10,
         top => 0,
@@ -64,7 +56,7 @@ sub _build_main {
                     'save_report', '~Save', 'Ctrl+S', '^S',
                     sub {
                         my ($win, $item) = @_;
-                        my $trw = $win->menu->data($item);
+                        my $trw = $win->menu->options($item);
                         $trw->save;
                     },
                     $self,
@@ -73,7 +65,7 @@ sub _build_main {
                     'close_window', '~Close', 'Ctrl+W', '^W',
                     sub {
                         my ($win, $item) = @_;
-                        my $trw = $win->menu->data($item);
+                        my $trw = $win->menu->options($item);
                         $trw->close;
                     },
                     $self,
@@ -228,17 +220,17 @@ sub save {
             $filename .= ".$ext" unless $filename =~ /\.$ext$/; #windows is weird
         }
     } else {
-        carp "Saving the report was canceled.";
+        $log->warn("Saving the report was canceled.");
         return;
     }
     CORE::open (my $fh, '>', $filename) or message("Unable to open $filename to write the report");
     if ($fh) {
-        say $fh join(',', @headers);
+        print $fh join(',', @headers), "\n";
         foreach my $arr (@$items) {
-            say $fh join(',', @$arr);
+            print $fh join(',', @$arr), "\n";
         }
         CORE::close $fh;
-        say "Done writing $filename" if $self->debug;
+        $log->debug("Done writing $filename");
     }
 }
 

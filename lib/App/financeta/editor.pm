@@ -2,15 +2,13 @@ package App::financeta::editor;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
-use App::financeta::utils qw(dumper log_filter);
+use App::financeta::utils qw(dumper log_filter get_icon_path);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
-use Carp;
 use File::ShareDir 'dist_file';
 use POE 'Loop::Prima';
 use Prima qw(Application Edit MsgBox);
@@ -21,20 +19,15 @@ $| = 1;
 has debug => 0;
 has parent => undef;
 has main => (builder => '_build_main');
-has icon => (builder => '_build_icon');
 has brand => __PACKAGE__;
 has tab_name => undef;
 has compiler => (default => sub {
     return App::financeta::language->new(debug => 0);
 });
 
-sub _build_icon {
-    my $self = shift;
-    my $icon_path = dist_file('App-financeta', 'icon.gif');
-    my $icon = Prima::Icon->create;
-    say "Icon path: $icon_path" if $self->debug;
-    $icon->load($icon_path) or carp "Unable to load $icon_path";
-    return $icon;
+sub icon {#candidate for inheritance
+    my $icon_path = get_icon_path();
+    return (defined $icon_path) ? Prima::Icon->load($icon_path) : undef;
 }
 
 sub _build_main {
@@ -49,7 +42,7 @@ sub _build_main {
         borderIcons => bi::All,
         borderStyle => bs::Sizeable,
         windowState => ws::Normal,
-        icon => $self->icon,
+        icon => $self->icon(),
         # origin
         left => 10,
         top => 0,
@@ -60,7 +53,7 @@ sub _build_main {
                     'save_rules', '~Save', 'Ctrl+S', '^S',
                     sub {
                         my ($win, $item) = @_;
-                        my $ed = $win->menu->data($item);
+                        my $ed = $win->menu->options($item);
                         my $txt = $win->editor_edit->text;
                         $ed->parent->save_editor($txt, $ed->tab_name, 0);
                     },
@@ -70,7 +63,7 @@ sub _build_main {
                     'close_window', '~Close', 'Ctrl+W', '^W',
                     sub {
                         my ($win, $item) = @_;
-                        my $ed = $win->menu->data($item);
+                        my $ed = $win->menu->options($item);
                         my $txt = $win->editor_edit->text;
                         $ed->parent->save_editor($txt, $ed->tab_name, 1);
                         $ed->parent->close_editor($ed->tab_name); # force it
@@ -83,7 +76,7 @@ sub _build_main {
                     'compile_rules', 'Compile', 'Ctrl+B', '^B',
                     sub {
                         my ($win, $item) = @_;
-                        my $ed = $win->menu->data($item);
+                        my $ed = $win->menu->options($item);
                         my $txt = $win->editor_edit->text;
                         $ed->parent->save_editor($txt, $ed->tab_name, 0);
                         my $output = $ed->compile($txt);
@@ -97,7 +90,7 @@ sub _build_main {
                     'execute_rules', 'Execute', 'Ctrl+R', '^R',
                     sub {
                         my ($win, $item) = @_;
-                        my $ed = $win->menu->data($item);
+                        my $ed = $win->menu->options($item);
                         my $txt = $win->editor_edit->text;
                         $ed->parent->save_editor($txt, $ed->tab_name, 0);
                         $ed->execute($txt);
@@ -216,7 +209,7 @@ sub compile {
         $output = $self->compiler->compile($txt);
     } catch {
         my $err = $_;
-        say $err if $self->debug;
+        $log->error("Compiler error:\n$err");
         #TODO: create a better window
         message("Compiler Error\n$err");
     };
@@ -230,15 +223,13 @@ sub execute {
     try {
         my $coderef = $self->compiler->generate_coderef($code);
         if ($self->parent) {
-            say "Executing rules for tab name: ", $self->tab_name if $self->debug;
+            $log->info("Executing rules for tab name: ", $self->tab_name);
             $self->parent->execute_rules($self->tab_name, $coderef);
         }
     } catch {
         my $err = $_;
-        if ($self->debug) {
-            say $err;
-            say $code;
-        }
+        $log->error("Error executing generated code:\n$err");
+        $log->debug("Erroneous code: $code");
         #TODO: create a better window
         message("Error executing generated code:\n$err");
     };
