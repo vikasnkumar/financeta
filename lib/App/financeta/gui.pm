@@ -8,6 +8,7 @@ $VERSION = eval $VERSION;
 
 use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter get_icon_path);
+use Carp ();
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Try::Tiny;
 use File::Spec;
@@ -67,8 +68,7 @@ sub _build_editor {
     my $name = shift || '';
     $name =~ s/tab_//g if length $name;
     return App::financeta::editor->new(debug => $self->debug,
-        parent => $self, icon => $self->icon,
-        brand => $self->brand . " Rules Editor for $name");
+        parent => $self, brand => $self->brand . " Rules Editor for $name");
 }
 
 sub _build_tradereport {
@@ -76,12 +76,11 @@ sub _build_tradereport {
     my $name = shift || '';
     $name =~ s/tab_//g if length $name;
     return App::financeta::tradereport->new(debug => $self->debug,
-        parent => $self, icon => $self->icon,
-        brand => $self->brand . " Trade Report for $name");
+        parent => $self, brand => $self->brand . " Trade Report for $name");
 }
 
 sub icon {
-    my $icon_path = get_icon_path();
+    my $icon_path = get_icon_path(__PACKAGE__);
     return (defined $icon_path) ? Prima::Icon->load($icon_path) : undef;
 }
 
@@ -449,6 +448,11 @@ sub run {
     my $self = shift;
     $self->main->show;
     $self->disable_menu_options; # to be safe
+    my $stack_sub = sub {
+        Carp::confess();
+    };
+    local $SIG{__DIE__} = $stack_sub;
+    local $SIG{SEGV} = $stack_sub;
     run Prima;
 }
 

@@ -39,9 +39,12 @@ sub log_filter {
 }
 
 sub get_icon_path {
+    my @args = @_;
     my $icon_path;
+    my $filename = 'chart-line-solid.png';#'icon.gif';
+    my $distname = 'App-financeta';
     try {
-        $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
+        $icon_path = dist_file($distname, $filename);
     } catch {
         $log->warn("Failed to find icon. Error: $_");
         $icon_path = undef;
@@ -50,9 +53,14 @@ sub get_icon_path {
         my $dist_share_path = rel2abs(catfile(getcwd, 'share'));
         try {
             $log->debug("icon backup dist-share path: $dist_share_path");
-            $File::ShareDir::DIST_SHARE{'App::financeta'} = $dist_share_path;
-            $File::ShareDir::DIST_SHARE{'App-financeta'} = $dist_share_path;
-            $icon_path = dist_file('App-financeta', 'chart-line-solid.png');
+            ## find all packages and search for all of them
+            if (@args) {
+                foreach (@args) {
+                    $File::ShareDir::DIST_SHARE{$_} = $dist_share_path;
+                }
+            }
+            $File::ShareDir::DIST_SHARE{$distname} = $dist_share_path;
+            $icon_path = dist_file($distname, $filename);
         } catch {
             $log->warn("Failed to find icon in $dist_share_path. Error: $_");
             $icon_path = undef;

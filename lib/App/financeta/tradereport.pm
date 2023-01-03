@@ -56,7 +56,7 @@ sub _build_main {
                     $self,
                 ],
                 [
-                    'close_window', '~Close', 'Ctrl+W', '^W',
+                    'close_report', '~Close', 'Ctrl+W', '^W',
                     sub {
                         my ($win, $item) = @_;
                         my $trw = $win->menu->options($item);

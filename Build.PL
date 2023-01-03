@@ -20,6 +20,7 @@ my $build = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
+        'Carp' => 0,
         'POSIX' => 0,
         'Cwd' => 0,
         'Pod::Usage' => '2.03',
