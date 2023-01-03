@@ -7,7 +7,7 @@ our $VERSION = '0.11';
 $VERSION = eval $VERSION;
 
 use App::financeta::mo;
-use App::financeta::utils qw(dumper log_filter get_icon_path);
+use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use File::HomeDir;
 use DateTime;
@@ -28,11 +28,6 @@ has main => (builder => '_build_main');
 has brand => __PACKAGE__;
 has tab_name => undef;
 
-sub icon {
-    my $icon_path = get_icon_path();
-    return (defined $icon_path) ? Prima::Icon->load($icon_path) : undef;
-}
-
 sub _build_main {
     my $self = shift;
     my $mw = new Prima::Window(
@@ -45,7 +40,6 @@ sub _build_main {
         borderIcons => bi::All,
         borderStyle => bs::Sizeable,
         windowState => ws::Normal,
-        icon => $self->icon(),
         # origin
         left => 10,
         top => 0,
