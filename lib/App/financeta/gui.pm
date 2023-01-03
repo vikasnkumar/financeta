@@ -2,7 +2,6 @@ package App::financeta::gui;
 use strict;
 use warnings;
 use 5.10.0;
-use feature 'say';
 
 our $VERSION = '0.11';
 $VERSION = eval $VERSION;
@@ -11,7 +10,6 @@ use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Try::Tiny;
-use Carp;
 use File::Spec;
 use File::HomeDir;
 use File::Path ();
@@ -27,7 +25,6 @@ use Prima qw(
     Dialog::PrintDialog Dialog::ImageDialog Dialog::FontDialog
 );
 use Prima::Utils ();
-use Data::Dumper;
 use Capture::Tiny ();
 use Finance::QuoteHist;
 use PDL::Lite;
@@ -478,7 +475,7 @@ sub close_all {
     my ($self, $win) = @_;
     my $pwin = $win->{plot};
     $pwin->close if $pwin;
-    say "Closing all open windows" if $self->debug;
+    $log->info("Closing all open windows");
     $win->close if $win;
     $::application->close;
 }
@@ -704,8 +701,7 @@ sub security_wizard {
             my $btn = shift;
             my $owner = $btn->owner;
             $owner->hide;
-            my $dlg = Prima::OpenDialog->new(
-                defaultExt => 'csv',
+            my $dlg = Prima::Dialog::OpenDialog->new(
                 filter => [
                     ['CSV files' => '*.csv'],
                     ['All files' => '*'],
@@ -717,7 +713,7 @@ sub security_wizard {
             );
             my $csv = $dlg->fileName if $dlg->execute;
             if (defined $csv and -e $csv) {
-                say "You have selected $csv to load" if $self->debug;
+                $log->info("You have selected $csv to load");
                 $owner->label_csv->text($csv);
                 $self->current->{csv} = $csv;
             }
@@ -794,7 +790,7 @@ sub remove_indicator($) {
     my ($self, $win) = @_;
     my $result = $self->remove_indicator_wizard($win);
     if ($result and ref $result eq 'HASH') {
-        say "Removing indicator: ", Dumper($result) if $self->debug;
+        $log->debug("Removing indicator: ", dumper($result));
         # we know here the name of the indicator, the index of the indicator and
         # the columns in the data to remove.
         # let's do that.
@@ -811,8 +807,8 @@ sub remove_indicator($) {
         }
         @nhdrs = grep { defined $_ } @nhdrs;
         @ncols = grep { defined $_ } @ncols;
-        say "New Headers: ", Dumper(\@nhdrs) if $self->debug;
-        say "Remaining columns: ", Dumper(\@ncols) if $self->debug;
+        $log->debug("New Headers: ", dumper(\@nhdrs));
+        $log->debug("Remaining columns: ", dumper(\@ncols));
         my $ndata = $data->dice('X', \@ncols);
         my $nindics = [];
         if ($indicators) {
@@ -823,7 +819,7 @@ sub remove_indicator($) {
             }
         }
         if ($self->set_tab_data_by_name($win, $result->{tab}, $ndata, $symbol, $nindics, \@nhdrs)) {
-            say "Successfully set data" if $self->debug;
+            $log->debug("Successfully set data");
             $self->display_data($win, $ndata, $symbol);
             my ($adata, $asymbol, $aindicators, $ahdr, $abysl) = $self->get_tab_data($win);
             my $type = $self->current->{plot_type} || 'OHLC';
@@ -857,7 +853,7 @@ sub remove_indicator_wizard {
     );
     $w->owner($win) if defined $win;
     my %tabs = $self->get_tab_names($win);
-    say "Current tabs: ", Dumper(\%tabs) if $self->debug;
+    $log->debug("Current tabs: ", dumper(\%tabs));
     my $result = {};
     $w->insert(Label => name => 'label_tabs',
         text => 'Select Security',
@@ -896,7 +892,7 @@ sub remove_indicator_wizard {
                         push @inds, $_->{indicator}->{func};
                     }
                 }
-                say "Current indicators for tab $txt: ", Dumper(\@inds) if $self->debug;
+                $log->debug("Current indicators for tab $txt: ", dumper(\@inds));
                 if (scalar @inds) {
                     $owner->cbox_inds->items(\@inds);
                     $owner->btn_ok->enabled(1);
@@ -993,12 +989,12 @@ sub remove_indicator_wizard {
                 if ($iref->{func} eq $result->{indicator}) {
                     $result->{columns} = $indicators->[$result->{indicator_index}]->{columns};
                 } else {
-                    carp "Cannot find the columns to remove";
+                    $log->warn("Cannot find the columns to remove");
                 }
             } else {
-                carp "Invalid indicators for tab: ", $result->{tab};
+                $log->warn("Invalid indicators for tab: ", $result->{tab});
             }
-            say "Result: ", Dumper($result) if $self->debug;
+            $log->debug("Result: ", dumper($result));
         },
     );
     my $res = $w->execute();
@@ -1013,7 +1009,7 @@ sub run_and_display_indicator {
         ref $indicators eq 'ARRAY') {
         my $icount = scalar @$indicators;
         foreach my $iref (@$indicators) {
-            say "Trying to run indicator for :", Dumper($iref) if $self->debug;
+            $log->debug("Trying to run indicator for :", dumper($iref));
             my $output;
             if (exists $iref->{params} and exists $iref->{params}->{CompareWith}) {
                 # ok this is a security.
@@ -1036,7 +1032,7 @@ sub run_and_display_indicator {
                 my ($data2, $symbol2, $csv2) = $self->download_data($bar, $current);
                 $self->progress_bar_close($bar);
                 return unless (defined $data2 and defined $symbol2);
-                say "Successfully downloaded data for $symbol2" if $self->debug;
+                $log->debug("Successfully downloaded data for $symbol2");
                 $iref->{params}->{CompareWith} = $symbol2;
                 $output = $self->indicator->execute_ohlcv($data, $iref, $data2);
             } else {
@@ -1087,7 +1083,7 @@ sub indicator_parameter_wizard {
         $gbox->text("$fn_name Parameters");
         my @origin = $gbox->origin;
         my @size = $gbox->size;
-        say "Gbox: Origin: @origin  Size: @size" if $self->debug;
+        $log->debug("Gbox: Origin: @origin  Size: @size");
         my $num = scalar @$params;
         my $sz_x = $size[0] / 2; # label and value
         my $sz_y = $size[1] / ($num + 1);
@@ -1373,7 +1369,7 @@ sub add_indicator_wizard {
                 # $params is an array-ref
                 my $params = $self->indicator->get_params($txt, $grp);
                 $self->current->{indicator}->{func} = $txt;
-                say "Params: ", Dumper($params) if $self->debug;
+                $log->debug("Params: ", dumper($params));
                 $owner->btn_ok->enabled(1);
                 $self->indicator_parameter_wizard($owner->gbox_params,
                         $txt, $grp, $params);
@@ -1412,7 +1408,7 @@ sub add_indicator_wizard {
         enabled => 0,
         font => { height => 16, style => fs::Bold },
         onClick => sub {
-            say "Final parameters selected: ", Dumper($self->current->{indicator}) if $self->debug;
+            $log->debug("Final parameters selected: ", dumper($self->current->{indicator}));
         },
     );
     $w->insert(
@@ -1457,7 +1453,7 @@ sub download_data {
     $csv = File::Spec->catfile($self->tmpdir, $csv);
     if (defined $current->{csv}) {
         $csv = $current->{csv};
-        say "Using $csv as it was chosen" if $self->debug;
+        $log->debug("Using $csv as it was chosen");
     }
     $self->progress_bar_update($pbar) if $pbar;
     my $data;
@@ -1482,7 +1478,7 @@ sub download_data {
                 hour => 16, minute => 0, second => 0,
                 time_zone => $self->timezone,
             )->epoch;
-            say $fh "$epoch,$o,$h,$l,$c,$vol";
+            print $fh "$epoch,$o,$h,$l,$c,$vol\n";
             push @quotes, pdl($epoch, $o, $h, $l, $c, $vol);
         }
         $self->progress_bar_update($pbar) if $pbar;
@@ -1495,14 +1491,14 @@ sub download_data {
             unlink $csv;
             return;
         }
-        say "$csv has downloaded data for analysis" if $self->debug;
+        $log->info("$csv has downloaded data for analysis");
         $self->progress_bar_update($pbar) if $pbar;
         $data = pdl(@quotes)->transpose;
         $self->progress_bar_update($pbar) if $pbar;
     } else {
         ## now read this back into a PDL using rcol
         $self->progress_bar_update($pbar) if $pbar;
-        say "$csv already present. loading it..." if $self->debug;
+        $log->info("$csv already present. loading it...");
         $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
         $self->progress_bar_update($pbar) if $pbar;
     }
@@ -1515,7 +1511,7 @@ sub display_data {
     my @tabsize = $win->size();
     $symbol = $self->current->{symbol} unless defined $symbol;
     my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
-    say "Tabs: @tabs" if $self->debug;
+    $log->debug("Tabs: @tabs");
     unless (@tabs) {
         $win->insert('Prima::TabbedNotebook',
             name => 'data_tabs',
@@ -1527,7 +1523,7 @@ sub display_data {
             onChange => sub {
                 my ($w, $oldidx, $newidx) = @_;
                 my $owner = $w->owner;
-                say "Tab changed from $oldidx to $newidx" if $self->debug;
+                $log->debug("Tab changed from $oldidx to $newidx");
                 return if ($oldidx == $newidx and !$self->tab_was_closed);
                 $self->tab_was_closed(0);
                 # ok find the detailed-list object and use it
@@ -1542,15 +1538,15 @@ sub display_data {
     # create unique tab-names
     if (scalar @$nt_tabs) {
         my %tabnames = map { $_ => 1 } @$nt_tabs;
-        say "$symbol tab already exists" if exists $tabnames{$symbol} and $self->debug;
-        say "$symbol tab will be added" if not exists $tabnames{$symbol} and $self->debug;
+        $log->debug("$symbol tab already exists") if exists $tabnames{$symbol};
+        $log->debug("$symbol tab will be added") if not exists $tabnames{$symbol};
         $nt->tabs([@$nt_tabs, $symbol]) if not exists $tabnames{$symbol};
     } else {
-        say "$symbol tab will be added" if $self->debug;
+        $log->debug("$symbol tab will be added");
         $nt->tabs([$symbol]);
     }
     my $pc = $nt->pageCount;
-    say "TabCount: $pc" if $self->debug;
+    $log->debug("TabCount: $pc");
     my $pageno = $pc;
     # find the existing tab with the same symbol info and remove the widget
     # there and get that page number
@@ -1564,7 +1560,7 @@ sub display_data {
         my @dls = grep { $_->name eq "tab_$symbol" } @wids;
         if (@dls) {
             foreach (@dls) {
-                say "Found existing ", $_->name, " at $idx" if $self->debug;
+                $log->debug("Found existing " . $_->name . " at $idx");
                 $headers = $_->headers if defined $_->headers;
                 push @$existing_indicators, @{$_->{-indicators}} if exists $_->{-indicators};
                 $info = $_->{-info} if exists $_->{-info};
@@ -1589,8 +1585,8 @@ sub display_data {
         # add the current indicator to the bottom of the list
         push @$existing_indicators, {indicator => $iref, data => $output, columns => \@cols};
     }
-    say "Data dimension: ", Dumper([$data->dims]) if $self->debug;
-    say "Updated headers: ", Dumper($headers) if $self->debug;
+    $log->debug("Data dimension: ", dumper([$data->dims]));
+    $log->debug("Updated headers: ", dumper($headers));
     my $items;
     if (defined $buysells and ref $buysells eq 'HASH' and
         defined $buysells->{buys} and
@@ -1604,7 +1600,7 @@ sub display_data {
             push @$headers, 'Buys', 'Sells' unless grep {/Buys|Sells/} @$headers;
             $items = $ldata->transpose->unpdl;
         } else {
-            carp "Buy-sells object is corrupt. Not using.";
+            $log->warn("Buy-sells object is corrupt. Not using.");
             $items = $data->transpose->unpdl;
         }
     } else {
@@ -1739,14 +1735,14 @@ sub save_current_tab {
     return unless $saved;
     my $tz = $self->timezone;
     $saved->{saved_at} = DateTime->now(time_zone => $tz)->iso8601();
-    say "Saving the model: ", Dumper($saved) if $self->debug;
+    $log->debug("Saving the model: ", dumper($saved));
     my $mfile;
     if ($info and $info->{filename} and not $save_as) {
         $mfile = $info->{filename};
+        $log->info("Saving tab $name to $mfile");
     } else {
-        my $dlg = Prima::SaveDialog->new(
-            defaultExt => 'yml',
-            fileName => $symbol,
+        my $dlg = Prima::Dialog::SaveDialog->new(
+            fileName => "$symbol.yml",
             filter => [
                 ['financeta files' => '*.yml'],
                 ['All files' => '*'],
@@ -1764,8 +1760,9 @@ sub save_current_tab {
             } else {
                 $mfile .= '.yml' unless $mfile =~ /\.yml$/; #windows is weird
             }
+            $log->info("Saving tab $name to $mfile");
         } else {
-            carp "Saving the tab was canceled.";
+            $log->warn("Saving the tab $name was canceled.");
             return;
         }
     }
@@ -1780,12 +1777,12 @@ sub save_current_tab {
     $saved->{csv} = $info->{csv} if defined $info and defined $info->{csv};
     if ($mfile) {
         $saved->{filename} = $mfile;
-        say "You have selected $mfile to save the tab info into." if $self->debug;
+        $log->debug("You have selected $mfile to save the tab info into.");
         YAML::Any::DumpFile($mfile, $saved) or message("Unable to save to $mfile");
         $self->set_tab_info($win, $saved);
         1;
     } else {
-        carp "Saving the tab was canceled.";
+        $log->warn("Saving the tab was canceled.");
     }
 }
 
@@ -1793,8 +1790,7 @@ sub save_current_tab {
 sub load_new_tab {
     my ($self, $win) = @_;
     return unless $win;
-    my $dlg = Prima::OpenDialog->new(
-        defaultExt => 'yml',
+    my $dlg = Prima::Dialog::OpenDialog->new(
         filter => [
             ['financeta files' => '*.yml'],
             ['All files' => '*'],
@@ -1805,6 +1801,7 @@ sub load_new_tab {
         directory => $self->datadir,
     );
     my $mfile = $dlg->fileName if $dlg->execute;
+    $log->info("requesting file $mfile to be opened");
     return unless $mfile;
     return unless -e $mfile;
     my $saved = YAML::Any::LoadFile($mfile);
@@ -1819,7 +1816,7 @@ sub load_new_tab {
     $current->{csv} = $saved->{csv} if defined $saved->{csv};
     my $bar = $self->progress_bar_create($win, 'Loading...');
     my ($data, $symbol, $csv) = $self->download_data($bar, $current);
-    say "Loading the data into tab" if $self->debug;
+    $log->debug("Loading the data into tab");
     $saved->{csv} = $csv if defined $csv;
     # overwrite the filename for saving
     if (defined $saved->{filename} and $mfile ne $saved->{filename}) {
@@ -1829,7 +1826,7 @@ sub load_new_tab {
     $self->display_data($win, $data, $symbol);
     $self->enable_menu_options($win);
     $self->set_tab_info($win, $saved);
-    say "Running the indicators and updating tab" if $self->debug;
+    $log->debug("Running the indicators and updating tab");
     $self->progress_bar_close($bar);
     if ($self->run_and_display_indicator($win, $data, $symbol,
             $saved->{indicators})) {
@@ -1865,7 +1862,9 @@ sub close_current_tab {
         $nt->close;
         $self->disable_menu_options;
     } else {
+        ##FIXME: make it current
         my $v = eval $Prima::VERSION;
+        $log->debug("Prima Version is $v");
         if ($v > 1.40) {
             $self->tab_was_closed(1);
             # find corresponding editors and close them
@@ -1873,12 +1872,12 @@ sub close_current_tab {
             if (@wids) {
                 my ($dl) = grep { $_->name =~ /^tab_/i } @wids;
                 if ($dl and exists $self->editors->{$dl->name}) {
-                    say "Closing the rules editor for ", $dl->name if $self->debug;
+                    $log->debug("Closing the rules editor for " . $dl->name);
                     $self->editors->{$dl->name}->close;
                     delete $self->editors->{$dl->name};
                 }
                 if ($dl and exists $self->tradereports->{$dl->name}) {
-                    say "Closing the trade report for ", $dl->name if $self->debug;
+                    $log->debug("Closing the trade report for " . $dl->name);
                     $self->tradereports->{$dl->name}->close;
                     delete $self->tradereports->{$dl->name};
                 }
@@ -1887,15 +1886,15 @@ sub close_current_tab {
             $nt->pageIndex($idx >= $nt->pageCount ?
                 $nt->pageCount - 1 : $idx);
         } else {
-            carp "Your Prima version is lower than expected: 1.401, closing tabs is buggy";
+            $log->warn("Your Prima version is lower than expected: 1.401, closing tabs is buggy");
             my @wids = $nt->widgets_from_page($idx);
             # close child widgets explicitly
             map { $_->close } @wids if @wids;
             $nt->Notebook->delete_page($idx);
             my @ntabs = @{$nt->TabSet->tabs};
-            say "Existing tabs: ", Dumper(\@ntabs) if $self->debug;
+            $log->debug("Existing tabs: ", dumper(\@ntabs));
             splice(@ntabs, $idx, 1);
-            say "New tabs: ", Dumper(\@ntabs) if $self->debug;
+            $log->debug("New tabs: ", dumper(\@ntabs));
             $nt->TabSet->tabs(\@ntabs);
         }
     }
@@ -1907,7 +1906,7 @@ sub _get_tab_data {
     return unless @nt;
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
-        say "Found ", $dl->name if $self->debug;
+        $log->debug("Found " . $dl->name);
         return ($dl->{-pdl}, $dl->{-symbol}, $dl->{-indicators},
                     [$dl->headers],
                     $dl->{-buysells});
@@ -1930,13 +1929,13 @@ sub get_tab_data_by_name($$) {
     return unless @tabs;
     my $pc = $win->data_tabs->pageCount - 1;
     return unless $pc >= 0;
-    say "Looking for $name" if $self->debug;
+    $log->debug("Looking for $name");
     for my $idx (0 .. $pc) {
         my @nt = $win->data_tabs->widgets_from_page($idx);
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and ($dl->{-symbol} eq $name) or ($dl->name eq $name)) {
-            say "Found $name on page $idx" if $self->debug;
+            $log->debug("Found $name on page $idx");
             return ($dl->{-pdl},
                     $dl->{-symbol},
                     $dl->{-indicators},
@@ -1957,7 +1956,7 @@ sub get_tab_info {
     return unless @nt;
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
-        say "Getting info for ", $dl->name if $self->debug;
+        $log->debug("Getting info for " . $dl->name);
         return wantarray ? ($dl->{-info}, $dl->name) : $dl->{-info};
     }
 }
@@ -1972,7 +1971,7 @@ sub set_tab_info($$) {
     return unless @nt;
     my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
     if ($dl) {
-        say "Setting info for ", $dl->name if $self->debug;
+        $log->debug("Setting info for " . $dl->name);
         $dl->{-info} = $info;
         return 1;
     }
@@ -1992,7 +1991,7 @@ sub set_tab_data_by_name($$) {
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->{-symbol} eq $name) {
-            say "Found $name on page $idx" if $self->debug;
+            $log->debug("Found $name on page $idx");
             $dl->{-pdl} = $p;
             $dl->{-indicators}= $ind;
             $dl->headers($hdr);
@@ -2014,7 +2013,7 @@ sub get_tab_info_by_name {
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->name eq $name) {
-            say "Getting info for ", $dl->name if $self->debug;
+            $log->debug("Getting info for " . $dl->name);
             return wantarray ? ($dl->{-info}, $dl->name) : $dl->{-info};
         }
     }
@@ -2034,7 +2033,7 @@ sub set_tab_info_by_name {
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->name eq $name) {
-            say "Setting info for ", $dl->name if $self->debug;
+            $log->debug("Setting info for " . $dl->name);
             $dl->{-info} = $info;
             return 1;
         }
@@ -2055,7 +2054,7 @@ sub set_tab_buysells_by_name {
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->name eq $name) {
-            say "Setting buy-sells for ", $dl->name if $self->debug;
+            $log->debug("Setting buy-sells for " . $dl->name);
             $dl->{-buysells} = $buysells;
             return 1;
         }
@@ -2075,7 +2074,7 @@ sub get_tab_buysells_for_name {
         next unless @nt;
         my ($dl) = grep { $_->name =~ /^tab_/i } @nt;
         if ($dl and $dl->name eq $name) {
-            say "Getting buy-sells for ", $dl->name if $self->debug;
+            $log->debug("Getting buy-sells for " . $dl->name);
             return wantarray ? ($dl->{-buysells}, $dl->name) : $dl->{-buysells};
         }
     }
@@ -2111,7 +2110,7 @@ sub open_editor {
     # object
     my $editor = $self->editors->{$tabname} || $self->_build_editor($tabname);
     unless (defined $editor) {
-        carp "Unable to create the editor window.";
+        $log->error("Unable to create the editor window.");
         return;
     }
     # find the list of indicators and the variable names
@@ -2133,11 +2132,11 @@ sub open_editor {
 $varstr
 ### END OF AUTOGENERATED CODE
 AUTOGEN
-    say "New Auto comment block:\n$autogen" if $self->debug;
+    $log->debug("New Auto comment block:\n$autogen");
     if (defined $rules and length $rules) {
         if ($rules =~ /(.*###\sEND\sOF\sAUTOGENERATED\sCODE\s+)(.*)/s) {
-            say "Old Auto comment block:\n$1" if $self->debug;
-            say "User block:\n$2" if $self->debug;
+            $log->debug("Old Auto comment block:\n$1");
+            $log->debug("User block:\n$2");
             $rules = $autogen . "\n" . $2;
         } else {
             $rules = $autogen . "\n" . $rules;
@@ -2153,20 +2152,20 @@ AUTOGEN
 sub save_editor {
     my ($self, $txt, $tabname, $is_closing) = @_;
     unless (defined $tabname) {
-        carp "Tab-name not retrieved. not sure which tab to save it for.";
+        $log->error("Tab-name not retrieved. not sure which tab to save it for.");
         return;
     }
     # ok we have a tab for which we need to save info
     my $info = $self->get_tab_info_by_name($self->main, $tabname);
     $info->{rules} = $txt if $info;
-    say "Retrieved info - ", Dumper($info), " for tab($tabname)" if $self->debug and $info;
-    carp "Unable to retrieve info for $tabname" unless $info;
+    $log->debug("Retrieved info - ", dumper($info), " for tab($tabname)") if $info;
+    $log->warn("Unable to retrieve info for $tabname") unless $info;
     if ($self->set_tab_info_by_name($self->main, $tabname, $info)) {
-        say "Saving tab($tabname) info to file" if $self->debug;
+        $log->debug("Saving tab($tabname) info to file");
         my $rc = $self->save_current_tab($self->main, 0, $tabname);
-        carp "Unable to save information for $tabname" unless $rc;
+        $log->warn("Unable to save information for $tabname") unless $rc;
     } else {
-        carp "Unable to save editor rules for tab $tabname";
+        $log->warn("Unable to save editor rules for tab $tabname");
     }
     delete $self->editors->{$tabname} if $is_closing;
 }
@@ -2181,7 +2180,7 @@ sub open_tradereport {
     return unless defined $buysells;
     my $trw = $self->tradereports->{$tabname} || $self->_build_tradereport($tabname);
     unless (defined $trw) {
-        carp "Unable to create the trade report window.";
+        $log->error("Unable to create the trade report window.");
         return;
     }
     $trw->update($tabname, $buysells);
@@ -2231,19 +2230,19 @@ sub execute_rules {
         }
         my $buysells = &$coderef(@var_pdls); # invoke the rules sub
         if (defined $buysells and ref $buysells eq 'HASH') {
-            say "Retrieved buy-sells successfully from code-ref" if $self->debug;
+            $log->debug("Retrieved buy-sells successfully from code-ref");
             $buysells = $self->indicator->calculate_pnl($data(, (0)), $buysells);
             if ($buysells) {
-                say "Done applying P&L calcs to buy-sells" if $self->debug;
+                $log->debug("Done applying P&L calcs to buy-sells");
                 if ($self->set_tab_buysells_by_name($win, $tabname, $buysells)) {
-                    say "Successully set buy-sells for tab $tabname\n";
+                    $log->debug("Successully set buy-sells for tab $tabname\n");
                 }
-                say "BUYS: ", $buysells->{buys} if $self->debug;
-                say "SELLS: ", $buysells->{sells} if $self->debug;
-                say "Longs PnL: ", $buysells->{longs_pnl} if $self->debug;
-                say "Shorts PnL: ", $buysells->{shorts_pnl} if $self->debug;
+                $log->debug("BUYS: ", $buysells->{buys});
+                $log->debug("SELLS: ", $buysells->{sells});
+                $log->debug("Longs PnL: ", $buysells->{longs_pnl});
+                $log->debug("Shorts PnL: ", $buysells->{shorts_pnl});
             } else {
-                carp "Failed to calculate P&L on executed rules";
+                $log->warn("Failed to calculate P&L on executed rules");
             }
             # this $data should not change theoretically
             $self->display_data($win, $data, $sym);
@@ -2253,23 +2252,22 @@ sub execute_rules {
             $self->main->menu->trade_report->enabled(1);
             $self->open_tradereport($win, $tabname, $abysl);
         } else {
-            carp "Unable to execute rules strategy code-ref";
+            $log->warn("Unable to execute rules strategy code-ref");
             return;
         }
     } else {
-        carp "Code for non-existent tab $tabname was being executed";
+        $log->warn("Code for non-existent tab $tabname was being executed");
     }
 }
 
 sub plot_data {
     my $self = shift;
     if (lc($self->plot_engine) eq 'gnuplot') {
-        say "Using Gnuplot to do plotting" if $self->debug;
-        say "PDL::Graphics::Gnuplot $PDL::Graphics::Gnuplot::VERSION is being used"
-        if $self->debug;
+        $log->info("Using Gnuplot to do plotting");
+        $log->info("PDL::Graphics::Gnuplot $PDL::Graphics::Gnuplot::VERSION is being used");
         return $self->plot_data_gnuplot(@_);
     }
-    carp $self->plot_engine . " is not supported yet.";
+    $log->warn($self->plot_engine . " is not supported yet.");
 }
 
 sub plot_data_gnuplot {
@@ -2293,7 +2291,7 @@ sub plot_data_gnuplot {
             # on Cygwin it may be x11
         };
     }
-    say "Using term $term" if $self->debug;
+    $log->debug("Using term $term");
     my $pwin = $win->{plot} || gpwin($term, size => [1024, 768, 'px']);
     $win->{plot} = $pwin;
     $symbol = $self->current->{symbol} unless defined $symbol;
@@ -2322,7 +2320,7 @@ sub plot_data_gnuplot {
                 my $iplot_cdl = $iplot->{candle};
                 push @candle_plot, @$iplot_cdl if $iplot_cdl and scalar @$iplot_cdl;
             } else {
-                carp 'Unable to handle plot arguments in ' . ref($iplot) . ' form!';
+                $log->warn('Unable to handle plot arguments in ' . ref($iplot) . ' form!');
             }
         }
     }
@@ -2342,7 +2340,7 @@ sub plot_data_gnuplot {
                 }
             }
         } else {
-            carp "Unable to plot invalid buy-sell data";
+            $log->warn("Unable to plot invalid buy-sell data");
         }
     }
     $pwin->reset();
@@ -2350,7 +2348,7 @@ sub plot_data_gnuplot {
     $pwin->multiplot();
     my %binmode = ();
     if ($^O !~ /Win32/ and $Alien::Gnuplot::version < 4.6) {
-        say "Binary mode is set to 0 due to gnuplot $Alien::Gnuplot::version" if $self->debug;
+        $log->debug("Binary mode is set to 0 due to gnuplot $Alien::Gnuplot::version");
         $binmode{binary} = 0;
     }
     if ($type eq 'OHLC') {
