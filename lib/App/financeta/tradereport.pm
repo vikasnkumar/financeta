@@ -12,7 +12,12 @@ use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use File::HomeDir;
 use DateTime;
 if ($^O !~ /win32/i) {
-    eval { require POE::Loop::Prima; } or die "Unable to load POE::Loop::Prima";
+    eval {
+        require POE;
+        require POE::Kernel;
+        POE::Kernel->import({loop => 'Prima'});
+        require POE::Session;
+    } or die "Unable to load POE::Loop::Prima";
 }
 #use Prima qw(Application DetailedList ScrollWidget MsgBox StdDlg);
 use Prima qw(

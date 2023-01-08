@@ -11,7 +11,12 @@ use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use File::ShareDir 'dist_file';
 if ($^O !~ /win32/i) {
-    eval { require POE::Loop::Prima; } or die "Unable to load POE::Loop::Prima";
+    eval {
+        require POE;
+        require POE::Kernel;
+        POE::Kernel->import({loop => 'Prima'});
+        require POE::Session;
+    } or die "Unable to load POE::Loop::Prima";
 }
 use Prima qw(Application Edit MsgBox);
 use Try::Tiny;
