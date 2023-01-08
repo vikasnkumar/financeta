@@ -2,6 +2,9 @@ use strict;
 use warnings;
 use 5.10.0;
 use Module::Build;
+### do not install these packages on Windows
+my %non_windows = ();
+$non_windows{'POE::Loop::Prima'} = '1.03' if $^O !~ /win32/i;
 
 my $build = Module::Build->new(
     module_name => 'App::financeta',
@@ -38,7 +41,6 @@ my $build = Module::Build->new(
         'Finance::QuoteHist' => '1.32',
         'PDL::Finance::TA' => '0.010',
         'Prima' => '1.67',
-        'POE::Loop::Prima' => '1.03',
         'PDL::Graphics::Gnuplot' => '2.021',
         'Scalar::Util' => '1.63',
         'Getopt::Long' => '2.54',
@@ -47,6 +49,7 @@ my $build = Module::Build->new(
         'Pegex' => '0.75',
         'Perl::Tidy' => 0,
         'Log::Any' => '1.713',
+        %non_windows,
     },
     dynamic_config => 1,
     add_to_cleanup => [ qw/*.bak _Inline/ ],

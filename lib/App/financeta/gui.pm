@@ -15,7 +15,9 @@ use File::Spec;
 use File::HomeDir;
 use File::Path ();
 use DateTime;
-use POE 'Loop::Prima';
+if ($^O !~ /win32/i) {
+    eval { require POE::Loop::Prima; } or die "Unable to load POE::Loop::Prima";
+}
 use Prima qw(
     Application Buttons MsgBox Calendar ComboBox Notebooks
     Widget::ScrollWidget DetailedList Dialog::ColorDialog

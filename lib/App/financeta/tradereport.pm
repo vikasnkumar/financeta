@@ -11,7 +11,9 @@ use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use File::HomeDir;
 use DateTime;
-use POE 'Loop::Prima';
+if ($^O !~ /win32/i) {
+    eval { require POE::Loop::Prima; } or die "Unable to load POE::Loop::Prima";
+}
 #use Prima qw(Application DetailedList ScrollWidget MsgBox StdDlg);
 use Prima qw(
     Application Buttons MsgBox Calendar ComboBox Notebooks
