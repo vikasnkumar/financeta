@@ -96,3 +96,4 @@ testthreading.pl
 testmain.pl
 \.log$
 \.err$
+\.zip$

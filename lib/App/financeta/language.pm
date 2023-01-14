@@ -3,9 +3,6 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.11';
-$VERSION = eval $VERSION;
-
 use Pegex::Base;
 extends 'Pegex::Grammar';
 use App::financeta::utils qw(log_filter);
@@ -95,9 +92,6 @@ package App::financeta::language::receiver;
 use strict;
 use warnings;
 use 5.10.0;
-
-our $VERSION = '0.11';
-$VERSION = eval $VERSION;
 
 use App::financeta::utils qw(log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
@@ -527,9 +521,6 @@ package App::financeta::language;
 use strict;
 use warnings;
 use 5.10.0;
-
-our $VERSION = '0.11';
-$VERSION = eval $VERSION;
 
 use Pegex::Parser;
 use App::financeta::mo;

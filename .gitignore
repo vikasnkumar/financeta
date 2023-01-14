@@ -31,3 +31,5 @@ gh-pages
 *.log
 *.err
 App-financeta-*tar.gz
+*.bak
+*.zip

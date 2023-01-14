@@ -3,9 +3,6 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.11';
-$VERSION = eval $VERSION;
-
 use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;

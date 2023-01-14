@@ -23,6 +23,7 @@ my $build = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
+        perl => '5.10.0',
         'Carp' => 0,
         'POSIX' => 0,
         'Cwd' => 0,
