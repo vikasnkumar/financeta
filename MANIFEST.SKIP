@@ -72,6 +72,7 @@
 # Avoid archives of this distribution
 \bPDL-Finance-TA-[\d\.\_]+
 \bApp-financeta-[\d\.\_]+
+\.tar.gz$
 
 # Avoid the temporary directories created by Alien::Base
 \b_alien/

@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use 5.10.0;
 
+our $VERSION = '0.13';
+$VERSION = eval $VERSION;
 use Pegex::Base;
 extends 'Pegex::Grammar';
 use App::financeta::utils qw(log_filter);
@@ -93,6 +95,8 @@ use strict;
 use warnings;
 use 5.10.0;
 
+our $VERSION = '0.13';
+$VERSION = eval $VERSION;
 use App::financeta::utils qw(log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Perl::Tidy;

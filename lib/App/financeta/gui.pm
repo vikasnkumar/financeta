@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use 5.10.0;
 
+our $VERSION = '0.13';
+$VERSION = eval $VERSION;
 use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter get_icon_path);
 use Carp ();

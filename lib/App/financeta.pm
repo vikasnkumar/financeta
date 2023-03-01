@@ -7,7 +7,7 @@ use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Log::Any::Adapter 'Stderr';
 use App::financeta::gui;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 $VERSION = eval $VERSION;
 
 sub print_banner {
