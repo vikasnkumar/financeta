@@ -5,6 +5,7 @@ lib/App/financeta.pm
 lib/App/financeta/editor.pm
 lib/App/financeta/gui.pm
 lib/App/financeta/gui.pod
+lib/App/financeta/gui/security_wizard.pm
 lib/App/financeta/indicators.pm
 lib/App/financeta/language.pm
 lib/App/financeta/mo.pm
