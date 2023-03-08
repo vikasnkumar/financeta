@@ -79,7 +79,7 @@ Here is a sample example generated for an MACD indicator:
         from below;
 
         sell at $high when $macdhist_12_26_9 becomes negative and $macd_12_26_9 crosses
-            $macdsig_12_26_9 from above;'
+            $macdsig_12_26_9 from above;
  
 This shows that when the `$macdhist_12_26_9` variable value becomes positive
 along with the crossing condition, a
