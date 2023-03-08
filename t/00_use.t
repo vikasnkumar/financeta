@@ -28,6 +28,10 @@ use_ok('App::financeta::gui::security_wizard');
 foreach (qw(run)) {
     can_ok('App::financeta::gui::security_wizard', $_);
 }
+use_ok('App::financeta::gui::progress_bar');
+foreach (qw(update close)) {
+    can_ok('App::financeta::gui::progress_bar', $_);
+}
 use_ok('App::financeta::gui');
 foreach (qw(run)) {
     can_ok('App::financeta::gui', $_);

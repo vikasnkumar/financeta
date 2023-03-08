@@ -37,6 +37,7 @@ use PDL::IO::Misc;
 use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use App::financeta::gui::security_wizard;
+use App::financeta::gui::progress_bar;
 use App::financeta::indicators;
 use App::financeta::editor;
 use Scalar::Util qw(blessed);
@@ -150,7 +151,7 @@ sub _menu_items {
                         return;
                     }
                     if ($gui->security_wizard($win)) {
-                        my $bar = $gui->progress_bar_create($win, 'Downloading...');
+                        my $bar = App::financeta::gui::progress_bar->new(gui => $gui, owner => $win, title => 'Downloading...');
                         # download security data
                         my ($data, $symbol, $csv) = $gui->download_data($bar);
                         if (defined $data) {
@@ -164,7 +165,7 @@ sub _menu_items {
                             $gui->plot_data($win, $data, $symbol, $type);
                             $gui->enable_menu_options($win);
                         }
-                        $gui->progress_bar_close($bar);
+                        $bar->close if $bar;
                     }
                 },
                 $self,
@@ -482,57 +483,6 @@ sub run {
     run Prima;
 }
 
-sub progress_bar_create {
-    my ($self, $win, $text) = @_;
-    $text = $text || 'Loading...';
-    my $bar = Prima::Window->create(
-        name => 'progress_bar',
-        text => $text,
-        size => [160, 100],
-        origin => [0, 0],
-        widgetClass => wc::Dialog,
-        borderStyle => bs::Dialog,
-        borderIcons => 0,
-        centered => 1,
-        owner => $win,
-        visible => 1,
-        pointerType => cr::Wait,
-        onPaint => sub {
-            my ($w, $canvas) = @_;
-            $canvas->color(cl::Blue);
-            $canvas->bar(0, 0, $w->{-progress}, $w->height);
-            $canvas->color(cl::Back);
-            $canvas->bar($w->{-progress}, 0, $w->size);
-            $canvas->color(cl::Yellow);
-            $canvas->font(size => 16, style => fs::Bold);
-            $canvas->text_out($w->text, 0, 10);
-        },
-        syncPaint => 1,
-        onTop => 1,
-    );
-    $bar->{-progress} = 0;
-    $bar->repaint;
-    $win->pointerType(cr::Wait);
-    $win->repaint;
-    return $bar;
-}
-
-sub progress_bar_update {
-    my ($self, $bar) = @_;
-    if ($bar and defined $bar->{-progress}) {
-        $bar->{-progress} += 5;
-        $bar->repaint;
-    }
-}
-
-sub progress_bar_close {
-    my ($self, $bar) = @_;
-    if ($bar) {
-        $bar->owner->pointerType(cr::Default);
-        $bar->close;
-    }
-}
-
 sub security_wizard {
     my ($self, $win) = @_;
     my $wiz = App::financeta::gui::security_wizard->new(owner => $win, gui => $self);
@@ -767,7 +717,7 @@ sub run_and_display_indicator {
             if (exists $iref->{params} and exists $iref->{params}->{CompareWith}) {
                 # ok this is a security.
                 # we need to download the data for this and store it
-                my $bar = $self->progress_bar_create($win, 'Downloading...');
+                my $bar = App::financeta::gui::progress_bar->new(gui => $self, owner => $win, title => 'Downloading...');
                 my $current = $self->current;
                 $iref->{params}->{CompareWith} =~ s/\s//g;
                 $current->{symbol} = $iref->{params}->{CompareWith};
@@ -783,7 +733,7 @@ sub run_and_display_indicator {
                     $current->{end_date} = $dt;
                 }
                 my ($data2, $symbol2, $csv2) = $self->download_data($bar, $current);
-                $self->progress_bar_close($bar);
+                $bar->close if $bar;
                 return unless (defined $data2 and defined $symbol2);
                 $log->debug("Successfully downloaded data for $symbol2");
                 $iref->{params}->{CompareWith} = $symbol2;
@@ -1196,7 +1146,7 @@ sub add_indicator_wizard {
 
 sub download_data {
     my ($self, $pbar, $current) = @_;
-    $self->progress_bar_update($pbar) if $pbar;
+    $pbar->update(5) if $pbar;
     $current = $self->current unless $current;
     my $start = $current->{start_date};
     my $end = $current->{end_date};
@@ -1208,7 +1158,7 @@ sub download_data {
         $csv = $current->{csv};
         $log->debug("Using $csv as it was chosen");
     }
-    $self->progress_bar_update($pbar) if $pbar;
+    $pbar->update(5) if $pbar;
     my $data;
     unlink $csv if $current->{force_download};
     unless (-e $csv) {
@@ -1218,7 +1168,7 @@ sub download_data {
             end_date => $end->mdy('/'),
             auto_proxy => 1,
         );
-        $self->progress_bar_update($pbar) if $pbar;
+        $pbar->update(5) if $pbar;
         open my $fh, '>', $csv or die "$!";
         my @quotes = ();
         foreach my $row ($fq->quotes) {
@@ -1234,7 +1184,7 @@ sub download_data {
             print $fh "$epoch,$o,$h,$l,$c,$vol\n";
             push @quotes, pdl($epoch, $o, $h, $l, $c, $vol);
         }
-        $self->progress_bar_update($pbar) if $pbar;
+        $pbar->update(5) if $pbar;
         $fq->clear_cache;
         close $fh;
         unless (scalar @quotes) {
@@ -1245,15 +1195,15 @@ sub download_data {
             return;
         }
         $log->info("$csv has downloaded data for analysis");
-        $self->progress_bar_update($pbar) if $pbar;
+        $pbar->update(5) if $pbar;
         $data = pdl(@quotes)->transpose;
-        $self->progress_bar_update($pbar) if $pbar;
+        $pbar->update(5) if $pbar;
     } else {
         ## now read this back into a PDL using rcol
-        $self->progress_bar_update($pbar) if $pbar;
+        $pbar->update(5) if $pbar;
         $log->info("$csv already present. loading it...");
         $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
-        $self->progress_bar_update($pbar) if $pbar;
+        $pbar->update(5) if $pbar;
     }
     return ($data, $symbol, $csv);
 }
@@ -1513,8 +1463,10 @@ sub save_current_tab {
             } else {
                 $mfile .= '.yml' unless $mfile =~ /\.yml$/; #windows is weird
             }
+            $name //= $tname // '';
             $log->info("Saving tab $name to $mfile");
         } else {
+            $name //= $tname // '';
             $log->warn("Saving the tab $name was canceled.");
             return;
         }
@@ -1567,7 +1519,7 @@ sub load_new_tab {
         force_download => 0,
     };
     $current->{csv} = $saved->{csv} if defined $saved->{csv};
-    my $bar = $self->progress_bar_create($win, 'Loading...');
+    my $bar = App::financeta::gui::progress_bar->new(gui => $self, owner => $win, title => 'Loading...');
     my ($data, $symbol, $csv) = $self->download_data($bar, $current);
     $log->debug("Loading the data into tab");
     $saved->{csv} = $csv if defined $csv;
@@ -1580,7 +1532,7 @@ sub load_new_tab {
     $self->enable_menu_options($win);
     $self->set_tab_info($win, $saved);
     $log->debug("Running the indicators and updating tab");
-    $self->progress_bar_close($bar);
+    $bar->close if $bar;
     if ($self->run_and_display_indicator($win, $data, $symbol,
             $saved->{indicators})) {
         # this is specially done
