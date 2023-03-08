@@ -29,7 +29,7 @@ foreach (qw(run)) {
     can_ok('App::financeta::gui::security_wizard', $_);
 }
 use_ok('App::financeta::gui::progress_bar');
-foreach (qw(update close)) {
+foreach (qw(update close progress)) {
     can_ok('App::financeta::gui::progress_bar', $_);
 }
 use_ok('App::financeta::gui');

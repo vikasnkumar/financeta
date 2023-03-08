@@ -13,6 +13,8 @@ has owner => (required => 1);
 has gui => (required => 1);
 has bar => ( builder => '_build_bar' );
 has title => (required => 1);
+has bar_width => 160;
+has bar_height => 80;
 
 sub _build_bar {
     my $self = shift;
@@ -21,11 +23,11 @@ sub _build_bar {
     my $bar = Prima::Window->create(
         name => 'progress_bar',
         text => $self->title,
-        size => [160, 100],
+        size => [$self->bar_width, $self->bar_height],
         origin => [0, 0],
         widgetClass => wc::Dialog,
-        borderStyle => bs::Dialog,
-        borderIcons => 0,
+        borderStyle => bs::Single,
+        borderIcons => bi::TitleBar,
         centered => 1,
         owner => $self->owner,
         visible => 1,
@@ -36,9 +38,9 @@ sub _build_bar {
             $canvas->bar(0, 0, $w->{-progress}, $w->height);
             $canvas->color(cl::Back);
             $canvas->bar($w->{-progress}, 0, $w->size);
-            $canvas->color(cl::Yellow);
-            $canvas->font(size => 16, style => fs::Bold);
-            $canvas->text_out($w->text, 0, 10);
+            #$canvas->color(cl::Yellow);
+            #$canvas->font(size => 16, style => fs::Bold);
+            #$canvas->text_out($w->text, 0, 10);
         },
         syncPaint => 1,
         onTop => 1,
@@ -52,7 +54,12 @@ sub _build_bar {
 
 sub update {
     my ($self, $val) = @_;
-    $self->bar->{-progress} += $val // 5; 
+    ## is percentage
+    if (defined $val and ($val > 0 and $val < 1)) {
+        $self->bar->{-progress} += ($val * $self->bar_width);
+    } else {#is absolute
+        $self->bar->{-progress} += $val // 5;
+    }
     $self->bar->repaint;
 }
 
@@ -60,6 +67,10 @@ sub close {
     my $self = shift;
     $self->bar->owner->pointerType(cr::Default);
     $self->bar->close;
+}
+
+sub progress {
+    return shift->bar->{-progress};
 }
 
 1;
