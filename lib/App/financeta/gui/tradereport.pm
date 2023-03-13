@@ -1,4 +1,4 @@
-package App::financeta::tradereport;
+package App::financeta::gui::tradereport;
 use strict;
 use warnings;
 use 5.10.0;

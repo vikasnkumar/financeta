@@ -1,4 +1,4 @@
-package App::financeta::editor;
+package App::financeta::gui::editor;
 use strict;
 use warnings;
 use 5.10.0;

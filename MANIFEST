@@ -2,14 +2,14 @@ bin/financeta
 Build.PL
 Changes
 lib/App/financeta.pm
-lib/App/financeta/editor.pm
 lib/App/financeta/gui.pm
+lib/App/financeta/gui/editor.pm
 lib/App/financeta/gui/progress_bar.pm
 lib/App/financeta/gui/security_wizard.pm
+lib/App/financeta/gui/tradereport.pm
 lib/App/financeta/indicators.pm
 lib/App/financeta/language.pm
 lib/App/financeta/mo.pm
-lib/App/financeta/tradereport.pm
 lib/App/financeta/utils.pm
 LICENSE
 MANIFEST			This list of files

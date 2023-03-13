@@ -38,8 +38,9 @@ use PDL::NiceSlice;
 use PDL::Graphics::Gnuplot;
 use App::financeta::gui::security_wizard;
 use App::financeta::gui::progress_bar;
+use App::financeta::gui::editor;
+use App::financeta::gui::tradereport;
 use App::financeta::indicators;
-use App::financeta::editor;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
@@ -76,7 +77,7 @@ sub _build_editor {
     my $self = shift;
     my $name = shift || '';
     $name =~ s/tab_//g if length $name;
-    return App::financeta::editor->new(debug => $self->debug,
+    return App::financeta::gui::editor->new(debug => $self->debug,
         parent => $self, brand => $self->brand . " Rules Editor for $name");
 }
 
@@ -84,7 +85,7 @@ sub _build_tradereport {
     my $self = shift;
     my $name = shift || '';
     $name =~ s/tab_//g if length $name;
-    return App::financeta::tradereport->new(debug => $self->debug,
+    return App::financeta::gui::tradereport->new(debug => $self->debug,
         parent => $self, brand => $self->brand . " Trade Report for $name");
 }
 

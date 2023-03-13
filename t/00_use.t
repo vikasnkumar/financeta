@@ -16,13 +16,13 @@ foreach (qw(calculate_pnl get_plot_args_buysell get_plot_args buysell
     overlaps ma_name volatility momentum hilbert volume candlestick)) {
     can_ok('App::financeta::indicators', $_);
 }
-use_ok('App::financeta::editor');
+use_ok('App::financeta::gui::editor');
 foreach (qw(execute compile get_text update_editor close)) {
-    can_ok('App::financeta::editor', $_);
+    can_ok('App::financeta::gui::editor', $_);
 }
-use_ok('App::financeta::tradereport');
+use_ok('App::financeta::gui::tradereport');
 foreach (qw(save close update)) {
-    can_ok('App::financeta::tradereport', $_);
+    can_ok('App::financeta::gui::tradereport', $_);
 }
 use_ok('App::financeta::gui::security_wizard');
 foreach (qw(run)) {
