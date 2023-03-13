@@ -9,6 +9,13 @@ foreach (qw(dumper log_filter get_icon_path)) {
 }
 use_ok('App::financeta::language');
 
+foreach my $src (qw(yahoo)) {
+    my $module = "App::financeta::data::$src";
+    use_ok($module);
+    foreach (qw(ohlcv)) {
+        can_ok($module, $_);
+    }
+}
 use_ok('App::financeta::indicators');
 foreach (qw(calculate_pnl get_plot_args_buysell get_plot_args buysell
     execute_ohlcv get_params get_funcs get_groups 

@@ -2,6 +2,7 @@ bin/financeta
 Build.PL
 Changes
 lib/App/financeta.pm
+lib/App/financeta/data/yahoo.pm
 lib/App/financeta/gui.pm
 lib/App/financeta/gui/editor.pm
 lib/App/financeta/gui/progress_bar.pm

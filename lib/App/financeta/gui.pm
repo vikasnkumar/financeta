@@ -31,7 +31,6 @@ use Prima qw(
 );
 use Prima::Utils ();
 use Capture::Tiny ();
-use Finance::QuoteHist;
 use PDL::Lite;
 use PDL::IO::Misc;
 use PDL::NiceSlice;
@@ -41,6 +40,7 @@ use App::financeta::gui::progress_bar;
 use App::financeta::gui::editor;
 use App::financeta::gui::tradereport;
 use App::financeta::indicators;
+use App::financeta::data::yahoo;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
@@ -1163,48 +1163,25 @@ sub download_data {
     my $data;
     unlink $csv if $current->{force_download};
     unless (-e $csv) {
-        my $fq = Finance::QuoteHist->new(
-            symbols => [ $symbol ],
-            start_date => $start->mdy('/'),
-            end_date => $end->mdy('/'),
-            auto_proxy => 1,
-        );
         $pbar->update(5) if $pbar;
-        open my $fh, '>', $csv or die "$!";
-        my @quotes = ();
-        foreach my $row ($fq->quotes) {
-            my ($sym, $date, $o, $h, $l, $c, $vol) = @$row;
-            my ($yy, $mm, $dd) = split /\//, $date;
-            my $epoch = DateTime->new(
-                year => $yy,
-                month => $mm,
-                day => $dd,
-                hour => 16, minute => 0, second => 0,
-                time_zone => $self->timezone,
-            )->epoch;
-            print $fh "$epoch,$o,$h,$l,$c,$vol\n";
-            push @quotes, pdl($epoch, $o, $h, $l, $c, $vol);
-        }
-        $pbar->update(5) if $pbar;
-        $fq->clear_cache;
-        close $fh;
-        unless (scalar @quotes) {
+        $data = App::financeta::data::yahoo::ohlcv($symbol, $start, $end, $csv);
+        $pbar->update(45) if $pbar;
+        unless (defined $data) {
             message_box('Error',
                 "Failed to download $symbol data. Check if '$symbol' is correct",
                 mb::Ok | mb::Error);
-            unlink $csv;
+            unlink $csv if -e $csv;
             return;
         }
-        $log->info("$csv has downloaded data for analysis");
-        $pbar->update(5) if $pbar;
-        $data = pdl(@quotes)->transpose;
-        $pbar->update(5) if $pbar;
+        wcols($data, $csv, { COLSEP => ',' });
+        $log->info("File $csv has downloaded data for analysis for symbol $symbol");
+        $pbar->update(50) if $pbar;
     } else {
         ## now read this back into a PDL using rcol
-        $pbar->update(5) if $pbar;
+        $pbar->update(20) if $pbar;
         $log->info("$csv already present. loading it...");
-        $data = PDL->rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
-        $pbar->update(5) if $pbar;
+        $data = rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
+        $pbar->update(45) if $pbar;
     }
     return ($data, $symbol, $csv);
 }
