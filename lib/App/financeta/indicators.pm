@@ -2282,7 +2282,7 @@ sub execute_ohlcv($$) {
             my $csv = $params->{$k};
             $csv =~ s/\s//g if length $csv;
             my @a = split /,/, $csv if length $csv;
-            push @args, PDL->new(@a) if @a;
+            push @args, pdl(@a) if @a;
             push @args, PDL::null unless @a;
         } elsif ($k =~ /CompareWith/i) {
             # dont eval it
