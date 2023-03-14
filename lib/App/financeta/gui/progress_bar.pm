@@ -6,28 +6,29 @@ use 5.10.0;
 use App::financeta::mo;
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Prima qw(Application  sys::GUIException Utils );
+use POSIX qw(floor);
 
 $|=1;
 
-has owner => (required => 1);
-has gui => (required => 1);
+has owner => undef;
 has bar => ( builder => '_build_bar' );
-has title => (required => 1);
-has bar_width => 160;
-has bar_height => 80;
+has title => 'Loading...';
+has bar_width => 100;
+has bar_height => 40;
 
 sub _build_bar {
     my $self = shift;
-    my $gui = $self->gui;
-    $log->debug("Creating progress bar for " . ref($gui));
+    $log->debug("Creating progress bar");
     my $bar = Prima::Window->create(
         name => 'progress_bar',
         text => $self->title,
         size => [$self->bar_width, $self->bar_height],
         origin => [0, 0],
         widgetClass => wc::Dialog,
-        borderStyle => bs::Single,
-        borderIcons => bi::TitleBar,
+        borderStyle => bs::Dialog,
+        borderIcons => 0,
+        hint => $self->title,
+        showHint => 1,
         centered => 1,
         owner => $self->owner,
         visible => 1,
@@ -38,17 +39,22 @@ sub _build_bar {
             $canvas->bar(0, 0, $w->{-progress}, $w->height);
             $canvas->color(cl::Back);
             $canvas->bar($w->{-progress}, 0, $w->size);
-            #$canvas->color(cl::Yellow);
-            #$canvas->font(size => 16, style => fs::Bold);
-            #$canvas->text_out($w->text, 0, 10);
+            my $pct = floor(100 * $w->{-progress} / $w->width);
+            if ($pct > 0) {
+                $canvas->color(cl::Yellow);
+                $canvas->font(size => 10, style => fs::Bold);
+                $canvas->text_out(sprintf("%d%%", $pct), 0, 10) if $pct > 0;
+            }
         },
         syncPaint => 1,
         onTop => 1,
     );
     $bar->{-progress} = 0;
     $bar->repaint;
-    $bar->owner->pointerType(cr::Wait);
-    $bar->owner->repaint;
+    if (defined $bar->owner) {
+        $bar->owner->pointerType(cr::Wait);
+        $bar->owner->repaint;
+    }
     return $bar;
 }
 
@@ -56,17 +62,28 @@ sub update {
     my ($self, $val) = @_;
     ## is percentage
     if (defined $val and ($val > 0 and $val < 1)) {
-        $self->bar->{-progress} += ($val * $self->bar_width);
-    } else {#is absolute
-        $self->bar->{-progress} += $val // 5;
+        $self->bar->{-progress} = ($val * $self->bar_width);
+    } elsif (defined $val) {#is absolute
+        $self->bar->{-progress} = $val;
+    } else {
+        $self->bar->{-progress} += 5;
     }
     $self->bar->repaint;
+    if (defined $self->bar->owner) {
+        $self->bar->owner->repaint;
+    }
+    return $self->bar->{-progress};
 }
 
 sub close {
     my $self = shift;
-    $self->bar->owner->pointerType(cr::Default);
-    $self->bar->close;
+    if (defined $self and defined $self->bar) {
+        if (defined $self->bar->owner) {
+            $self->bar->owner->pointerType(cr::Default);
+            $self->bar->owner->repaint;
+        }
+        $self->bar->close;
+    }
 }
 
 sub progress {

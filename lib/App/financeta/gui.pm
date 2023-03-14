@@ -152,7 +152,7 @@ sub _menu_items {
                         return;
                     }
                     if ($gui->security_wizard($win)) {
-                        my $bar = App::financeta::gui::progress_bar->new(gui => $gui, owner => $win, title => 'Downloading...');
+                        my $bar = App::financeta::gui::progress_bar->new(owner => $win, title => 'Downloading...');
                         # download security data
                         my ($data, $symbol, $csv) = $gui->download_data($bar);
                         if (defined $data) {
@@ -718,7 +718,7 @@ sub run_and_display_indicator {
             if (exists $iref->{params} and exists $iref->{params}->{CompareWith}) {
                 # ok this is a security.
                 # we need to download the data for this and store it
-                my $bar = App::financeta::gui::progress_bar->new(gui => $self, owner => $win, title => 'Downloading...');
+                my $bar = App::financeta::gui::progress_bar->new(owner => $win, title => 'Downloading...');
                 my $current = $self->current;
                 $iref->{params}->{CompareWith} =~ s/\s//g;
                 $current->{symbol} = $iref->{params}->{CompareWith};
@@ -1159,13 +1159,13 @@ sub download_data {
         $csv = $current->{csv};
         $log->debug("Using $csv as it was chosen");
     }
-    $pbar->update(5) if $pbar;
+    $pbar->update(10) if $pbar;
     my $data;
     unlink $csv if $current->{force_download};
     unless (-e $csv) {
-        $pbar->update(5) if $pbar;
+        $pbar->update(25) if $pbar;
         $data = App::financeta::data::yahoo::ohlcv($symbol, $start, $end, $csv);
-        $pbar->update(45) if $pbar;
+        $pbar->update(35) if $pbar;
         unless (defined $data) {
             message_box('Error',
                 "Failed to download $symbol data. Check if '$symbol' is correct",
@@ -1175,13 +1175,13 @@ sub download_data {
         }
         wcols($data, $csv, { COLSEP => ',' });
         $log->info("File $csv has downloaded data for analysis for symbol $symbol");
-        $pbar->update(50) if $pbar;
+        $pbar->update(75) if $pbar;
     } else {
         ## now read this back into a PDL using rcol
-        $pbar->update(20) if $pbar;
+        $pbar->update(35) if $pbar;
         $log->info("$csv already present. loading it...");
         $data = rcols($csv, [], { COLSEP => ',', DEFTYPE => PDL::double});
-        $pbar->update(45) if $pbar;
+        $pbar->update(75) if $pbar;
     }
     return ($data, $symbol, $csv);
 }
@@ -1192,7 +1192,6 @@ sub display_data {
     my @tabsize = $win->size();
     $symbol = $self->current->{symbol} unless defined $symbol;
     my @tabs = grep { $_->name =~ /data_tabs/ } $win->get_widgets();
-    $log->debug("Tabs: @tabs");
     unless (@tabs) {
         $win->insert('Prima::TabbedNotebook',
             name => 'data_tabs',
@@ -1497,7 +1496,7 @@ sub load_new_tab {
         force_download => 0,
     };
     $current->{csv} = $saved->{csv} if defined $saved->{csv};
-    my $bar = App::financeta::gui::progress_bar->new(gui => $self, owner => $win, title => 'Loading...');
+    my $bar = App::financeta::gui::progress_bar->new(owner => $win, title => 'Loading...');
     my ($data, $symbol, $csv) = $self->download_data($bar, $current);
     $log->debug("Loading the data into tab");
     $saved->{csv} = $csv if defined $csv;

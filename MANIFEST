@@ -20,6 +20,7 @@ README
 share/changelogger.sh
 share/chart-line-solid.png
 share/icon.gif
+share/spinner.svg
 t/00_use.t
 t/01_lang.t
 t/02_exec.t

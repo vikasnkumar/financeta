@@ -2,9 +2,11 @@
 
 use strict;
 use warnings;
+use lib 'lib';
 $| = 1;
 use Path::Tiny qw(path);
 use Prima qw(Application MsgBox);
+use App::financeta::gui::progress_bar;
 my $curfile = path($0)->absolute;
 print $curfile, "\n";
 
@@ -100,6 +102,21 @@ $gui = Prima::MainWindow->new(
                         ]],
                     );
                     $another_gui->show;
+                },
+            ],
+            [ 'progress_bar', '~Progress Bar', 'Ctrl+P', '^P',
+                sub {
+                    my ($w, $item) = @_;
+                    print "$item called\n";
+                    my $bar = App::financeta::gui::progress_bar->new(owner => $w);
+                    my $cnt = 0;
+                    while ($cnt < 100) {
+                        $bar->update($cnt);
+                        $cnt += 10;
+                        sleep 2;
+                        print "Count $cnt\n";
+                    }
+                    $bar->close;
                 },
             ],
             [ 'exit_app', '~Exit', 'Ctrl+Q', '^Q',
