@@ -9,8 +9,8 @@ foreach (qw(dumper log_filter get_icon_path)) {
 }
 use_ok('App::financeta::language');
 
-foreach my $src (qw(yahoo)) {
-    my $module = "App::financeta::data::$src";
+foreach my $src (qw(data data::yahoo)) {
+    my $module = "App::financeta::$src";
     use_ok($module);
     foreach (qw(ohlcv)) {
         can_ok($module, $_);

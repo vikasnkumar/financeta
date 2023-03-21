@@ -40,7 +40,7 @@ use App::financeta::gui::progress_bar;
 use App::financeta::gui::editor;
 use App::financeta::gui::tradereport;
 use App::financeta::indicators;
-use App::financeta::data::yahoo;
+use App::financeta::data;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
@@ -66,6 +66,9 @@ has indicator => (builder => '_build_indicator');
 has tab_was_closed => 0;
 has editors => {};
 has tradereports => {};
+has list_sources => ['yahoo', 'gemini'];
+has list_sources_pretty => ['Yahoo! Finance', 'Gemini Crypto Exchange'];
+has list_sources_urls => ['https://finance.yahoo.com', 'https://docs.gemini.com/rest-api/?python#symbols'];
 
 sub _build_indicator {
     my $self = shift;
@@ -1149,6 +1152,8 @@ sub download_data {
     my ($self, $pbar, $current) = @_;
     $pbar->update(5) if $pbar;
     $current = $self->current unless $current;
+    my $src_index = $current->{source_index} // 0;
+    my $src = @{$self->list_sources}[$src_index];
     my $start = $current->{start_date};
     my $end = $current->{end_date};
     my $symbol = $current->{symbol};
@@ -1164,7 +1169,7 @@ sub download_data {
     unlink $csv if $current->{force_download};
     unless (-e $csv) {
         $pbar->update(25) if $pbar;
-        $data = App::financeta::data::yahoo::ohlcv($symbol, $start, $end, $csv);
+        $data = App::financeta::data::ohlcv($src, $symbol, $start, $end, $csv);
         $pbar->update(35) if $pbar;
         unless (defined $data) {
             message_box('Error',

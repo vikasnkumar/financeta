@@ -7,7 +7,7 @@ use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Prima qw(
-    Application Buttons MsgBox Calendar Label InputLine
+    Application Buttons MsgBox Calendar Label InputLine ComboBox
     sys::GUIException Utils
 );
 use Try::Tiny;
@@ -47,6 +47,7 @@ sub _build_wizard {
         taskListed => 0,
         onExecute => sub {
             my $dlg = shift;
+            $dlg->input_source->focusedItem($gui->current->{source_index} // 0);
             my $sec = $gui->current->{symbol} || '';
             $dlg->input_symbol->text($sec);
             $dlg->btn_ok->enabled(length($sec) ? 1 : 0);
@@ -73,11 +74,40 @@ sub _build_wizard {
     my $pwin = $self->owner;
     $w->owner($pwin) if defined $pwin;
     $w->insert(
+        Label => text => 'Select Source',
+        name => 'label_source',
+        alignment => ta::Left,
+        autoHeight => 1,
+        origin => [ 20, $sz_y - 40],
+        autoWidth => 1,
+        font => { height => 14, style => fs::Bold },
+        hint => 'Stock symbols are available at Yahoo! Finance',
+    );
+    $w->insert(
+        ComboBox => name => 'input_source',
+        style => cs::DropDownList,
+        multiSelect => 0,
+        alignment => ta::Left,
+        width => 200,
+        height => 30,
+        autoTab => 1,
+        origin => [ 200, $sz_y - 40],
+        font => { height => 16 },
+        items => $gui->list_sources_pretty,
+        selectedItems => [0],
+        onChange => sub {
+            my $inp = shift;
+            my $idx = $inp->focusedItem;
+            $gui->current->{source_index} = $idx;
+            $log->info("Selected input source index: $idx");
+        },
+    );
+    $w->insert(
         Label => text => 'Enter Security Symbol',
         name => 'label_symbol',
         alignment => ta::Left,
         autoHeight => 1,
-        origin => [ 20, $sz_y - 40],
+        origin => [ 20, $sz_y - 80],
         autoWidth => 1,
         font => { height => 14, style => fs::Bold },
         hint => 'Stock symbols are available at Yahoo! Finance',
@@ -89,7 +119,7 @@ sub _build_wizard {
         width => 160,
         autoTab => 1,
         maxLen => 10,
-        origin => [ 200, $sz_y - 40],
+        origin => [ 200, $sz_y - 80],
         font => { height => 16 },
         onChange => sub {
             my $inp = shift;
@@ -106,12 +136,16 @@ sub _build_wizard {
         text => 'Symbol Search',
         height => 20,
         autoWidth => 1,
-        origin => [$sz_x - 100, $sz_y - 40],
+        origin => [$sz_x - 100, $sz_y - 80],
         default => 0,
         enabled => 1,
         font => { height => 12, style => fs::Bold },
         onClick => sub {
-            my $url = 'http://finance.yahoo.com';
+            my $owner = shift->owner;
+            my $arr = $gui->list_sources_urls;
+            my $idx = $owner->input_source->focusedItem;
+            my $url = $arr->[$idx // 0];
+            $log->info("Opening URL $url");
             my $ok = Browser::Open::open_browser($url, 1);
             if (not defined $ok) {
                 message("Error finding a browser to open $url");
@@ -126,14 +160,14 @@ sub _build_wizard {
         alignment => ta::Center,
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 20, $sz_y - 180 ],
+        origin => [ 20, $sz_y - 220 ],
         font => { height => 14, style => fs::Bold },
     );
     $w->insert(
         Calendar => name => 'cal_start',
         useLocale => 1,
         size => [ 220, 200 ],
-        origin => [ 20, $sz_y - 400 ],
+        origin => [ 20, $sz_y - 440 ],
         font => { height => 16 },
         onChange => sub {
             my $cal = shift;
@@ -151,14 +185,14 @@ sub _build_wizard {
         alignment => ta::Center,
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ $sz_x / 2, $sz_y - 180 ],
+        origin => [ $sz_x / 2, $sz_y - 220 ],
         font => { height => 14, style => fs::Bold },
     );
     $w->insert(
         Calendar => name => 'cal_end',
         useLocale => 1,
         size => [ 220, 200 ],
-        origin => [ $sz_x / 2, $sz_y - 400 ],
+        origin => [ $sz_x / 2, $sz_y - 440 ],
         font => { height => 16 },
         onChange => sub {
             my $cal = shift;
@@ -173,7 +207,7 @@ sub _build_wizard {
     $w->insert(
         CheckBox => name => 'chk_force_download',
         text => 'Force Download',
-        origin => [ 20, $sz_y - 480 ],
+        origin => [ 20, $sz_y - 500 ],
         font => { height => 14, style => fs::Bold },
         onCheck => sub {
             my $chk = shift;
@@ -190,7 +224,7 @@ sub _build_wizard {
         text => 'Load from CSV',
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 200, $sz_y - 480 ],
+        origin => [ 200, $sz_y - 500 ],
         default => 0,
         enabled => 1,
         font => { height => 16, style => fs::Bold },
@@ -211,7 +245,9 @@ sub _build_wizard {
             my $csv = $dlg->fileName if $dlg->execute;
             if (defined $csv and -e $csv) {
                 $log->info("You have selected $csv to load");
-                $owner->label_csv->text($csv);
+                if ($owner->label_csv) {
+                    $owner->label_csv->text($csv);
+                }
                 $gui->current->{csv} = $csv;
             }
             $owner->show;
@@ -223,7 +259,7 @@ sub _build_wizard {
         alignment => ta::Left,
         autoHeight => 1,
         autoWidth => 1,
-        origin => [ 20, $sz_y - 500 ],
+        origin => [ 360, $sz_y - 500 ],
         font => { height => 13, style => fs::Bold },
     );
     $w->insert(
@@ -257,7 +293,10 @@ sub _build_wizard {
         onClick => sub {
             my $btn = shift;
             my $owner = $btn->owner;
+            $gui->current->{source_index} = $owner->input_source->focusedItem;
+            $log->info("Selected input source index: " . $gui->current->{source_index});
             $gui->current->{symbol} = $owner->input_symbol->text;
+            $log->info("Selected input symbol: " . $gui->current->{symbol});
             unless (defined $gui->current->{start_date}) {
                 my $cal = $owner->cal_start;
                 $gui->current->{start_date} = DateTime->new(
