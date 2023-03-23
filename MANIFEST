@@ -2,6 +2,8 @@ bin/financeta
 Build.PL
 Changes
 lib/App/financeta.pm
+lib/App/financeta/data.pm
+lib/App/financeta/data/gemini.pm
 lib/App/financeta/data/yahoo.pm
 lib/App/financeta/gui.pm
 lib/App/financeta/gui/editor.pm

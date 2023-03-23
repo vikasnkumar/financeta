@@ -9,7 +9,7 @@ foreach (qw(dumper log_filter get_icon_path)) {
 }
 use_ok('App::financeta::language');
 
-foreach my $src (qw(data data::yahoo)) {
+foreach my $src (qw(data data::yahoo data::gemini)) {
     my $module = "App::financeta::$src";
     use_ok($module);
     foreach (qw(ohlcv)) {

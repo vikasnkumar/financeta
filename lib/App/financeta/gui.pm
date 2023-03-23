@@ -1294,7 +1294,7 @@ sub display_data {
     my $tz = $self->timezone;
     # reformat
     foreach my $arr (@$items) {
-        my $dt = DateTime->from_epoch(epoch => $arr->[0], time_zone => $tz)->ymd('-');
+        my $dt = DateTime->from_epoch(epoch => $arr->[0], time_zone => $tz)->datetime(' ');
         $arr->[0] = $dt;
         for (my $i = 1; $i < scalar @$arr; ++$i) {
             $arr->[$i] = '' if $arr->[$i] =~ /BAD/i;
