@@ -200,9 +200,8 @@ sub save {
     $symbol =~ s/tab_//g;
     my $docdir = File::HomeDir->my_documents || File::HomeDir->my_home;
     my $ext = 'csv';
-    my $dlg = Prima::SaveDialog->new(
-        defaultExt => $ext,
-        fileName => "tradereport_$symbol",
+    my $dlg = Prima::Dialog::SaveDialog->new(
+        fileName => "tradereport_$symbol\.$ext",
         filter => [
             ['CSV files' => "*.$ext"],
             ['All files' => '*'],
