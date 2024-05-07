@@ -1966,8 +1966,8 @@ sub plot_data_gnuplot {
     } elsif ($^O =~ /Win32|Cygwin/i) {
         Capture::Tiny::capture {
             my @terms = PDL::Graphics::Gnuplot::terminfo();
-            $term = 'wxt' if (grep {/wxt/} @terms) > 0;
             $term = 'windows' if (grep {/windows/} @terms) > 0;
+            $term = 'wxt' if (grep {/wxt/} @terms) > 0;
             $term = 'qt' if (grep {/qt/} @terms) > 0;
             # on Cygwin it may be x11
         };
