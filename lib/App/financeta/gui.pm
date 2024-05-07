@@ -1951,14 +1951,16 @@ sub plot_data_gnuplot {
     if ($^O =~ /Darwin/i) {
         Capture::Tiny::capture {
             my @terms = PDL::Graphics::Gnuplot::terminfo();
-            $term = 'aqua' if grep {/aqua/} @terms;
-            $term = 'wxt' if grep {/wxt/} @terms;
+            $term = 'aqua' if (grep {/aqua/} @terms) > 0;
+            $term = 'wxt' if (grep {/wxt/} @terms) > 0;
+            $term = 'qt' if (grep {/qt/} @terms) > 0;
         };
     } elsif ($^O =~ /Win32|Cygwin/i) {
         Capture::Tiny::capture {
             my @terms = PDL::Graphics::Gnuplot::terminfo();
             $term = 'wxt' if (grep {/wxt/} @terms) > 0;
             $term = 'windows' if (grep {/windows/} @terms) > 0;
+            $term = 'qt' if (grep {/qt/} @terms) > 0;
             # on Cygwin it may be x11
         };
     }
