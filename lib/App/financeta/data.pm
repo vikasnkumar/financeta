@@ -7,7 +7,7 @@ use App::financeta::data::gemini;
 use App::financeta::utils qw(log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 $VERSION = eval $VERSION;
 #our @EXPORT_OK = (qw(ohlcv));
 

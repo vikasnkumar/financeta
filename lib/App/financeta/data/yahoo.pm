@@ -9,7 +9,7 @@ use App::financeta::utils qw(dumper log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use PDL::Lite;#for pdl
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 $VERSION = eval $VERSION;
 #our @EXPORT_OK = (qw(ohlcv));
 

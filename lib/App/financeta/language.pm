@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 $VERSION = eval $VERSION;
 use Pegex::Base;
 extends 'Pegex::Grammar';
@@ -12,7 +12,7 @@ use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 
 use constant text => <<GRAMMAR;
 %grammar financeta
-%version 0.13
+%version 0.14
 
 program: statement* end-of-program
 statement: comment | instruction | declaration
@@ -95,7 +95,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 $VERSION = eval $VERSION;
 use App::financeta::utils qw(log_filter);
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
@@ -526,7 +526,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 $VERSION = eval $VERSION;
 use Pegex::Parser;
 use App::financeta::mo;

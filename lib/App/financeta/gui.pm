@@ -3,10 +3,10 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 $VERSION = eval $VERSION;
 use App::financeta::mo;
-use App::financeta::utils qw(dumper log_filter get_icon_path);
+use App::financeta::utils qw(dumper log_filter get_icon_path get_file_path);
 use Carp ();
 use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Try::Tiny;
@@ -44,6 +44,8 @@ use App::financeta::data;
 use Scalar::Util qw(blessed);
 use Browser::Open ();
 use YAML::Any ();
+use JSON::XS qw(encode_json);
+use Template;
 
 $PDL::doubleformat = "%0.6lf";
 $| = 1;
@@ -52,8 +54,11 @@ has timezone => 'America/New_York';
 has brand => __PACKAGE__;
 has main => (builder => '_build_main');
 has tmpdir => ( default => sub {
-    return $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
-    return $ENV{TMPDIR} || '/tmp';
+    my $dir = $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
+    $dir //= $ENV{TMPDIR} || File::Spec->tmpdir || '/tmp';
+    $dir = File::Spec->catdir($dir, $ENV{USER} || getlogin(), 'financeta');
+    File::Path::make_path($dir) unless -d $dir;
+    return $dir;
 });
 has datadir => ( default => sub {
     my $dir = $ENV{DATADIR} || File::Spec->catfile(File::HomeDir->my_home, '.financeta');
@@ -1937,6 +1942,9 @@ sub plot_data {
         $log->info("Using Gnuplot to do plotting");
         $log->info("PDL::Graphics::Gnuplot $PDL::Graphics::Gnuplot::VERSION is being used");
         return $self->plot_data_gnuplot(@_);
+    } elsif (lc($self->plot_engine) eq 'highcharts') {
+        $log->info("Using Highcharts to do plotting");
+        return $self->plot_data_highcharts(@_);
     }
     $log->warn($self->plot_engine . " is not supported yet.");
 }
@@ -2452,6 +2460,167 @@ sub plot_data_gnuplot {
     $self->current->{plot_type} = $type if defined $type;
 }
 
+sub plot_data_highcharts {
+    my ($self, $win, $data, $symbol, $type, $indicators, $buysell) = @_;
+    return unless defined $data;
+    $symbol = $self->current->{symbol} unless defined $symbol;
+    $type = $self->current->{plot_type} unless defined $type;
+    my @general_plot = ();
+    my @volume_plot = ();
+    my @addon_plot = ();
+    my @candle_plot = ();
+    $self->indicator->color_idx(0); # reset color index
+    if (defined $indicators and scalar @$indicators) {
+        # ok now create a list of indicators to plot
+        foreach (@$indicators) {
+            my $iref = $_->{indicator};
+            my $idata = $_->{data};
+            my $iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
+            next unless $iplot;
+            if (ref $iplot eq 'ARRAY') {
+                push @general_plot, @$iplot if scalar @$iplot;
+            } elsif (ref $iplot eq 'HASH') {
+                my $iplot_gen = $iplot->{general};
+                push @general_plot, @$iplot_gen if $iplot_gen and scalar @$iplot_gen;
+                my $iplot_vol = $iplot->{volume};
+                push @volume_plot, @$iplot_vol if $iplot_vol and scalar @$iplot_vol;
+                my $iplot_addon = $iplot->{additional};
+                push @addon_plot, @$iplot_addon if $iplot_addon and scalar @$iplot_addon;
+                my $iplot_cdl = $iplot->{candle};
+                push @candle_plot, @$iplot_cdl if $iplot_cdl and scalar @$iplot_cdl;
+            } else {
+                $log->warn('Unable to handle plot arguments in ' . ref($iplot) . ' form!');
+            }
+        }
+    }
+    if (defined $buysell and ref $buysell eq 'HASH' and
+        defined $buysell->{buys} and defined $buysell->{sells}) {
+        my $buys = $buysell->{buys};
+        my $sells = $buysell->{sells};
+        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
+            my $bsplot = $self->indicator->get_plot_args_buysell(
+                $data(,(0)), $buys, $sells);
+            if (defined $bsplot and ref $bsplot eq 'ARRAY') {
+                push @general_plot, @$bsplot if scalar @$bsplot;
+            } elsif (ref $bsplot eq 'HASH') {
+                my $bsplot_gen = $bsplot->{general};
+                if ($bsplot_gen) {
+                    push @general_plot, @$bsplot_gen if scalar @$bsplot_gen;
+                }
+            }
+        } else {
+            $log->warn("Unable to plot invalid buy-sell data");
+        }
+    }
+    ### for OHLC type
+    ## timestamp: data(,(0))
+    ## OHLC: data(, (1)), data(, (2)), data(,(3)), data(,(4))
+    ## Volume: data(, (5))
+    $log->debug("Symbol $symbol. Plot type $type");
+    ### we use Template toolkit to take a template, plug data in via variables
+    ### and auto-generate an HTML page that will then render graphics as needed
+    ### maybe all the data should be in the HTML form for easy generation
+    ### and the JS code has to be fixed and pre-written.
+    ### so the JS code uses variables that are defined in the HTML data that is printed by
+    ### the template
+    my $ttfile = get_file_path('chart.tt');
+    $log->info("Template file path: $ttfile");
+    my $html = File::Spec->catfile($self->tmpdir, lc "$symbol\_$type.html");
+    ## highcharts requires timestamp in milliseconds
+    ## transpose the data for JSON charting
+    my $chart_type_pretty;
+    my @charts = ();
+    $type //= 'OHLC';
+    if ($type eq 'OHLC' or $type eq 'CANDLE') {
+        $chart_type_pretty = ($type eq 'CANDLE') ? 'Candlestick' : 'OHLC Price';
+        my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)))->transpose->unpdl;
+        $log->debug($ppdl);
+        push @charts, {
+            title => $symbol,
+            data => $ppdl,
+            type => ($type eq 'CANDLE') ? 'candlestick' : 'ohlc',
+            id => lc "$symbol-$type",
+            y_axis => 0,
+        };
+    } elsif ($type eq 'OHLCV' or $type eq 'CANDLEV') {
+        $chart_type_pretty = ($type eq 'CANDLEV') ? 'Candlestick & Volume' : 'OHLC Price & Volume';
+        my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)))->transpose->unpdl;
+        $log->debug($ppdl);
+        my $vpdl = encode_json pdl($data(,(0)) * 1000, $data(,(5)))->transpose->unpdl;
+        push @charts, {
+            title => $symbol,
+            data => $ppdl,
+            type => ($type eq 'CANDLEV') ? 'candlestick' : 'ohlc',
+            id => lc "$symbol-$type",
+            y_axis => 0,
+        };
+        push @charts, {
+            title => 'Volume',
+            data => $vpdl,
+            type => 'column',
+            id => lc "$symbol-volume",
+            y_axis => 1,
+        },
+    } elsif ($type eq 'CLOSEV') {
+        $chart_type_pretty = "Close Price & Volume";
+        my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(4)))->transpose->unpdl;
+        my $vpdl = encode_json pdl($data(,(0)) * 1000, $data(,(5)))->transpose->unpdl;
+        $log->debug($ppdl);
+        push @charts, {
+            title => $symbol,
+            data => $ppdl,
+            type => 'line',
+            id => lc "$symbol-$type",
+            y_axis => 0,
+        };
+        push @charts, {
+            title => 'Volume',
+            data => $vpdl,
+            type => 'column',
+            id => lc "$symbol-volume",
+            y_axis => 1,
+        };
+    } else {
+        $chart_type_pretty = "Close Price";
+        my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(4)))->transpose->unpdl;
+        $log->debug($ppdl);
+        push @charts, {
+            title => $symbol,
+            data => $ppdl,
+            type => 'line',
+            id => lc "$symbol-$type",
+            y_axis => 0,
+        };
+    }
+    my $ttconf = {
+        page => {
+            title => "$chart_type_pretty plot of $symbol",
+        },
+        chart => {
+            charts => \@charts,
+            title => $symbol,
+        },
+    };
+    my $tt = Template->new({ ABSOLUTE => 1 });
+    my $ret = $tt->process($ttfile, $ttconf, $html, { binmode => ':utf8' });
+    if ($ret) {
+        my $url = "file://$html";
+        my $ok = Browser::Open::open_browser($url, 1);
+        if (not defined $ok) {
+            message("Error finding a browser to open $url");
+            $log->warn("Error finding a default browser to open $url");
+        } elsif ($ok != 0) {
+            message("Error opening $url");
+            $log->warn("Error opening $url in default browser");
+        }
+    } else {
+        $log->error("Failed to generate $html from $ttfile: " . $tt->error() . "\n");
+        message("Failed to plot chart in a browser!");
+    }
+    # make the current plot type the type
+    $self->current->{plot_type} = $type if defined $type;
+}
+
 1;
 
 __END__
@@ -2473,7 +2642,7 @@ research with Technical Analysis.
 
 =head1 VERSION
 
-0.11
+0.14
 
 =head1 METHODS
 
