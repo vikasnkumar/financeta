@@ -4,7 +4,7 @@ use Test::More;
 
 use_ok('App::financeta::mo');
 use_ok('App::financeta::utils');
-foreach (qw(dumper log_filter get_icon_path)) {
+foreach (qw(dumper log_filter get_icon_path get_file_path)) {
     can_ok('App::financeta::utils', $_);
 }
 use_ok('App::financeta::language');
