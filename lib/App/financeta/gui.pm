@@ -2465,6 +2465,7 @@ sub plot_data_highcharts {
     return unless defined $data;
     $symbol = $self->current->{symbol} unless defined $symbol;
     $type = $self->current->{plot_type} unless defined $type;
+    if (0) {
     my @general_plot = ();
     my @volume_plot = ();
     my @addon_plot = ();
@@ -2493,24 +2494,6 @@ sub plot_data_highcharts {
             }
         }
     }
-    if (defined $buysell and ref $buysell eq 'HASH' and
-        defined $buysell->{buys} and defined $buysell->{sells}) {
-        my $buys = $buysell->{buys};
-        my $sells = $buysell->{sells};
-        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
-            my $bsplot = $self->indicator->get_plot_args_buysell(
-                $data(,(0)), $buys, $sells);
-            if (defined $bsplot and ref $bsplot eq 'ARRAY') {
-                push @general_plot, @$bsplot if scalar @$bsplot;
-            } elsif (ref $bsplot eq 'HASH') {
-                my $bsplot_gen = $bsplot->{general};
-                if ($bsplot_gen) {
-                    push @general_plot, @$bsplot_gen if scalar @$bsplot_gen;
-                }
-            }
-        } else {
-            $log->warn("Unable to plot invalid buy-sell data");
-        }
     }
     ### for OHLC type
     ## timestamp: data(,(0))
@@ -2591,6 +2574,46 @@ sub plot_data_highcharts {
             id => lc "$symbol-$type",
             y_axis => 0,
         };
+    }
+    ## handle buys and sells
+    if (defined $buysell and ref $buysell eq 'HASH' and
+        defined $buysell->{buys} and defined $buysell->{sells}) {
+        my $buys = $buysell->{buys};
+        my $sells = $buysell->{sells};
+        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
+            my $bpdl = pdl($data(,(0)) * 1000, $buys)->transpose;
+            my $bidx = $bpdl((1))->which;#check if !0 is true
+            my $bpdlclean = $bpdl->dice_axis(1, $bidx);
+            $log->debug($bpdlclean);
+            my $bpdljs = encode_json $bpdlclean->unpdl;
+            push @charts, {
+                title => "Buy Signals",
+                data => $bpdljs,
+                type => 'line',
+                id => lc "$symbol-buy-signals",
+                y_axis => 0,
+                is_signal => 1,
+                marker_symbol => 'triangle',
+                marker_color => 'green',
+            };
+            my $spdl = pdl($data(,(0)) * 1000, $sells)->transpose;
+            my $sidx = $spdl((1))->which;#check if !0 is true
+            my $spdlclean = $spdl->dice_axis(1, $sidx);
+            $log->debug($spdlclean);
+            my $spdljs = encode_json $spdlclean->unpdl;
+            push @charts, {
+                title => "Sell Signals",
+                data => $spdljs,
+                type => 'line',
+                id => lc "$symbol-sell-signals",
+                y_axis => 0,
+                is_signal => 1,
+                marker_symbol => 'triangle-down',
+                marker_color => 'red',
+            };
+        } else {
+            $log->warn("Unable to plot invalid buy-sell data");
+        }
     }
     my $ttconf = {
         page => {

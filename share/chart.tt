@@ -27,6 +27,7 @@
         <hr/>
     <script type="text/javascript">
         window.chart = new Highcharts.stockChart('chart-container', {
+            accessibility: { enabled: false },
             yAxis: [
                 {
                     labels: { align: 'left' },
@@ -52,6 +53,16 @@
                     data: [% el.data %],
                     [% IF el.y_axis %]
                     yAxis: [% el.y_axis %],
+                    [% END %]
+                    [% IF el.is_signal %]
+                    lineWidth: 0,
+                    showInLegend: true,
+                    marker: {
+                        enabled: true,
+                        fillColor: "[% el.marker_color %]",
+                        radius: 4,
+                        symbol: "[% el.marker_symbol %]",
+                    },
                     [% END %]
                 },
             [% END %]
