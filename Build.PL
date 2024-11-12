@@ -52,6 +52,7 @@ my $build = Module::Build->new(
         'Pegex' => '0.75',
         'Perl::Tidy' => 0,
         'Log::Any' => '1.713',
+        'Template::Toolkit' => '3.100',
         %non_windows,
     },
     dynamic_config => 1,

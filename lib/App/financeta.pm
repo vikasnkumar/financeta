@@ -7,7 +7,7 @@ use Log::Any '$log', filter => \&App::financeta::utils::log_filter;
 use Log::Any::Adapter 'Stderr';
 use App::financeta::gui;
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 $VERSION = eval $VERSION;
 
 sub print_banner {
@@ -79,7 +79,7 @@ as an application. It handles command line processing of C<financeta>.
 
 =head1 VERSION
 
-0.14
+0.15
 
 DESCRIPTION
 

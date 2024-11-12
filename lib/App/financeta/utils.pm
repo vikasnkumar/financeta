@@ -10,7 +10,7 @@ use File::ShareDir 'dist_file';
 use File::Spec::Functions qw(rel2abs catfile);
 use Cwd qw(getcwd);
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 $VERSION = eval $VERSION;
 our @EXPORT_OK = (
     qw(dumper log_filter get_icon_path get_file_path)
@@ -95,7 +95,7 @@ App::financeta::utils is an internal utility library for App::financeta.
 
 =head1 VERSION
 
-0.14
+0.15
 
 
 =head1 METHODS
