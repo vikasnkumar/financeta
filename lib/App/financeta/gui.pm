@@ -2553,47 +2553,6 @@ sub plot_data_highcharts {
         };
         $next_y_axis = 1;
     }
-    ## handle buys and sells
-    ##TODO: handle realtime P&L and draw an area plot
-    if (defined $buysell and ref $buysell eq 'HASH' and
-        defined $buysell->{buys} and defined $buysell->{sells}) {
-        my $buys = $buysell->{buys};
-        my $sells = $buysell->{sells};
-        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
-            my $bpdl = pdl($data(,(0)) * 1000, $buys)->transpose;
-            my $bidx = $bpdl((1))->which;#check if !0 is true
-            my $bpdlclean = $bpdl->dice_axis(1, $bidx);
-            $log->debug($bpdlclean);
-            my $bpdljs = encode_json $bpdlclean->unpdl;
-            push @charts, {
-                title => "Buy Signals",
-                data => $bpdljs,
-                type => 'line',
-                id => lc "$symbol-buy-signals",
-                y_axis => 0,
-                is_signal => 1,
-                marker_symbol => 'triangle',
-                marker_color => 'green',
-            };
-            my $spdl = pdl($data(,(0)) * 1000, $sells)->transpose;
-            my $sidx = $spdl((1))->which;#check if !0 is true
-            my $spdlclean = $spdl->dice_axis(1, $sidx);
-            $log->debug($spdlclean);
-            my $spdljs = encode_json $spdlclean->unpdl;
-            push @charts, {
-                title => "Sell Signals",
-                data => $spdljs,
-                type => 'line',
-                id => lc "$symbol-sell-signals",
-                y_axis => 0,
-                is_signal => 1,
-                marker_symbol => 'triangle-down',
-                marker_color => 'red',
-            };
-        } else {
-            $log->warn("Unable to plot invalid buy-sell data");
-        }
-    }
     ## add the indicators
     if (defined $indicators and scalar @$indicators) {
         $self->indicator->color_idx(0); # reset color index
@@ -2653,6 +2612,47 @@ sub plot_data_highcharts {
             } else {
                 $log->warn('Unable to handle plot arguments in ' . ref($iplot) . ' form!');
             }
+        }
+    }
+    ## handle buys and sells
+    ##TODO: handle realtime P&L and draw an area plot
+    if (defined $buysell and ref $buysell eq 'HASH' and
+        defined $buysell->{buys} and defined $buysell->{sells}) {
+        my $buys = $buysell->{buys};
+        my $sells = $buysell->{sells};
+        if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
+            my $bpdl = pdl($data(,(0)) * 1000, $buys)->transpose;
+            my $bidx = $bpdl((1))->which;#check if !0 is true
+            my $bpdlclean = $bpdl->dice_axis(1, $bidx);
+            $log->debug($bpdlclean);
+            my $bpdljs = encode_json $bpdlclean->unpdl;
+            push @charts, {
+                title => "Buy Signals",
+                data => $bpdljs,
+                type => 'line',
+                id => lc "$symbol-buy-signals",
+                y_axis => 0,
+                is_signal => 1,
+                marker_symbol => 'triangle',
+                marker_color => 'green',
+            };
+            my $spdl = pdl($data(,(0)) * 1000, $sells)->transpose;
+            my $sidx = $spdl((1))->which;#check if !0 is true
+            my $spdlclean = $spdl->dice_axis(1, $sidx);
+            $log->debug($spdlclean);
+            my $spdljs = encode_json $spdlclean->unpdl;
+            push @charts, {
+                title => "Sell Signals",
+                data => $spdljs,
+                type => 'line',
+                id => lc "$symbol-sell-signals",
+                y_axis => 0,
+                is_signal => 1,
+                marker_symbol => 'triangle-down',
+                marker_color => 'red',
+            };
+        } else {
+            $log->warn("Unable to plot invalid buy-sell data");
         }
     }
     my %y_axes_index = ();
