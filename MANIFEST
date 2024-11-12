@@ -21,6 +21,7 @@ META.yml
 README
 share/changelogger.sh
 share/chart-line-solid.png
+share/chart.tt
 share/icon.gif
 share/spinner.svg
 t/00_use.t
