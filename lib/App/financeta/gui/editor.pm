@@ -136,6 +136,11 @@ sub _build_main {
             }
         },
     );
+    my $is_dark_mode = 0;
+    if ($mw->backColor ne cl::White) {
+        $log->debug("Editor window is in dark mode\n");
+        $is_dark_mode = 1;
+    }
     my @sz = $mw->size;
     $sz[0] *= 0.98;
     $sz[1] *= 0.98;
@@ -148,6 +153,7 @@ sub _build_main {
         hiliteNumbers => cl::Red,
         hiliteQStrings => cl::Red,
         hiliteQQStrings => cl::Red,
+        hiliteChars => [ ';:?/,~`!@#$%^&*()-_+=\|]}{[./', $is_dark_mode ? cl::White : cl::Black],
         #    hiliteIDs => [$keywords, cl::Green],
         tabIndent => 4,
         size => \@sz,
@@ -157,17 +163,22 @@ sub _build_main {
         persistentBlock => 1,
         wantTabs => 1,
     );
-    my $regexes = $self->compiler->get_grammar_regexes;
+    my $regexes = $self->compiler->get_grammar_regexes($is_dark_mode);
     my @arr = ();
+    my %color_scheme = (
+        conditions => $is_dark_mode ? cl::LightCyan : cl::Blue,
+        keywords => $is_dark_mode ? cl::Yellow : cl::Green,
+        booleans => $is_dark_mode ? cl::LightGreen : cl::Brown,
+        variables => $is_dark_mode ? cl::Magenta : cl::Red,
+        plain => $is_dark_mode ? cl::White : cl::Black,
+    );
     foreach my $k (keys %$regexes) {
         if (ref $regexes->{$k} eq 'ARRAY') {
             push @arr, '(?i:(' . join('|', @{$regexes->{$k}}) . '))';
         } else {
             push @arr, $regexes->{$k};
         }
-        $k = ucfirst $k;
-        my $color = eval "cl::$k" or cl::Black; # ignore error
-        push @arr, $color;
+        push @arr, $color_scheme{$k} // $color_scheme{plain},
     }
     my $hlres = $ed->hiliteREs;
     $ed->hiliteREs([@arr, @$hlres]);

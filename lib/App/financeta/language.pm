@@ -75,16 +75,20 @@ boolean: /((i:'true'|'false'))/
 GRAMMAR
 
 sub get_regexes {
-    return {
-        green => [qw(
-            buy sell negative positive zero below above long short
-        )],
-        blue => [qw(
+    my $conditions = [qw(
             at equals if when and or not is becomes crosses from to
             over into trades
-        )],
-        red => [qw(allow no true false)],
-        black => '(\$\w+)',
+        )];
+    my $keywords = [qw(
+            buy sell negative positive zero below above long short
+        )];
+    my $booleans = [qw(allow no true false)];
+    my $variables = '(\$\w+)';
+    return {
+        conditions => $conditions,
+        keywords => $keywords,
+        booleans => $booleans,
+        variables => $variables,
     };
 }
 
