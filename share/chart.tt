@@ -26,6 +26,33 @@
         </div>
         <hr/>
     <script type="text/javascript">
+        try {
+            const poll = () => {
+                const interval = 10000;
+                let _poller = null;
+                const repeat = () => {
+                    console.log(`~ Polling: ${Date.now()}.`);
+                };
+                return {
+                    start: () => { _poller = setInterval(repeat, interval); },
+                    stop: () => { console.log('~ Poller stopped.'); clearInterval(_poller); }
+                };
+            };
+            const poller = poll();
+            poller.start();
+            const onVisibilityChange = () => {
+                if (document.visibilityState === 'hidden') {
+                    poller.stop();
+                    console.log("Closing the window due to lack of use");
+                    window.close();
+                } else {
+                    poller.start();
+                }
+            };
+            document.addEventListener('visibilitychange', onVisibilityChange, false);
+        } catch (err) {
+            console.error("visibility change has failed: " + err);
+        }
         var yaxes = [];
         [% FOREACH el IN chart.yaxes_index %]
             [% SWITCH el %]
