@@ -2640,7 +2640,16 @@ sub plot_data_highcharts {
                         push @charts, $ph;
                     }
                 }
-                my $iplot_cdl = $iplot->{candle};
+                if ($type =~ /CANDLE/) {
+                    my $iplot_cdl = $iplot->{candle};
+                    $log->debug("Candle: " . dumper($iplot_cdl));
+                    foreach my $ph (@$iplot_cdl) {
+                        $ph->{type} = 'column';
+                        $ph->{id} = lc "$symbol-$ph->{id}";
+                        $ph->{y_axis} = 0;
+                        push @charts, $ph;
+                    }
+                }
             } else {
                 $log->warn('Unable to handle plot arguments in ' . ref($iplot) . ' form!');
             }

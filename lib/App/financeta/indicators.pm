@@ -216,18 +216,24 @@ sub _plot_gnuplot_compare {
 sub _plot_highcharts_candlestick {
     my ($self, $xdata, $output) = @_;
     my @plotinfo = ();
-    foreach (@$output) {
-        my $p = $_->[1];
-        my %legend = (legend => $_->[0]) if length $_->[0];
-        my $args = $_->[2] || {};
-        $log->debug("Plot args: ", dumper($args));
+    foreach my $o (@$output) {
+        ## this is an array
+        #[0] => legend title
+        #[1] => PDL data
+        #[2] => gnuplot args or undef
+        #[3] => variable name for execution rules
+        ## let's create a x-y pdl data
+        ## highcharts requires timestamp in milliseconds;
+        my $xypdl = pdl($xdata * 1000, $o->[1])->transpose->setbadtoval(0);
+        my $xyidx = $xypdl((1))->which;
+        my $xypdlclean = $xypdl->dice_axis(1, $xyidx);
+        $log->debug($o->[0], $xypdlclean);
         push @plotinfo, {
-            with => 'impulses',
-            axes => 'x1y2',
-            linecolor => $self->next_color,
-            %legend,
-            %$args,
-        }, $xdata, $p;
+            title => $o->[0],
+            data => encode_json $xypdlclean->unpdl,
+            impulses => 1,
+            id => $o->[3],
+        };
     }
     return { candle => \@plotinfo };
 }
@@ -1836,7 +1842,7 @@ has candlestick => {
         name => 'Identical Three Crows',
         params => [],
         input => [qw(open high low close)],
-        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlidential3crows, 'ta_cdlidential3crows', 'ID3CROWS', @_); },
+        code => sub { return shift->_execute_candlestick(\&PDL::ta_cdlidentical3crows, 'ta_cdlidentical3crows', 'ID3CROWS', @_); },
         gnuplot => \&_plot_gnuplot_candlestick,
         highcharts => \&_plot_highcharts_candlestick,
     },
