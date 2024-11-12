@@ -13,7 +13,7 @@
     #chart-container {
         min-width: 600px;
         min-height: 400px;
-        height: 600px;
+        height: [% chart.height %];
         width: 95%;
         margin: 20px;
     };
@@ -26,23 +26,47 @@
         </div>
         <hr/>
     <script type="text/javascript">
-        window.chart = new Highcharts.stockChart('chart-container', {
-            accessibility: { enabled: false },
-            yAxis: [
-                {
+        var yaxes = [];
+        [% FOREACH el IN chart.yaxes_index %]
+            [% SWITCH el %]
+            [% CASE 0 %]
+                yaxes.push({
                     labels: { align: 'left' },
-                    height: '80%',
+                    height: "400px",
                     resize: { enabled: true },
-                },
-                {
+                });
+            [% CASE 1 %]
+                yaxes.push({
                     labels: { align: 'left' },
-                    top: '80%',
-                    height: '20%',
+                    top: "400px",
+                    height: "200px",
                     opposite: true,
                     offset: 0,
                     resize: { enabled: true },
-                },
-            ],
+                });
+            [% CASE 2 %]
+                yaxes.push({
+                    labels: { align: 'left' },
+                    top: "600px",
+                    height: "200px",
+                    opposite: true,
+                    offset: 0,
+                    resize: { enabled: true },
+                });
+            [% CASE 3 %]
+                yaxes.push({
+                    labels: { align: 'left' },
+                    top: "800px",
+                    height: "200px",
+                    opposite: true,
+                    offset: 0,
+                    resize: { enabled: true },
+                });
+            [% END %]
+        [% END %]
+        window.chart = new Highcharts.stockChart('chart-container', {
+            accessibility: { enabled: false },
+            yAxis: yaxes,
             title: { text: "[% chart.title %]" },
             series:[
             [% FOREACH el IN chart.charts %]

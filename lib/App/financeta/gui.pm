@@ -2465,36 +2465,6 @@ sub plot_data_highcharts {
     return unless defined $data;
     $symbol = $self->current->{symbol} unless defined $symbol;
     $type = $self->current->{plot_type} unless defined $type;
-    if (0) {
-    my @general_plot = ();
-    my @volume_plot = ();
-    my @addon_plot = ();
-    my @candle_plot = ();
-    $self->indicator->color_idx(0); # reset color index
-    if (defined $indicators and scalar @$indicators) {
-        # ok now create a list of indicators to plot
-        foreach (@$indicators) {
-            my $iref = $_->{indicator};
-            my $idata = $_->{data};
-            my $iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
-            next unless $iplot;
-            if (ref $iplot eq 'ARRAY') {
-                push @general_plot, @$iplot if scalar @$iplot;
-            } elsif (ref $iplot eq 'HASH') {
-                my $iplot_gen = $iplot->{general};
-                push @general_plot, @$iplot_gen if $iplot_gen and scalar @$iplot_gen;
-                my $iplot_vol = $iplot->{volume};
-                push @volume_plot, @$iplot_vol if $iplot_vol and scalar @$iplot_vol;
-                my $iplot_addon = $iplot->{additional};
-                push @addon_plot, @$iplot_addon if $iplot_addon and scalar @$iplot_addon;
-                my $iplot_cdl = $iplot->{candle};
-                push @candle_plot, @$iplot_cdl if $iplot_cdl and scalar @$iplot_cdl;
-            } else {
-                $log->warn('Unable to handle plot arguments in ' . ref($iplot) . ' form!');
-            }
-        }
-    }
-    }
     ### for OHLC type
     ## timestamp: data(,(0))
     ## OHLC: data(, (1)), data(, (2)), data(,(3)), data(,(4))
@@ -2514,6 +2484,8 @@ sub plot_data_highcharts {
     my $chart_type_pretty;
     my @charts = ();
     $type //= 'OHLC';
+    my $next_y_axis = 0;
+    my $has_volume_chart = 0;
     if ($type eq 'OHLC' or $type eq 'CANDLE') {
         $chart_type_pretty = ($type eq 'CANDLE') ? 'Candlestick' : 'OHLC Price';
         my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)))->transpose->unpdl;
@@ -2525,6 +2497,7 @@ sub plot_data_highcharts {
             id => lc "$symbol-$type",
             y_axis => 0,
         };
+        $next_y_axis = 1;
     } elsif ($type eq 'OHLCV' or $type eq 'CANDLEV') {
         $chart_type_pretty = ($type eq 'CANDLEV') ? 'Candlestick & Volume' : 'OHLC Price & Volume';
         my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(1)), $data(,(2)), $data(,(3)), $data(,(4)))->transpose->unpdl;
@@ -2543,7 +2516,9 @@ sub plot_data_highcharts {
             type => 'column',
             id => lc "$symbol-volume",
             y_axis => 1,
-        },
+        };
+        $has_volume_chart = 1;
+        $next_y_axis = 2;
     } elsif ($type eq 'CLOSEV') {
         $chart_type_pretty = "Close Price & Volume";
         my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(4)))->transpose->unpdl;
@@ -2563,6 +2538,8 @@ sub plot_data_highcharts {
             id => lc "$symbol-volume",
             y_axis => 1,
         };
+        $has_volume_chart = 1;
+        $next_y_axis = 2;
     } else {
         $chart_type_pretty = "Close Price";
         my $ppdl = encode_json pdl($data(,(0)) * 1000, $data(,(4)))->transpose->unpdl;
@@ -2574,8 +2551,10 @@ sub plot_data_highcharts {
             id => lc "$symbol-$type",
             y_axis => 0,
         };
+        $next_y_axis = 1;
     }
     ## handle buys and sells
+    ##TODO: handle realtime P&L and draw an area plot
     if (defined $buysell and ref $buysell eq 'HASH' and
         defined $buysell->{buys} and defined $buysell->{sells}) {
         my $buys = $buysell->{buys};
@@ -2615,11 +2594,73 @@ sub plot_data_highcharts {
             $log->warn("Unable to plot invalid buy-sell data");
         }
     }
+    ## add the indicators
+    if (defined $indicators and scalar @$indicators) {
+        $self->indicator->color_idx(0); # reset color index
+        # ok now create a list of indicators to plot
+        # we have to take the data and plot it into HighCharts structure
+        foreach (@$indicators) {
+            my $iref = $_->{indicator};
+            my $idata = $_->{data};
+            ## we  have custom HighCharts plotting data handlers
+            my $iplot = $self->indicator->get_plot_args($data(,(0)), $idata, $iref);
+            next unless $iplot;
+            if (ref $iplot eq 'ARRAY') {
+                foreach my $ph (@$iplot) {
+                    $ph->{id} = lc "$symbol-$ph->{id}";
+                    $ph->{y_axis} = 0;
+                    $ph->{type} = ($ph->{impulses}) ? 'column' : 'line';
+                    push @charts, $ph;
+                }
+            } elsif (ref $iplot eq 'HASH') {
+                my $iplot_gen = $iplot->{general};
+                if (ref $iplot_gen eq 'ARRAY') {
+                    foreach my $ph (@$iplot_gen) {
+                        $ph->{type} = ($ph->{impulses}) ? 'column' : 'line';
+                        $ph->{id} = lc "$symbol-$ph->{id}";
+                        $ph->{y_axis} = 0;
+                        push @charts, $ph;
+                    }
+                }
+                my $iplot_vol = $iplot->{volume};
+                if ($has_volume_chart and ref $iplot_vol eq 'ARRAY') {
+                    foreach my $ph (@$iplot_vol) {
+                        $ph->{type} = 'column';
+                        $ph->{id} = lc "$symbol-$ph->{id}";
+                        $ph->{y_axis} = 1;
+                        push @charts, $ph;
+                    }
+                }
+                my $iplot_addon = $iplot->{additional};
+                if (ref $iplot_addon eq 'ARRAY') {
+                    foreach my $ph (@$iplot_addon) {
+                        $ph->{type} = ($ph->{impulses}) ? 'column' : 'line';
+                        $ph->{id} = lc "$symbol-$ph->{id}";
+                        $ph->{y_axis} = $next_y_axis;
+                        push @charts, $ph;
+                    }
+                }
+                my $iplot_cdl = $iplot->{candle};
+            } else {
+                $log->warn('Unable to handle plot arguments in ' . ref($iplot) . ' form!');
+            }
+        }
+    }
+    my %y_axes_index = ();
+    foreach (@charts) {
+        $y_axes_index{$_->{y_axis}}++;
+    }
+    my $cheight = 400;
+    foreach (keys %y_axes_index) {
+        $cheight += 200;
+    }
     my $ttconf = {
         page => {
             title => "$chart_type_pretty plot of $symbol",
         },
         chart => {
+            height => $cheight . "px",
+            yaxes_index => [sort keys(%y_axes_index)],
             charts => \@charts,
             title => $symbol,
         },
