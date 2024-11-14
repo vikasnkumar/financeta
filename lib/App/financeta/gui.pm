@@ -1907,7 +1907,7 @@ sub execute_rules {
         my $buysells = &$coderef(@var_pdls); # invoke the rules sub
         if (defined $buysells and ref $buysells eq 'HASH') {
             $log->debug("Retrieved buy-sells successfully from code-ref");
-            $buysells = $self->indicator->calculate_pnl($data(, (0)), $buysells);
+            $buysells = $self->indicator->calculate_pnl($data(, (0)), $data(, (4)), $buysells);
             if ($buysells) {
                 $log->debug("Done applying P&L calcs to buy-sells");
                 if ($self->set_tab_buysells_by_name($win, $tabname, $buysells)) {
@@ -1917,6 +1917,7 @@ sub execute_rules {
                 $log->debug("SELLS: ", $buysells->{sells});
                 $log->debug("Longs PnL: ", $buysells->{longs_pnl});
                 $log->debug("Shorts PnL: ", $buysells->{shorts_pnl});
+                $log->debug("Runtime P&L: ", $buysells->{rtpnl});
             } else {
                 $log->warn("Failed to calculate P&L on executed rules");
             }
@@ -2615,7 +2616,7 @@ sub plot_data_highcharts {
         }
     }
     ## handle buys and sells
-    ##TODO: handle realtime P&L and draw an area plot
+    ##handle runtime P&L and draw an area plot
     if (defined $buysell and ref $buysell eq 'HASH' and
         defined $buysell->{buys} and defined $buysell->{sells}) {
         my $buys = $buysell->{buys};
@@ -2653,6 +2654,17 @@ sub plot_data_highcharts {
             };
         } else {
             $log->warn("Unable to plot invalid buy-sell data");
+        }
+        if (ref $buysell->{rtpnl} eq 'PDL') {
+            my $rpdl = pdl($data(, (0)) * 1000, $buysell->{rtpnl})->transpose;
+            my $rpdljs = encode_json $rpdl->unpdl;
+            push @charts, {
+                title => "Runtime P&L",
+                data => $rpdljs,
+                type => 'area',
+                id => lc "$symbol-runtime-pnl",
+                y_axis => $next_y_axis + 1,
+            };
         }
     }
     my %y_axes_index = ();

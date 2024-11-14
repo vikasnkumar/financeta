@@ -2554,9 +2554,12 @@ sub get_plot_args_buysell {
 }
 
 sub calculate_pnl {
-    my ($self, $xdata, $buysells) = @_;
+    my ($self, $xdata, $pxdata, $buysells) = @_;
+    $log->info("Px: ", $pxdata);
     my $buys = $buysells->{buys};
+    $log->info("Buys:", $buys);
     my $sells = $buysells->{sells};
+    $log->info("Sells: ", $sells);
     my $qty = $buysells->{quantity} || 100;
     my $b_idx = which( $buys > 0 );
     my $s_idx = which( $sells > 0 );
@@ -2727,6 +2730,19 @@ sub calculate_pnl {
     $buysells->{orig_sells} = $sells;
     $buysells->{buys} = $final_buys;
     $buysells->{sells} = $final_sells;
+    ## calculate RTPNL
+    ##TODO: handle short trades
+    my $buyflags = zeroes($final_buys->dim(0));
+    $buyflags->index(which($final_buys > 0)) .= 1; ## set 1 where it is a buy
+    my $sellflags = zeroes($final_sells->dim(0));
+    $sellflags->index(which($final_sells > 0)) .= -1; ## set -1 where it is a sell
+    my $netflags = $buyflags + $sellflags;
+    $netflags = $netflags->cumusumover;
+    $log->debug("netflags: ", $netflags);
+    my $net1 = $netflags * $pxdata - locf($final_buys->setbadif($final_buys == 0)) + $final_sells;
+    $buysells->{rtpnl} = $net1 * $netflags;
+    $log->debug("rtpnl: ", $buysells->{rtpnl});
+    $buysells->{rtpnl} *= $qty;
     return $buysells;
 }
 

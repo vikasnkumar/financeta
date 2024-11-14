@@ -89,6 +89,15 @@
                     offset: 0,
                     resize: { enabled: true },
                 });
+            [% CASE 4 %]
+                yaxes.push({
+                    labels: { align: 'left' },
+                    top: "1000px",
+                    height: "200px",
+                    opposite: true,
+                    offset: 0,
+                    resize: { enabled: true },
+                });
             [% END %]
         [% END %]
         window.chart = new Highcharts.stockChart('chart-container', {
@@ -114,6 +123,12 @@
                         radius: 4,
                         symbol: "[% el.marker_symbol %]",
                     },
+                    [% END %]
+                    [% IF el.type == 'area' %]
+                    color: 'green',
+                    negativeColor: 'red',
+                    threshold: 0,
+                    marker: { enabled: true },
                     [% END %]
                 },
             [% END %]
