@@ -178,6 +178,29 @@ sub _plot_highcharts_additional {
     return { additional => \@plotinfo };
 }
 
+sub _plot_gnuplot_buysell {
+    my ($self, $xdata, $output) = @_;
+    my $ret = { general => undef, additional => undef };
+    my @bsg = ();
+    my @bsa = ();
+    foreach (@$output) {
+        if ($_->[0] =~ /Buy|Sell/i) {
+            push @bsg, $_;
+        } else {
+            push @bsa, $_;
+        }
+    }
+    $ret->{general} = $self->_plot_gnuplot_general($xdata, \@bsg) if @bsg;
+    $ret->{additional} = $self->_plot_gnuplot_general($xdata, \@bsa) if @bsa;
+    return $ret;
+}
+
+sub _plot_highcharts_buysell {
+    ## not required
+    return undef;
+}
+
+
 sub _plot_gnuplot_candlestick {
     my ($self, $xdata, $output) = @_;
     my @plotinfo = ();
@@ -2536,20 +2559,43 @@ sub get_plot_args($$$) {
 }
 
 has buysell => {
-    gnuplot => \&_plot_gnuplot_general,
-    ##NOT USED for HighCharts
-    highcharts => \&_plot_highcharts_general,
+    gnuplot => \&_plot_gnuplot_buysell,
+    ## DO NOT USE
+    highcharts => \&_plot_highcharts_buysell,
 };
 
 sub get_plot_args_buysell {
-    my ($self, $xdata, $buys, $sells) = @_;
+    my ($self, $xdata, $buys, $sells, $rtpnl) = @_;
     my $plotref = $self->buysell->{lc($self->plot_engine)};
     $log->warn("There is no plotting function available for buy-sell") unless ref $plotref eq 'CODE';
+    return undef unless ref $plotref eq 'CODE';
     my $output = [
         # plotting beautifier
         [ 'Buys', $buys->setbadif($buys == 0), { with => 'points', pointtype => 5, linecolor => 'green', }, 'buys' ],
         [ 'Sells', $sells->setbadif($sells == 0), { with => 'points', pointtype => 7, linecolor => 'red', }, 'sells' ],
     ];
+    if (ref $rtpnl eq 'PDL' and $self->plot_engine =~ /gnuplot/i) {
+        push @$output, [
+            'Runtime Profit',
+            $rtpnl->setbadif($rtpnl <= 0),
+            {
+                with => 'filledcurves above y=0 fc "green"',
+                fillstyle => 'solid',
+            },
+            'rtpnl',
+        ];
+        push @$output, [
+            'Runtime Drawdown',
+            $rtpnl->setbadif($rtpnl >= 0),
+            {
+                with => 'filledcurves below y=0 fc "red"',
+                fillstyle => 'solid',
+            },
+            'rtpnl',
+        ];
+    } else {
+        push @$output, [ 'Runtime P&L', $rtpnl->setbadif($rtpnl == 0), {}, 'rtpnl', ];
+    }
     return &$plotref($self, $xdata, $output) if ref $plotref eq 'CODE';
 }
 

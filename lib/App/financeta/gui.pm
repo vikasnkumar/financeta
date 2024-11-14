@@ -2010,15 +2010,20 @@ sub plot_data_gnuplot {
         defined $buysell->{buys} and defined $buysell->{sells}) {
         my $buys = $buysell->{buys};
         my $sells = $buysell->{sells};
+        my $rtpnl = $buysell->{rtpnl};
         if (ref $buys eq 'PDL' and ref $sells eq 'PDL') {
             my $bsplot = $self->indicator->get_plot_args_buysell(
-                $data(,(0)), $buys, $sells);
+                $data(,(0)), $buys, $sells, $rtpnl);
             if (defined $bsplot and ref $bsplot eq 'ARRAY') {
                 push @general_plot, @$bsplot if scalar @$bsplot;
             } elsif (ref $bsplot eq 'HASH') {
                 my $bsplot_gen = $bsplot->{general};
                 if ($bsplot_gen) {
                     push @general_plot, @$bsplot_gen if scalar @$bsplot_gen;
+                }
+                my $bsplot_addon = $bsplot->{additional};
+                if (ref $bsplot_addon eq 'ARRAY' and scalar (@$bsplot_addon)) {
+                    push @addon_plot, @$bsplot_addon;
                 }
             }
         } else {
