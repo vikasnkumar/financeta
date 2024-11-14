@@ -2736,13 +2736,17 @@ sub calculate_pnl {
     $buyflags->index(which($final_buys > 0)) .= 1; ## set 1 where it is a buy
     my $sellflags = zeroes($final_sells->dim(0));
     $sellflags->index(which($final_sells > 0)) .= -1; ## set -1 where it is a sell
-    my $netflags = $buyflags + $sellflags;
-    $netflags = $netflags->cumusumover;
-    $log->debug("netflags: ", $netflags);
-    my $net1 = $netflags * $pxdata - locf($final_buys->setbadif($final_buys == 0)) + $final_sells;
-    $buysells->{rtpnl} = $net1 * $netflags;
+    my $netflags = $buyflags + $sellflags;## spread the buy to each day until sell
+    my $netflags2 = $netflags->cumusumover;
+    $netflags2 = $netflags2 - $sellflags;## move the buy to the sell day as well
+    $log->debug("netflags2: ", $netflags2);
+    my $buypx_daily = locf($final_buys->setbadif($final_buys == 0));
+    $buypx_daily = $buypx_daily * $netflags2;
+    my $px_daily = $pxdata * $netflags2;
+    my $rtpnl = $px_daily - $buypx_daily;
+    $rtpnl *= $qty;
+    $buysells->{rtpnl} = $rtpnl;
     $log->debug("rtpnl: ", $buysells->{rtpnl});
-    $buysells->{rtpnl} *= $qty;
     return $buysells;
 }
 
