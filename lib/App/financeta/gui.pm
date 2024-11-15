@@ -54,8 +54,9 @@ has timezone => 'America/New_York';
 has brand => __PACKAGE__;
 has main => (builder => '_build_main');
 has tmpdir => ( default => sub {
-    my $dir = $ENV{TEMP} || $ENV{TMP} if $^O =~ /Win32|Cygwin/i;
-    $dir //= $ENV{TMPDIR} || File::Spec->tmpdir || '/tmp';
+    my $dir = $ENV{TEMP} || $ENV{TMP} || $ENV{APPDATA} if $^O =~ /Win32|Cygwin/i;
+    $dir //= $ENV{TMPDIR} || File::Spec->tmpdir;
+    $dir //= '/tmp' unless $^O =~ /Win32|Cygwin/i;
     $dir = File::Spec->catdir($dir, $ENV{USER} || getlogin(), 'financeta');
     File::Path::make_path($dir) unless -d $dir;
     return $dir;
