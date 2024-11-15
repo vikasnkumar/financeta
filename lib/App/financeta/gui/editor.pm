@@ -136,11 +136,8 @@ sub _build_main {
             }
         },
     );
-    my $is_dark_mode = 0;
-    if ($mw->backColor ne cl::White) {
-        $log->debug("Editor window is in dark mode\n");
-        $is_dark_mode = 1;
-    }
+    my $is_dark_mode = (cl::to_gray_byte($mw->map_color($mw->color)) > cl::to_gray_byte($mw->map_color($mw->backColor))) ? 1 : 0;
+    $log->debug("Editor window dark mode test: $is_dark_mode\n");
     my @sz = $mw->size;
     $sz[0] *= 0.98;
     $sz[1] *= 0.98;
