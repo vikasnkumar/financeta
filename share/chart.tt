@@ -26,6 +26,7 @@
         </div>
         <hr/>
     <script type="text/javascript">
+        [% IF page.close_on_idle %]
         try {
             const poll = () => {
                 const interval = 10000;
@@ -53,6 +54,8 @@
         } catch (err) {
             console.error("visibility change has failed: " + err);
         }
+        [% END %]
+        [% IF chart %]
         var yaxes = [];
         [% FOREACH el IN chart.yaxes_index %]
             [% SWITCH el %]
@@ -144,6 +147,7 @@
                 }]
             }
         });
+        [% END %]
     </script>
     </body>
 </html>
