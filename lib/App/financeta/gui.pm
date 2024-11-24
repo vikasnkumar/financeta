@@ -2684,6 +2684,7 @@ sub plot_data_highcharts {
     my $ttconf = {
         page => {
             title => "$chart_type_pretty plot of $symbol",
+            close_on_idle => 1,
         },
         chart => {
             height => $cheight . "px",
