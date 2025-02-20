@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 $VERSION = eval $VERSION;
 use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter);
@@ -16,7 +16,7 @@ use JSON::XS qw(encode_json);
 
 $PDL::doubleformat = "%0.6lf";
 has debug => 0;
-has plot_engine => 'gnuplot';
+has plot_engine => 'highcharts';
 has color_idx => 0;
 has colors => [qw(
     red
@@ -2798,7 +2798,7 @@ sub calculate_pnl {
 
 1;
 __END__
-### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2025. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 17th Aug 2014
 ### LICENSE: Refer LICENSE file

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 $VERSION = eval $VERSION;
 use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter get_icon_path get_file_path);
@@ -66,7 +66,7 @@ has datadir => ( default => sub {
     File::Path::make_path($dir) unless -d $dir;
     return $dir;
 });
-has plot_engine => 'gnuplot';
+has plot_engine => 'highcharts';
 has current => {};
 has indicator => (builder => '_build_indicator');
 has tab_was_closed => 0;
@@ -366,6 +366,44 @@ sub _menu_items {
                         $win->menu->uncheck('plot_close');
                         $win->menu->uncheck('plot_closev');
                         $win->menu->uncheck('plot_cdl');
+                    },
+                    $self,
+                ],
+                [
+                    sprintf('-%splot_using_highcharts', ($self->plot_engine eq 'highcharts') ? '*' : ''),
+                    'Use HighCharts', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        $win->menu->check('plot_using_highcharts');
+                        $win->menu->uncheck('plot_using_gnuplot');
+                        my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
+                        $gui->plot_engine('highcharts');
+                        $gui->indicator->plot_engine('highcharts');
+                        $log->info("Changing plot engine to " . $self->plot_engine);
+                        my $pwin = $win->{plot};
+                        $pwin->close if $pwin;
+                    },
+                    $self,
+                ],
+                [
+                    sprintf('-%splot_using_gnuplot', ($self->plot_engine eq 'gnuplot') ? '*' : ''),
+                    'Use Gnuplot', '', '',
+                    sub {
+                        my ($win, $item) = @_;
+                        $win->menu->check('plot_using_gnuplot');
+                        $win->menu->uncheck('plot_using_highcharts');
+                        my $gui = $win->menu->options($item);
+                        unless (ref $gui eq __PACKAGE__) {
+                            $log->error("Invalid gui object passed to menu item $item");
+                            return;
+                        }
+                        $gui->plot_engine('gnuplot');
+                        $gui->indicator->plot_engine('gnuplot');
+                        $log->info("Changing plot engine to " . $self->plot_engine);
                     },
                     $self,
                 ],
@@ -1360,6 +1398,8 @@ sub enable_menu_options {
     $win->menu->plot_closev->enabled(1);
     $win->menu->plot_cdl->enabled(1);
     $win->menu->plot_cdlv->enabled(1);
+    $win->menu->plot_using_highcharts->enabled(1);
+    $win->menu->plot_using_gnuplot->enabled(1);
     $win->menu->add_indicator->enabled(1);
     $win->menu->edit_rules->enabled(1);
     $win->menu->execute_rules->enabled(1);
@@ -1379,6 +1419,8 @@ sub disable_menu_options {
     $win->menu->plot_closev->enabled(0);
     $win->menu->plot_cdl->enabled(0);
     $win->menu->plot_cdlv->enabled(0);
+    $win->menu->plot_using_highcharts->enabled(0);
+    $win->menu->plot_using_gnuplot->enabled(0);
     $win->menu->add_indicator->enabled(0);
     $win->menu->remove_indicator->enabled(0);
     $win->menu->edit_rules->enabled(0);
@@ -1945,7 +1987,7 @@ sub plot_data {
         $log->info("PDL::Graphics::Gnuplot $PDL::Graphics::Gnuplot::VERSION is being used");
         return $self->plot_data_gnuplot(@_);
     } elsif (lc($self->plot_engine) eq 'highcharts') {
-        $log->info("Using Highcharts to do plotting");
+        $log->info("Using HighCharts to do plotting");
         return $self->plot_data_highcharts(@_);
     }
     $log->warn($self->plot_engine . " is not supported yet.");
@@ -2573,6 +2615,8 @@ sub plot_data_highcharts {
             next unless $iplot;
             if (ref $iplot eq 'ARRAY') {
                 foreach my $ph (@$iplot) {
+                    use Data::Dumper;
+                    print Dumper($ph), "\n";
                     $ph->{id} = lc "$symbol-$ph->{id}";
                     $ph->{y_axis} = 0;
                     $ph->{type} = ($ph->{impulses}) ? 'column' : 'line';
@@ -2716,7 +2760,7 @@ sub plot_data_highcharts {
 1;
 
 __END__
-### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2025. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 3rd Jan 2014
 ### LICENSE: Refer LICENSE file
@@ -2734,7 +2778,7 @@ research with Technical Analysis.
 
 =head1 VERSION
 
-0.15
+0.16
 
 =head1 METHODS
 
@@ -2807,7 +2851,7 @@ The commandline script that calls C<App::financeta>.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2013-2023. Vikas N Kumar <vikas@cpan.org>. All Rights Reserved.
+Copyright (C) 2013-2025. Vikas N Kumar <vikas@cpan.org>. All Rights Reserved.
 
 =head1 LICENSE
 

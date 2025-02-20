@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.10.0;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 $VERSION = eval $VERSION;
 use App::financeta::mo;
 use App::financeta::utils qw(dumper log_filter);
@@ -246,7 +246,7 @@ sub save {
 
 1;
 __END__
-### COPYRIGHT: 2013-2023. Vikas N. Kumar. All Rights Reserved.
+### COPYRIGHT: 2013-2025. Vikas N. Kumar. All Rights Reserved.
 ### AUTHOR: Vikas N Kumar <vikas@cpan.org>
 ### DATE: 29th Sept 2014
 ### LICENSE: Refer LICENSE file
